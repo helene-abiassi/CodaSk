@@ -2,8 +2,8 @@ import React from 'react';
 
 type Props = {};
 
-function Signup({}: Props) {
+function Register({}: Props) {
   return <div>Signup</div>;
 }
 
-export default Signup;
+export default Register;
