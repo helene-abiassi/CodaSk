@@ -2,8 +2,8 @@ import React from 'react';
 
 type Props = {};
 
-function searchQuestion({}: Props) {
+function Question({}: Props) {
   return <div>searchQuestion</div>;
 }
 
-export default searchQuestion;
+export default Question;
