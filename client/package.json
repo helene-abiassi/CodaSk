@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --check --ignore-path .gitignore .",
-    "format:fix": "prettier --write --ignore-path .gitignore ."
+    "format:fix": "prettier --write --ignore-path .gitignore .",
+    "test": "vitest"
   },
   "dependencies": {
     "next": "14.0.3",
@@ -16,17 +17,22 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.1.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
     "eslint-config-prettier": "^9.0.0",
+    "jsdom": "^23.0.0",
     "postcss": "^8",
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^0.34.6"
   }
 }
