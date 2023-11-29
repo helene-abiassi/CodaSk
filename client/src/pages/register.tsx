@@ -3,7 +3,7 @@ import React from 'react';
 type Props = {};
 
 function Register({}: Props) {
-  return <div>Signup</div>;
+  return <div>Register</div>;
 }
 
 export default Register;
