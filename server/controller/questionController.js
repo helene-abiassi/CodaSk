@@ -50,7 +50,6 @@ const getQuestionsById = async (req, res) => {};
 const getQuestionsByUserId = async (req, res) => {};
 
 const askQuestions = async (req, res) => {
-  console.log(req.body);
   const findUser = await userModel.findOne({ email: req.body.email });
 
   if (findUser) {
