@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  askQuestions,
   getAllQuestions,
   getQuestionsById,
   getQuestionsByUserId,
@@ -11,5 +12,9 @@ const router = express.Router();
 router.get("/all", getAllQuestions);
 router.get("/id/:_id", getQuestionsById);
 router.get("/userId/:_id", getQuestionsByUserId);
+
+// Post routes
+
+router.post("/askquestion", askQuestions);
 
 export default router;
