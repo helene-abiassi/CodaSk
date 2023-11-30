@@ -1,4 +1,7 @@
 import userModel from "../models/userModel.js";
+import { v2 as cloudinary } from "cloudinary";
+
+//GET Routes
 
 const getAllUsers = async (req, res) => {
   try {
@@ -44,4 +47,31 @@ const getUserById = async (req, res) => {
   }
 };
 
-export { getAllUsers, getUserById };
+//POST ROUTES
+
+const uploadImage = async (req, res) => {
+  console.log("REQ.FILE", req.file);
+  console.log(process.env.CLOUDINARY_CLOUDNAME);
+  console.log("API KEY", process.env.CLOUDINARY_APIKEY);
+
+  if (req.file) {
+    try {
+      const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
+        folder: "codask/user_photos",
+      });
+      console.log("uploadedImage>>>>>>>>", uploadedImage);
+      res.status(200).json({
+        message: "Image uploaded successfully",
+        user_photo: uploadedImage.secure_url,
+      });
+    } catch (error) {
+      console.error("error", error);
+    }
+  } else {
+    res.status(500).json({
+      error: "File type not supported",
+    });
+  }
+};
+
+export { getAllUsers, getUserById, uploadImage };
