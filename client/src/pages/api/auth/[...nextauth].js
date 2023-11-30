@@ -18,6 +18,8 @@ export const authOptions = {
       credentials: {
         //!Adapt to userModel
         username: {label: 'Username', type: 'text', placeholder: 'jsmith'},
+        email: {label: 'email', type: 'text', placeholder: 'jsmith@test.com'},
+
         password: {label: 'Password', type: 'password'},
       },
       async authorize(credentials, req) {
