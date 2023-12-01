@@ -23,7 +23,7 @@ const questionSchema = new mongoose.Schema({
   },
   module: {
     types: String,
-    required: true,
+    // required: true,
   },
   github_repo: {
     type: String,

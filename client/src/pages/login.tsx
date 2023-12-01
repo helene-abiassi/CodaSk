@@ -1,13 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 type Props = {};
 
 function Login({}: Props) {
-    <>
-      <div>Login</div>
-    </>
-
-  );
+  <>
+    <div>Login</div>
+  </>;
 }
 
 export default Login;
