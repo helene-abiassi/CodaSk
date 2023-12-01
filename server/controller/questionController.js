@@ -49,6 +49,8 @@ const getQuestionsById = async (req, res) => {};
 
 const getQuestionsByUserId = async (req, res) => {};
 
+const getQuestionByTagName = async (req, res) => {};
+
 const askQuestions = async (req, res) => {
   const findUser = await userModel.findOne({ email: req.body.email });
 
@@ -60,8 +62,10 @@ const askQuestions = async (req, res) => {
         title: req.body.title,
         problem_description: req.body.problem_description,
         solution_tried: req.body.solution_tried,
+        module: req.body.module,
         github_repo: req.body.github_repo,
         tags: req.body.tags,
+        //! Adjust this for array OR Add it 4 times in f and limit number of tags allowed
         status: req.body.status,
       });
 
@@ -91,4 +95,5 @@ export {
   getQuestionsByUserId,
   getQuestionsById,
   askQuestions,
+  getQuestionByTagName,
 };
