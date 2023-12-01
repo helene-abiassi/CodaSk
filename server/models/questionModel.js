@@ -21,6 +21,10 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  module: {
+    types: String,
+    required: true,
+  },
   github_repo: {
     type: String,
     required: true,
@@ -45,6 +49,7 @@ const questionSchema = new mongoose.Schema({
   ],
   status: {
     type: String,
+    default: "unanswered",
   },
 });
 
