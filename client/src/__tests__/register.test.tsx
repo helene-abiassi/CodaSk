@@ -1,6 +1,6 @@
 import {describe, expect, it, test} from 'vitest';
 import {render, screen} from '@testing-library/react';
-import Register from '../pages/register';
+import Register from '../pages/user/register';
 
 describe('General document structure', () => {
   it('Should contain a form with attribute data-testid set to registerForm', () => {

@@ -5,6 +5,7 @@ import cors from "cors";
 import * as dotenv from "dotenv";
 import userRoutes from "../server/routes/userRoutes.js";
 import questionRoutes from "../server/routes/questionRoutes.js";
+import answerRoutes from "../server/routes/answerRoute.js";
 import cloudinaryConfig from "./config/cloudinaryConfig.js";
 dotenv.config();
 const router = express.Router();

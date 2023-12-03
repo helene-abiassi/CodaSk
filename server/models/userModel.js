@@ -19,13 +19,11 @@ const userSchema = new mongoose.Schema({
   },
   user_photo: {
     type: String,
-    required: true,
     default:
       "https://res.cloudinary.com/dfm1r4ikr/image/upload/v1700763837/Codask/user-photos/user_photo_default.png",
   },
   bio: {
     type: String,
-    required: true,
   },
   location: {
     country: {
@@ -37,18 +35,15 @@ const userSchema = new mongoose.Schema({
   },
   course_type: {
     type: String,
-    required: true,
   },
   course_date: {
     type: Date,
-    // required: true,
   },
   cohort_name: {
     type: String,
   },
   user_permission: {
     type: String,
-    required: true,
   },
   website: {
     type: String,
@@ -58,7 +53,6 @@ const userSchema = new mongoose.Schema({
   },
   member_since: {
     type: Date,
-    required: true,
     default: Date.now,
   },
   last_seen: {
@@ -79,7 +73,8 @@ const userSchema = new mongoose.Schema({
   ],
   saved_tags: [
     {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "tag",
     },
   ],
 });

@@ -1,13 +1,37 @@
 import userModel from "../models/userModel.js";
+import { tagModel } from "../models/tagModel.js";
+import { questionModel } from "../models/questionModel.js";
 import { v2 as cloudinary } from "cloudinary";
+import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
+// import { generateToken } from "../utilities/tokenServices.js";
 
 //GET Routes
 
 const getAllUsers = async (req, res) => {
   try {
     const allUsers = await userModel.find();
-
-    // console.log("allUsers :>> ", allUsers);
+    // .populate([
+    //   {
+    //     path: "questions",
+    //     select: ["author", "title", "posted_on"],
+    //     populate: {
+    //       path: "author",
+    //       select: ["first_name", "last_name"],
+    //     },
+    //   },
+    //   {
+    //     path: "answers",
+    //     select: ["author", "message", "votes", "posted_on"],
+    //     populate: {
+    //       path: "author",
+    //       select: ["first_name", "last_name"],
+    //     },
+    //   },
+    //   {
+    //     path: "saved_tags",
+    //     select: ["name"],
+    //   },
+    // ]);
 
     res.json({
       number: allUsers.length,
@@ -25,8 +49,6 @@ const getUserById = async (req, res) => {
     const userByID = await userModel.find({
       _id: id,
     });
-    // console.log("userByID :>> ", userByID);
-
     if (userByID.length > 0) {
       res.status(200).json({
         number: userByID.length,
@@ -48,6 +70,91 @@ const getUserById = async (req, res) => {
 };
 
 //POST ROUTES
+
+const signUp = async (req, res) => {
+  console.log("req.body :>> ", req.body);
+
+  try {
+    const hashedPassword = await hashPassword(req.body.password);
+
+    if (hashedPassword) {
+      const existingUser = await userModel.findOne({ email: req.body.email });
+
+      if (existingUser) {
+        res.status(200).json({
+          message: "email already exists in the db",
+        });
+      } else {
+        try {
+          const newUser = new userModel({
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            email: req.body.email,
+            password: hashedPassword,
+            user_photo: req.body.user_photo,
+          });
+
+          console.log("newUser :>> ", newUser);
+
+          const savedUser = await newUser.save();
+          res.status(201).json({
+            message: "New user registered",
+            user: {
+              _id: savedUser._id,
+              first_name: savedUser.first_name,
+              last_name: savedUser.last_name,
+              email: savedUser.email,
+              user_photo: savedUser.user_photo,
+            },
+          });
+        } catch (error) {
+          console.log("error saving user :>> ", error);
+          res.status(500).json({
+            message: "something went wrong when registering your user",
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.log("error :>> ", error);
+    res.status(500).json({
+      message: "Oh no, it went wrong!",
+    });
+  }
+};
+
+const completeProfile = async (req, res) => {
+  const filter = { _id: req.body._id };
+  const update = {
+    bio: req.body.bio,
+    location: {
+      country: req.body.country,
+      city: req.body.city,
+    },
+    course_type: req.body.course_type,
+    course_date: req.body.course_date,
+    cohort_name: req.body.cohort_name,
+    user_permission: req.body.user_permission,
+    website: req.body.website,
+    github: req.body.github,
+  };
+
+  try {
+    const updatedUser = await userModel.findOneAndUpdate(filter, update, {
+      new: true,
+    });
+
+    res.status(200).json({
+      msg: "User updated successfully",
+      updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong when trying to update your user",
+      error: error,
+    });
+  }
+};
 
 const uploadImage = async (req, res) => {
   console.log("REQ.FILE", req.file);
@@ -74,4 +181,4 @@ const uploadImage = async (req, res) => {
   }
 };
 
-export { getAllUsers, getUserById, uploadImage };
+export { getAllUsers, getUserById, uploadImage, signUp, completeProfile };
