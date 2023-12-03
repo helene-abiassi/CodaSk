@@ -33,6 +33,15 @@ const resolvers = {
       return await userModel.findById(parent.author);
     },
   },
+
+  Mutation: {
+    async addQuestion(_, args) {
+      const newQuestion = new questionModel({
+        ...args.newQuestion,
+      });
+      return await newQuestion.save();
+    },
+  },
 };
 
 export default resolvers;

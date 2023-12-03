@@ -26,6 +26,7 @@ type Question {
     id: ID!
     author: User
     # posted_on: Date!
+    posted_on: String
     title: String!
     problem_description: String!
     solution_tried: String!
@@ -43,6 +44,26 @@ type Query {
     getAllUsers: [User]
     # -----Question queries-----
     getAllQuestions: [Question]
+}
+
+type Mutation {
+    addQuestion(newQuestion: newQuestionInput): Question
+}
+
+# NEW INPUT TYPE FOR A DATE?
+
+input newQuestionInput {
+    author: ID!
+    title: String!
+    problem_description: String!
+    solution_tried: String!
+    posted_on: String!
+    module: String
+    github_repo: String!
+    tags: [String!]!
+    answers: [ID!]
+    saved_by: [ID!]
+    status: String
 }
 `;
 
