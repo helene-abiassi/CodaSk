@@ -49,18 +49,18 @@ export const authOptions = {
         return null;
       },
     }),
-    GoogleProvider({
-      id: 'google',
-      name: 'google',
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    GithubProvider({
-      id: 'github',
-      name: 'github',
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
+    // GoogleProvider({
+    //   id: 'google',
+    //   name: 'google',
+    //   clientId: process.env.GOOGLE_CLIENT_ID,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    // }),
+    // GithubProvider({
+    //   id: 'github',
+    //   name: 'github',
+    //   clientId: process.env.GITHUB_ID,
+    //   clientSecret: process.env.GITHUB_SECRET,
+    // }),
     // ...add more providers here
   ],
   callbacks: {

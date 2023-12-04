@@ -1,7 +1,9 @@
 import express from "express";
 import {
+  completeProfile,
   getAllUsers,
   getUserById,
+  signUp,
   uploadImage,
 } from "../controller/userController.js";
 import { multerUpload } from "../middlewares/multer.js";
@@ -13,6 +15,8 @@ router.get("/all", getAllUsers);
 router.get("/id/:_id", getUserById);
 
 //POST routes
+router.post("/signup", signUp);
+router.post("/completeProfile", completeProfile);
 router.post("/imageupload", multerUpload.single("user_photo"), uploadImage);
 
 export default router;

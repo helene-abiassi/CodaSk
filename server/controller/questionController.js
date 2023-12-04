@@ -37,6 +37,8 @@ const getAllQuestions = async (req, res) => {
       path: "saved_by",
       select: ["first_name"],
     },
+
+    { path: "tags", select: ["first_name"] },
   ]);
 
   res.json({
@@ -56,20 +58,20 @@ const askQuestions = async (req, res) => {
 
   if (findUser) {
     try {
-      const newQuestion = new questionModel({
-        author: findUser._id,
-        posted_on: new Date(),
-        title: req.body.title,
-        problem_description: req.body.problem_description,
-        solution_tried: req.body.solution_tried,
-        module: req.body.module,
-        github_repo: req.body.github_repo,
-        tags: req.body.tags,
-        //! Adjust this for array OR Add it 4 times in f and limit number of tags allowed
-        status: req.body.status,
-      });
+      // const newQuestion = new questionModel({
+      //   author: findUser._id,
+      //   posted_on: new Date(),
+      //   title: req.body.title,
+      //   problem_description: req.body.problem_description,
+      //   solution_tried: req.body.solution_tried,
+      //   module: req.body.module,
+      //   github_repo: req.body.github_repo,
+      //   tags: req.body.tags,
+      //   //! Adjust this for array OR Add it 4 times in f and limit number of tags allowed
+      //   status: req.body.status,
+      // });
 
-      const savedQuestion = await newQuestion.save();
+      // const savedQuestion = await newQuestion.save();
 
       res.status(201).json({
         msg: "Question posted successfully",

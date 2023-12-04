@@ -23,7 +23,7 @@ const questionSchema = new mongoose.Schema({
   },
   module: {
     types: String,
-    required: true,
+    // required: true,
   },
   github_repo: {
     type: String,
@@ -31,8 +31,8 @@ const questionSchema = new mongoose.Schema({
   },
   tags: [
     {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "tag",
     },
   ],
   answers: [
