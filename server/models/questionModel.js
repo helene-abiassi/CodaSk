@@ -31,8 +31,8 @@ const questionSchema = new mongoose.Schema({
   },
   tags: [
     {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "tag",
     },
   ],
   answers: [
