@@ -7,7 +7,7 @@ import dateScalar from "../schema/dateScalar.js";
 const resolvers = {
   Query: {
     //   *------USER-------*
-    async userById(_, args) {
+    async getUserById(_, args) {
       return await userModel.findById(args.id);
     },
     async getAllUsers() {
@@ -15,11 +15,19 @@ const resolvers = {
     },
 
     //   *------QUESTIONS-------*
+    async getQuestionById(_, args) {
+      return await questionModel.findById(args.id);
+    },
+
     async getAllQuestions() {
       return await questionModel.find();
     },
 
     //   *------ANSWERS-------*
+    async getAnswerById(_, args) {
+      return await answerModel.findById(args.id);
+    },
+
     async getAllAnswers() {
       return await answerModel.find();
     },
@@ -69,6 +77,9 @@ const resolvers = {
   Answer: {
     async author(parent) {
       return await userModel.findById(parent.author);
+    },
+    async question(parent) {
+      return await questionModel.findById(parent.question);
     },
     async votes(parent) {
       const userVotes = parent.votes;

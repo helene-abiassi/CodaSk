@@ -55,13 +55,15 @@ type Answer {
 
 type Query {
     # -----User queries-----
-    userById(id: ID!): User
+    getUserById(id: ID!): User
     getAllUsers: [User]
     
     # -----Question queries-----
+    getQuestionById(id: ID!): Question
     getAllQuestions: [Question]
     
     # -----Answers queries-----
+    getAnswerById(id: ID!): Answer
     getAllAnswers:[Answer]
 }
 
@@ -73,11 +75,11 @@ type Mutation {
     deleteQuestion(id: ID): Question
     
     # ----- UPDATING ELEMENTS ------------
-    updateQuestion(id: ID, editInput: editInputData): Question
+    updateQuestion(id: ID, editInput: editQuestionInput): Question
 }
 
-# NEW INPUT TYPE FOR A DATE?
 
+# ------------INPUT TYPES----------------
 input newQuestionInput {
     author: ID!
     title: String!
@@ -92,7 +94,7 @@ input newQuestionInput {
     status: String
 }
 
-input editInputData {
+input editQuestionInput {
     title: String,
     problem_description: String,
     solution_tried: String,
