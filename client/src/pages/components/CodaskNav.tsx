@@ -4,7 +4,7 @@ import Link from 'next/link';
 function CodaskNav() {
   return (
     <>
-      <nav className=" flex justify-between bg-[#6741D9] p-6">
+      <nav className="static flex justify-between bg-[#6741D9] p-6">
         <Link
           href={'/'}
           className="mx-1 hover:font-semibold focus:font-semibold"

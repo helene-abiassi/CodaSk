@@ -1,48 +1,49 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import GoogleProvider from 'next-auth/providers/google';
+// import GoogleProvider from 'next-auth/providers/google';
 import GithubProvider from 'next-auth/providers/github';
+// import User from "../../../types/custom_types"
+import {signJwtAccessToken} from '../../lib/jwt';
 
 export const authOptions = {
-  // Configure one or more authentication providers
   providers: [
+    GithubProvider({
+      id: 'github',
+      name: 'github',
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. 'Sign in with...')
       id: 'credentials',
-      name: 'Credentials',
+      name: 'credentials',
       type: 'credentials',
-      // The credentials is used to generate a suitable form on the sign in page.
-      // You can specify whatever fields you are expecting to be submitted.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        //!Adapt to userModel
-        username: {label: 'Username', type: 'text', placeholder: 'jsmith'},
-        email: {label: 'email', type: 'text', placeholder: 'jsmith@test.com'},
-        //! Testing push
-        password: {label: 'Password', type: 'password'},
+        email: {label: 'email', type: 'text'},
+        password: {label: 'password', type: 'password'},
       },
       async authorize(credentials, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid. //!
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
+        //Faking user
+        const {email, password} = credentials;
+        // const user = {email: 'test@test.com', password: '123456'};
 
-        //!Faking user
-        const user = {id: '1', name: 'J Smith', email: 'jsmith@example.com'};
+        const urlencoded = new URLSearchParams();
+        urlencoded.append('email', email);
+        urlencoded.append('password', password);
 
-        //! method in documentation
-        // const res = await fetch('/your/endpoint', {
-        //   method: 'POST',
-        //   body: JSON.stringify(credentials),
-        //   headers: {'Content-Type': 'application/json'},
-        // });
-        // const user = await res.json();
+        const requestOptions = {
+          method: 'POST',
+          body: urlencoded,
+        };
+
+        const response = await fetch(
+          'http://localhost:5008/api/users/login',
+          requestOptions
+        );
+        const user = await response.json();
+        console.log('data :>> ', data);
 
         // If no error and we have user data, return it
-        if (res.ok && user) {
+        if (response.ok && user) {
           return user;
         }
         // Return null if user data could not be retrieved
@@ -55,26 +56,49 @@ export const authOptions = {
     //   clientId: process.env.GOOGLE_CLIENT_ID,
     //   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     // }),
-    // GithubProvider({
-    //   id: 'github',
-    //   name: 'github',
-    //   clientId: process.env.GITHUB_ID,
-    //   clientSecret: process.env.GITHUB_SECRET,
-    // }),
-    // ...add more providers here
   ],
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+  },
+  // pages: {
+  //   signIn: '/auth/login',
+  // }, //?
+  //   signOut: '/auth/signout',
+  //
   callbacks: {
-    async session(session, user) {
-      return Promise.resolve({
+    async jwt({token, user}) {
+      console.log('user :>> ', user);
+      if (user?.email) {
+        return {...token, ...user};
+      }
+      // if (token?.accessTokenExpires) {
+      //   if (Date.now() / 1000 < token?.accessTokenExpires)
+      //     return {...token, ...user};
+      // } else if (token?.refreshToken) return refreshAccessToken(token);
+
+      // return {...token, ...user};
+    },
+
+    async session(session, token, user) {
+      session.data.user.id = user.id;
+      session.data.user = token;
+
+      return {
         ...session,
+        accessToken: token.accessToken,
         user: {
           id: user.id,
-          username: user.username,
           email: user.email,
+          password: user.password,
         },
-      });
+      };
     },
+
+    // jwt,
   },
 };
 
-export default NextAuth(authOptions);
+const handler = NextAuth(authOptions);
+
+export default handler;

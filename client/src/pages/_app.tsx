@@ -7,6 +7,7 @@ import {useEffect} from 'react';
 export default function App({Component, pageProps}: AppProps) {
   const {session} = pageProps;
   console.log('session :>> ', session);
+
   return (
     <SessionProvider session={session}>
       <Layout>
