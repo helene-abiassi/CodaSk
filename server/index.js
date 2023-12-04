@@ -4,9 +4,15 @@ import colors from "colors";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import userRoutes from "../server/routes/userRoutes.js";
+import answerRoutes from "../server/routes/answerRoute.js";
 import questionRoutes from "../server/routes/questionRoutes.js";
 import answerRoutes from "../server/routes/answerRoute.js";
 import cloudinaryConfig from "./config/cloudinaryConfig.js";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
+import typeDefs from "./graphql/schema/typedefs.js";
+import resolvers from "./graphql/resolvers/resolvers.js";
+
 dotenv.config();
 const router = express.Router();
 
@@ -24,6 +30,11 @@ const addMiddlewares = () => {
   cloudinaryConfig();
 };
 
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
+
 const addRoutes = () => {
   app.use("/api", router);
   app.use("/api/users", userRoutes);
@@ -40,8 +51,12 @@ const DBConnection = async () => {
   }
 };
 
-const startServer = () => {
+const startServer = async () => {
   const port = process.env.PORT || 5008;
+
+  // * GRAPHQL Server
+  await server.start();
+  app.use("/graphql", expressMiddleware(server));
 
   app.listen(port, () => {
     console.log("Server running in port:".bgGreen, port);
