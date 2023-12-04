@@ -15,7 +15,8 @@ type User {
     user_photo: String!
     bio: String!
     location: Location
-    course_date: Date!
+    course_type: String
+    course_date: Date
     cohort_name: String
     user_permission: String!
     website: String
@@ -23,7 +24,7 @@ type User {
     member_since: Date!
     last_seen: Date!
     questions: [Question]
-    # answers: [Answer]
+    answers: [Answer]
     saved_tags: [String!]
 
 }
@@ -38,17 +39,30 @@ type Question {
     module: String
     github_repo: String!
     tags: [String!]!
-    answers: [ID!]
-    saved_by: [ID!]
+    answers: [Answer]
+    saved_by: [User]
     status: String
+}
+
+type Answer {
+    id: ID!
+    author: User
+    posted_on: Date!
+    message: String!
+    question: Question
+    votes: [User]
 }
 
 type Query {
     # -----User queries-----
     userById(id: ID!): User
     getAllUsers: [User]
+    
     # -----Question queries-----
     getAllQuestions: [Question]
+    
+    # -----Answers queries-----
+    getAllAnswers:[Answer]
 }
 
 type Mutation {

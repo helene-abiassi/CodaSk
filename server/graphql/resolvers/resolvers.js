@@ -1,5 +1,6 @@
 import { GraphQLScalarType } from "graphql";
 import { questionModel } from "../../models/questionModel.js";
+import { answerModel } from "../../models/answerModel.js";
 import userModel from "../../models/userModel.js";
 import dateScalar from "../schema/dateScalar.js";
 
@@ -17,6 +18,11 @@ const resolvers = {
     async getAllQuestions() {
       return await questionModel.find();
     },
+
+    //   *------ANSWERS-------*
+    async getAllAnswers() {
+      return await answerModel.find();
+    },
   },
 
   // * RESOLVING DEPENDENCIES BETWEEN COLLECTIONS
@@ -32,11 +38,44 @@ const resolvers = {
       });
       return questionsData;
     },
+    async answers(parent) {
+      const answersIDs = parent.answers;
+      const answersData = answersIDs.map(async (id) => {
+        return await answerModel.findById(id);
+      });
+      return answersData;
+    },
   },
 
   Question: {
     async author(parent) {
       return await userModel.findById(parent.author);
+    },
+    async answers(parent) {
+      const answersIDs = parent.answers;
+      const answersData = answersIDs.map(async (id) => {
+        return await answerModel.findById(id);
+      });
+      return answersData;
+    },
+    async saved_by(parent) {
+      const userIDs = parent.saved_by;
+      const userData = userIDs.map(async (id) => {
+        return await userModel.findById(id);
+      });
+      return userData;
+    },
+  },
+  Answer: {
+    async author(parent) {
+      return await userModel.findById(parent.author);
+    },
+    async votes(parent) {
+      const userVotes = parent.votes;
+      const votersData = userVotes.map(async (id) => {
+        return await userModel.findById(id);
+      });
+      return votersData;
     },
   },
 
