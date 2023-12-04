@@ -17,6 +17,6 @@ const tagSchema = new mongoose.Schema({
   ],
 });
 
-const tagModel = mongoose.model("question", tagSchema);
+const tagModel = mongoose.model("tag", tagSchema);
 
 export { tagModel };

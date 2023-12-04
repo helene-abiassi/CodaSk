@@ -38,7 +38,7 @@ type Question {
     solution_tried: String!
     module: String
     github_repo: String!
-    tags: [String!]!
+    tags: [Tag]!
     answers: [Answer]
     saved_by: [User]
     status: String
@@ -53,6 +53,13 @@ type Answer {
     votes: [User]
 }
 
+type Tag {
+    id: ID!
+    name: String!
+    description: String!
+    related_questions: [Question]
+}
+
 type Query {
     # -----User queries-----
     getUserById(id: ID!): User
@@ -65,8 +72,12 @@ type Query {
     # -----Answers queries-----
     getAnswerById(id: ID!): Answer
     getAllAnswers:[Answer]
-}
 
+    # -----Tags queries-----
+    getTagById(id: ID!): Tag
+    getAllTags: [Tag]
+}
+    
 type Mutation {
     # ----- ADDING NEW ELEMENTS ------------
     addQuestion(newQuestion: newQuestionInput): Question

@@ -6,11 +6,10 @@ import * as dotenv from "dotenv";
 import userRoutes from "../server/routes/userRoutes.js";
 import answerRoutes from "../server/routes/answerRoute.js";
 import questionRoutes from "../server/routes/questionRoutes.js";
-import answerRoutes from "../server/routes/answerRoute.js";
 import cloudinaryConfig from "./config/cloudinaryConfig.js";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
-import typeDefs from "./graphql/schema/typedefs.js";
+import typeDefs from "./graphql/schema/typeDefs.js";
 import resolvers from "./graphql/resolvers/resolvers.js";
 
 dotenv.config();
