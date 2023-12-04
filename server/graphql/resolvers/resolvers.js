@@ -1,5 +1,7 @@
+import { GraphQLScalarType } from "graphql";
 import { questionModel } from "../../models/questionModel.js";
 import userModel from "../../models/userModel.js";
+import dateScalar from "../schema/dateScalar.js";
 
 const resolvers = {
   Query: {
@@ -18,6 +20,10 @@ const resolvers = {
   },
 
   // * RESOLVING DEPENDENCIES BETWEEN COLLECTIONS
+  Date: {
+    Date: dateScalar,
+  },
+
   User: {
     async questions(parent) {
       const questionsIDs = parent.questions;
@@ -34,12 +40,40 @@ const resolvers = {
     },
   },
 
+  // * ----------MUTATIONS-----------------
   Mutation: {
+    // *----- ADDING MUTATIONS ---------
     async addQuestion(_, args) {
       const newQuestion = new questionModel({
         ...args.newQuestion,
       });
       return await newQuestion.save();
+    },
+
+    // *----- DELETING MUTATIONS ---------
+    async deleteQuestion(_, args) {
+      return await questionModel.findByIdAndDelete(args.id);
+    },
+
+    // *----- UPDATING MUTATIONS ---------
+    async updateQuestion(_, args) {
+      console.log(args);
+      const updatedQuestion = await questionModel.findByIdAndUpdate(
+        args.id,
+        {
+          $set: {
+            title: args.editInput.title,
+            problem_description: args.editInput.problem_description,
+            solution_tried: args.editInput.solution_tried,
+            module: args.editInput.module,
+            github_repo: args.editInput.github_repo,
+            tags: args.editInput.tags,
+          },
+        },
+        { new: true }
+      );
+
+      return updatedQuestion;
     },
   },
 };
