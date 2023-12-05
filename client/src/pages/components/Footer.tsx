@@ -3,7 +3,7 @@ import React from 'react';
 function Footer() {
   return (
     <div>
-      <div className="h-full bg-black text-white">
+      <div className="ml-48 h-full bg-black text-white">
         <div>
           <p>
             <svg

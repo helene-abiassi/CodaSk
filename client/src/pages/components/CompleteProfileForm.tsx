@@ -1,5 +1,5 @@
 import {User} from '@/types/custom_types';
-import Link from 'next/link';
+import {useRouter} from 'next/router';
 import React, {ChangeEvent, FormEvent, useState} from 'react';
 
 function CompleteProfileForm() {
@@ -54,6 +54,8 @@ function CompleteProfileForm() {
     answers: [],
     saved_tags: [],
   });
+
+  const router = useRouter();
 
   const handleInfoInput = (e: ChangeEvent<HTMLInputElement>) => {
     setuserInfo({...userInfo, [e.target.name]: e.target.value});
@@ -117,6 +119,10 @@ function CompleteProfileForm() {
           requestOptions
         );
         const result = await response.json();
+        if (response.ok) {
+          alert('Please log in!');
+          router.push('../user/login');
+        }
       } catch (error) {
         console.log('error in your /completeProfile route:>> ', error);
       }
@@ -127,10 +133,8 @@ function CompleteProfileForm() {
 
   return (
     <div>
-      {' '}
       <div>
-        <div className="moreInfoForm">
-          <br />
+        <div className="moreInfoForm m-16 max-w-lg rounded-2xl bg-[#EDE9E6] p-10">
           <form onSubmit={handleCompleteProfile}>
             <label htmlFor="bio">
               Bio
@@ -254,6 +258,7 @@ function CompleteProfileForm() {
           <p>You can also set this up later in your profile!</p>
         </div>
       </div>
+      <br />
     </div>
   );
 }

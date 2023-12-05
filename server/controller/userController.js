@@ -1,6 +1,6 @@
 import userModel from "../models/userModel.js";
 import { tagModel } from "../models/tagModel.js";
-import { questionModel } from "../models/questionModel.js";
+// import questionModel from "../models/questionModel.js";
 import { v2 as cloudinary } from "cloudinary";
 import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
 // import { generateToken } from "../utilities/tokenServices.js";
@@ -9,29 +9,28 @@ import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
 
 const getAllUsers = async (req, res) => {
   try {
-    const allUsers = await userModel.find();
-    // .populate([
-    //   {
-    //     path: "questions",
-    //     select: ["author", "title", "posted_on"],
-    //     populate: {
-    //       path: "author",
-    //       select: ["first_name", "last_name"],
-    //     },
-    //   },
-    //   {
-    //     path: "answers",
-    //     select: ["author", "message", "votes", "posted_on"],
-    //     populate: {
-    //       path: "author",
-    //       select: ["first_name", "last_name"],
-    //     },
-    //   },
-    //   {
-    //     path: "saved_tags",
-    //     select: ["name"],
-    //   },
-    // ]);
+    const allUsers = await userModel.find().populate([
+      // {
+      //   path: "questions",
+      //   select: ["author", "title", "posted_on"],
+      //   populate: {
+      //     path: "author",
+      //     select: ["first_name", "last_name"],
+      //   },
+      // },
+      {
+        path: "answers",
+        select: ["author", "message", "votes", "posted_on"],
+        populate: {
+          path: "author",
+          select: ["first_name", "last_name"],
+        },
+      },
+      // {
+      //   path: "saved_tags",
+      //   select: ["name"],
+      // },
+    ]);
 
     res.json({
       number: allUsers.length,
@@ -181,4 +180,57 @@ const uploadImage = async (req, res) => {
   }
 };
 
-export { getAllUsers, getUserById, uploadImage, signUp, completeProfile };
+const logIn = async (req, res) => {
+  console.log("request received from server");
+
+  //!Verify password
+
+  res.status(201).json({
+    message: "request received from server function",
+  });
+};
+
+const getProfile = async (req, res) => {
+  console.log("req.USER :>> ", req.user);
+
+  if (req.user) {
+    res.status(200).json({
+      userProfile: {
+        _id: req.user._id,
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        user_photo: req.user.user_photo,
+        bio: req.user.bio,
+        country: req.user.location.country,
+        city: req.user.location.city,
+        course_type: req.user.course_type,
+        course_date: req.user.course_date,
+        cohort_name: req.user.cohort_name,
+        user_permission: req.user.user_permission,
+        website: req.user.website,
+        github: req.user.github,
+        member_since: req.user.member_since,
+        last_seen: req.user.last_seen,
+        questions: req.user.questions,
+        answers: req.user.questions,
+        saved_tags: req.user.saved_tags,
+      },
+    });
+  }
+  if (!req.user) {
+    res.status(200).json({
+      message: "You need to log in to access this page",
+    });
+  }
+};
+
+export {
+  getAllUsers,
+  getUserById,
+  uploadImage,
+  signUp,
+  completeProfile,
+  logIn,
+  getProfile,
+};
