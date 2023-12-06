@@ -2,20 +2,20 @@ import jwt, {JwtPayload} from "jsonwebtoken"
 
 interface SignOption {
     expiresIn?:string | number;
-
 }
 
-const DEFAULT_SIGN_OPTION:SignOption={
-    expiresIn:"3 days"
+const options= {
+    expiresIn: "3 days"
 }
 
-export function signJwtAccessToken (payload:JwtPayload, options:SignOption){
+ function signJwtAccessToken (payload:JwtPayload, options:SignOption){
 const secret_key = process.env.SECRET_KEY;
 const token = jwt.sign(payload, secret_key!, options)
+console.log('show me my token :>> ', token);
 return token
 }
 
-export function verifyJwt(token:string){
+ function verifyJwt(token:string){
     try {
 const secret_key = process.env.SECRET_KEY;
 
@@ -28,3 +28,8 @@ return decoded as JwtPayload
         return null
     }
 }
+
+export {signJwtAccessToken, verifyJwt}
+
+
+
