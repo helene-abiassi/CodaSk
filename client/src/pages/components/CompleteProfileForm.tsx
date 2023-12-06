@@ -1,9 +1,16 @@
 import {User} from '@/types/custom_types';
+import {useSession} from 'next-auth/react';
 import {useRouter} from 'next/router';
 import React, {ChangeEvent, FormEvent, useState} from 'react';
 
 function CompleteProfileForm() {
-  const _id = '656cf289e4f0cbef9819865e';
+  const session = useSession();
+  const token = session.data?.token;
+
+  const id = token?.name as string;
+
+  console.log('id :>> ', id);
+
   const cohortNames = [
     'Petrol Raccoons',
     'Salmon Pink Treehoppers',
@@ -96,7 +103,7 @@ function CompleteProfileForm() {
 
     try {
       const urlencoded = new URLSearchParams();
-      urlencoded.append('_id', _id);
+      urlencoded.append('_id', id);
       urlencoded.append('bio', userInfo.bio);
       urlencoded.append('country', userInfo.location.country);
       urlencoded.append('city', userInfo.location.city);
@@ -120,7 +127,9 @@ function CompleteProfileForm() {
         );
         const result = await response.json();
         if (response.ok) {
-          alert('Please log in!');
+          alert(
+            'Thank you for signing up! \n Please log in to access your profile 🤓'
+          );
           router.push('../user/login');
         }
       } catch (error) {

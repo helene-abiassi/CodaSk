@@ -7,7 +7,6 @@ import {ApolloClient, InMemoryCache, ApolloProvider, gql} from '@apollo/client';
 
 export default function App({Component, pageProps}: AppProps) {
   const {session} = pageProps;
-  console.log('session in App component :>> ', session);
 
   const client = new ApolloClient({
     uri: 'http://localhost:5008/graphql',
