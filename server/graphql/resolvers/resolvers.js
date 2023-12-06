@@ -1,5 +1,5 @@
 import { GraphQLScalarType } from "graphql";
-import { questionModel } from "../../models/questionModel.js";
+import questionModel from "../../models/questionModel.js";
 import { answerModel } from "../../models/answerModel.js";
 import { tagModel } from "../../models/tagModel.js";
 import userModel from "../../models/userModel.js";

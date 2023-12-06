@@ -3,7 +3,7 @@ import { tagModel } from "../models/tagModel.js";
 // import questionModel from "../models/questionModel.js";
 import { v2 as cloudinary } from "cloudinary";
 import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
-// import { generateToken } from "../utilities/tokenServices.js";
+import { generateToken } from "../utilities/tokenServices.js";
 
 //GET Routes
 
@@ -183,11 +183,47 @@ const uploadImage = async (req, res) => {
 const logIn = async (req, res) => {
   console.log("request received from server");
 
-  //!Verify password
+  try {
+    const existingUser = await userModel.findOne({ email: req.body.email });
+    if (!existingUser) {
+      res.status(404).json({
+        msg: "no user found with this email",
+      });
+    } else {
+      const checkPassword = await verifyPassword(
+        req.body.password,
+        existingUser.password
+      );
 
-  res.status(201).json({
-    message: "request received from server function",
-  });
+      if (!checkPassword) {
+        res.status(404).json({
+          message: "Wrong password, try again",
+        });
+      }
+      if (checkPassword) {
+        const token = generateToken(existingUser._id);
+        if (token) {
+          res.status(200).json({
+            message: "login success",
+            user: {
+              _id: existingUser._id,
+              email: existingUser.email,
+            },
+            token,
+          });
+        } else {
+          console.log("error generating token");
+          res.status(400).json({
+            message: "something went wrong with your request",
+          });
+        }
+      }
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "I don't have a clue",
+    });
+  }
 };
 
 const getProfile = async (req, res) => {
