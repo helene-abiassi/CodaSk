@@ -96,7 +96,7 @@ input newQuestionInput {
     title: String!
     problem_description: String!
     solution_tried: String!
-    posted_on: String!
+    posted_on: Date!
     module: String
     github_repo: String!
     tags: [String!]!
