@@ -3,16 +3,24 @@ import type {AppProps} from 'next/app';
 import Layout from './Layout';
 import {SessionProvider} from 'next-auth/react';
 import {useEffect} from 'react';
+import {ApolloClient, InMemoryCache, ApolloProvider, gql} from '@apollo/client';
 
 export default function App({Component, pageProps}: AppProps) {
   const {session} = pageProps;
   console.log('session :>> ', session);
 
+  const client = new ApolloClient({
+    uri: 'http://localhost:5008/graphql',
+    cache: new InMemoryCache(),
+  });
+
   return (
     <SessionProvider session={session}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <ApolloProvider client={client}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ApolloProvider>
     </SessionProvider>
   );
 }
