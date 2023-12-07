@@ -1,5 +1,10 @@
 import {gql, useMutation} from '@apollo/client';
-import React, {ChangeEventHandler, useState} from 'react';
+import {useState} from 'react';
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import {quillFormats, quillModules} from '@/types/quillTypes';
+
+const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
 
 // * TYPES
 type questionInput = {
@@ -19,18 +24,35 @@ const POST_NEWQUESTION = gql`
   }
 `;
 
-// STYLE - tagi, moduły buttony
-// Pomyśl jak dodać tagi
+// TODO: Uporządkuj kod i dodaj trochę opisów
+// TODO: Dodaj query z tagami żeby dodać je do pytania
+// TODO: Dodaj moduł do pytani
+// TODO: Popracuj nad walidacją pól
+// TODO: Popracuj nad responsywnością
+// TODO: Być może przenieś inputy do diva z kolumnami i dodaj spany
 
 // * ---------MAIN FUNCTION-------------
 function AskQuestion() {
+  const [problemDescription, setProblemDescription] = useState('');
+  const [solutionsTried, setSolutionsTried] = useState('');
+
   const [addQuestion, {data: questionData}] = useMutation(POST_NEWQUESTION);
+  const tagID = '6568f8bda18f4803e0fff7b7';
+
   const [questionInput, setQuestionInput] = useState<questionInput>({
     title: '',
     problem_description: '',
     solutions_tried: '',
     github_repo: '',
   });
+
+  const handleProblemDescription = (newContent: string) => {
+    setProblemDescription(newContent);
+  };
+
+  const handleTriedSolutions = (newContent: string) => {
+    setSolutionsTried(newContent);
+  };
 
   const getUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuestionInput({...questionInput, [e.target.name]: e.target.value});
@@ -42,8 +64,8 @@ function AskQuestion() {
         newQuestion: {
           title: questionInput.title,
           author: '655f786db50fd7211a2c84ff',
-          problem_description: questionInput.problem_description,
-          solution_tried: questionInput.solutions_tried,
+          problem_description: problemDescription,
+          solution_tried: solutionsTried,
           posted_on: Date.now(),
           github_repo: questionInput.github_repo,
           tags: ['6568f8bda18f4803e0fff7b7'],
@@ -55,7 +77,7 @@ function AskQuestion() {
   };
   return (
     <>
-      <div className="container mx-auto my-6 w-7/12">
+      <div className="container mx-auto mt-10 w-7/12">
         <h1 className="text-3xl text-[#6741D9]">Ask a question</h1>
         <h3 className="text-xl text-[#6741D9]">
           Short description on guidelines to ask a good question
@@ -65,7 +87,7 @@ function AskQuestion() {
             type="text"
             name="title"
             placeholder="What is your question"
-            className="shadow-custom col-span-6 my-6 h-12 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9]"
+            className="col-span-6 my-6 h-12 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
             onChange={getUserInput}
           />
           <div className="col-span-2 flex">
@@ -89,12 +111,13 @@ function AskQuestion() {
         </div>
 
         <div className="grid grid-cols-8 gap-6">
-          <input
-            type="text"
-            name="problem_description"
-            placeholder="Describe your problem in details"
-            className="shadow-custom col-span-6 mb-6 h-36 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9]"
-            onChange={getUserInput}
+          <QuillEditor
+            value={problemDescription}
+            placeholder="Describe your problem in details..."
+            onChange={handleProblemDescription}
+            modules={quillModules}
+            formats={quillFormats}
+            className="col-span-6 mb-6 h-52 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
           />
           <div className="col-span-2 flex">
             <div className="relative mx-2 my-auto">
@@ -117,12 +140,13 @@ function AskQuestion() {
         </div>
 
         <div className="grid grid-cols-8 gap-6">
-          <input
-            type="text"
-            name="solutions_tried"
-            placeholder="What solution(s) did you try"
-            className="shadow-custom col-span-6 mb-6 h-36 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9]"
-            onChange={getUserInput}
+          <QuillEditor
+            value={solutionsTried}
+            placeholder="What solution(s) did you try?"
+            onChange={handleTriedSolutions}
+            modules={quillModules}
+            formats={quillFormats}
+            className="col-span-6 mb-6 h-52 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
           />
           <div className="col-span-2 flex">
             <div className="relative mx-2 my-auto">
@@ -144,32 +168,45 @@ function AskQuestion() {
           </div>
         </div>
 
-        <select name="tags" id="tags">
+        <select
+          name="tags"
+          id="tags"
+          className="mb-6 ml-1 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
+        >
           <option value="none">Select Tags</option>
           <option value="HTML">HTML</option>
           <option value="CSS">CSS</option>
         </select>
-        <select name="tags" id="tags">
+        <select
+          name="tags"
+          id="tags"
+          className="mb-6 ml-72 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
+        >
           <option value="none">Select Module</option>
-          <option value="HTML">HTML</option>
-          <option value="CSS">CSS</option>
+          <option value="MODULE 1">Module 1</option>
+          <option value="MODULE 2">Module 2</option>
+          <option value="MODULE 3">Module 3</option>
         </select>
+
         <input
           type="text"
           placeholder="Link your github repo"
-          className="block"
+          className="mb-10 ml-1 block w-64 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
           name="github_repo"
           onChange={getUserInput}
         />
-        <button className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white">
-          cancel
-        </button>
-        <button
-          className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white"
-          onClick={postQuestion}
-        >
-          submit
-        </button>
+
+        <div className="mb-32 mr-48 flex justify-end">
+          <button className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white">
+            cancel
+          </button>
+          <button
+            className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white"
+            onClick={postQuestion}
+          >
+            submit
+          </button>
+        </div>
       </div>
     </>
   );
