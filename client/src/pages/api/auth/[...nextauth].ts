@@ -1,4 +1,4 @@
-import NextAuth, { CookiesOptions } from 'next-auth';
+import NextAuth, { CookiesOptions, Session } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 // import GoogleProvider from 'next-auth/providers/google';
 import GithubProvider from 'next-auth/providers/github';
@@ -67,7 +67,7 @@ export const authOptions = {
         if (data.token){
 
           // return data;
-          return { ...data, email: credentials!.email, user: data.user }
+          return { ...data, email: credentials!.email, name:data.user._id , user: data.user }
         }
         }
         return null;
@@ -91,31 +91,23 @@ export const authOptions = {
   session: {
     strategy: 'jwt',
   },
-  // pages: {
-  //   signIn: '/auth/login',
-  // }, //?
-  //   signOut: '/auth/signout',
-  //
-  callbacks: { //!Fix remaining undefined and make sure to pass id in session object
-    async jwt({token, user}: { token: JWT; user }) {
+  callbacks: { 
+    async jwt({token, user}: { token: JWT; user:SessionUser }) {
       console.log('user in JWT:>> ', user);
       console.log('token in JWT :>> ', token);
 
       return {...token, user};
     },
 
-    async session({session, token, user}) {
+    async session({session, user, token}:{session:Session, user:SessionUser, token:JWT}) {
       console.log('How does my session callback param look :>> ', session);
-;
+;console.log('user :>> ', user);
       
       // session.user.id = token.user._id;
-      // console.log('token.user._id :>> ', token.user._id);
-      session.user.email = token.email;
-      // console.log('user.email :>> ', user.email);
+      session!.user = token.user;
 
-  session.token = token.token; //!
-  // session.user = token.user;
-      console.log('How does my session callback !!!!!param look :>> ', session);
+  session.token = token;
+      console.log('How does my session callback param look after :>> ', session);
 
 
   return session;
@@ -128,5 +120,3 @@ export const authOptions = {
 const handler = NextAuth(authOptions);
 
 export default handler;
-
-// Tutorial https://remaster.com/blog/next-auth-jwt-session
