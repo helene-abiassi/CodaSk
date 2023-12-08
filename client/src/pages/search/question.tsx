@@ -25,10 +25,12 @@ const GET_QUESTIONS = gql`
 
 function Question({}: Props) {
   const {data} = useQuery<questionQuery>(GET_QUESTIONS);
+  console.log('data :>> ', data);
 
   return (
     <>
       <div>
+        <h1>TEST</h1>
         {data &&
           data.getAllQuestions.map((q) => {
             return (

@@ -1,5 +1,7 @@
 import userModel from "../models/userModel.js";
 import { tagModel } from "../models/tagModel.js";
+import questionModel from "../models/questionModel.js";
+import { answerModel } from "../models/answerModel.js";
 // import questionModel from "../models/questionModel.js";
 import { v2 as cloudinary } from "cloudinary";
 import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
@@ -68,6 +70,41 @@ const getUserById = async (req, res) => {
   }
 };
 
+const getProfile = async (req, res) => {
+  //!Needs to be adapted to profileById
+  console.log("req.USER :>> ", req.user);
+
+  if (req.user) {
+    res.status(200).json({
+      userProfile: {
+        _id: req.user._id,
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        user_photo: req.user.user_photo,
+        bio: req.user.bio,
+        country: req.user.location.country,
+        city: req.user.location.city,
+        course_type: req.user.course_type,
+        course_date: req.user.course_date,
+        cohort_name: req.user.cohort_name,
+        user_permission: req.user.user_permission,
+        website: req.user.website,
+        github: req.user.github,
+        member_since: req.user.member_since,
+        last_seen: req.user.last_seen,
+        questions: req.user.questions,
+        answers: req.user.questions,
+        saved_tags: req.user.saved_tags,
+      },
+    });
+  }
+  if (!req.user) {
+    res.status(200).json({
+      message: "You need to log in to access this page",
+    });
+  }
+};
 //POST ROUTES
 
 const signUp = async (req, res) => {
@@ -86,8 +123,6 @@ const signUp = async (req, res) => {
       } else {
         try {
           const newUser = new userModel({
-            first_name: req.body.first_name,
-            last_name: req.body.last_name,
             email: req.body.email,
             password: hashedPassword,
             user_photo: req.body.user_photo,
@@ -100,8 +135,6 @@ const signUp = async (req, res) => {
             message: "New user registered",
             user: {
               _id: savedUser._id,
-              first_name: savedUser.first_name,
-              last_name: savedUser.last_name,
               email: savedUser.email,
               user_photo: savedUser.user_photo,
             },
@@ -125,6 +158,9 @@ const signUp = async (req, res) => {
 const completeProfile = async (req, res) => {
   const filter = { _id: req.body._id };
   const update = {
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    user_photoe: req.body.user_photo,
     bio: req.body.bio,
     location: {
       country: req.body.country,
@@ -224,38 +260,40 @@ const logIn = async (req, res) => {
   }
 };
 
-const getProfile = async (req, res) => {
-  //!Needs to be adapted to profileById
-  console.log("req.USER :>> ", req.user);
+const updateUser = () => {};
 
-  if (req.user) {
+const deleteUser = async (req, res) => {
+  const userId = req.params._id;
+  // console.log("userId :>> ", userId);
+
+  try {
+    if (!userId) {
+      return res.status(400).json({
+        msg: "userId is required in the URL parameter",
+      });
+    }
+
+    const deletedUser = await userModel.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({
+        msg: "User not found",
+      });
+    }
+    await questionModel.deleteMany({ saved_by: userId });
+    await questionModel.deleteMany({ author: userId });
+
+    await answerModel.deleteMany({ author: userId });
+    await answerModel.deleteMany({ votes: userId });
+
     res.status(200).json({
-      userProfile: {
-        _id: req.user._id,
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        email: req.user.email,
-        user_photo: req.user.user_photo,
-        bio: req.user.bio,
-        country: req.user.location.country,
-        city: req.user.location.city,
-        course_type: req.user.course_type,
-        course_date: req.user.course_date,
-        cohort_name: req.user.cohort_name,
-        user_permission: req.user.user_permission,
-        website: req.user.website,
-        github: req.user.github,
-        member_since: req.user.member_since,
-        last_seen: req.user.last_seen,
-        questions: req.user.questions,
-        answers: req.user.questions,
-        saved_tags: req.user.saved_tags,
-      },
+      msg: "User deleted successfully",
+      user: deletedUser,
     });
-  }
-  if (!req.user) {
-    res.status(200).json({
-      message: "You need to log in to access this page",
+  } catch (error) {
+    res.status(500).json({
+      msg: "Something went wrong",
+      error: error,
     });
   }
 };
@@ -268,4 +306,6 @@ export {
   completeProfile,
   logIn,
   getProfile,
+  updateUser,
+  deleteUser,
 };

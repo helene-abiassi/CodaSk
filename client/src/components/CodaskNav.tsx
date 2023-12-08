@@ -1,14 +1,14 @@
 import {useSession} from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import {useEffect} from 'react';
 
 function CodaskNav() {
-  const session = useSession();
-  console.log('session in Nav  :>> ', session);
+  const {data: session, status, update} = useSession();
+  // console.log('session in NAV :>> ', session);
+  const id = session?.user?.name;
 
-  const token = session.data?.token;
-
-  const id = token?.name as string;
+  useEffect(() => {}, [status]);
 
   return (
     <>
@@ -27,7 +27,7 @@ function CodaskNav() {
         />
 
         <ul className="flex">
-          {session.status === 'unauthenticated' ? (
+          {!session ? (
             <>
               <li>
                 <Link
@@ -50,7 +50,7 @@ function CodaskNav() {
             <>
               <li>
                 <Link
-                  href={`/user/profile/id`}
+                  href={`/user/profile/${id}`}
                   className="mx-1 text-2xl hover:font-semibold focus:font-semibold"
                 >
                   👀

@@ -17,9 +17,9 @@ const hashPassword = async (userPassword) => {
 const verifyPassword = async (userPassword, hashedPassword) => {
   try {
     const isVerified = await bcrypt.compare(userPassword, hashedPassword);
-    console.log("user :>> ", userPassword);
-    console.log("hashed :>> ", hashedPassword);
-    console.log("isVerified :>> ", isVerified);
+    // console.log("user :>> ", userPassword);
+    // console.log("hashed :>> ", hashedPassword);
+    // console.log("isVerified :>> ", isVerified);
     return isVerified;
   } catch (error) {
     console.log("error checking user password:>> ", error);

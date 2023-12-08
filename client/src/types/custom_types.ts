@@ -2,6 +2,7 @@ export interface User extends UserPhoto {
     first_name: string;
     last_name: string;
     email: string;
+    password:string;
     user_photo: string;
     bio: string;
     location: {

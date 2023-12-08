@@ -14,22 +14,15 @@ const cookies ={
           httpOnly: true,
           sameSite: "none",
           path: "/",
-          // domain: process.env.NEXT_PUBLIC_DOMAIN,
           domain: 'http://localhost:3000',
           secure: true,
       },
   },
   callbackUrl: {
       name: `next-auth.callback-url`,
-      // options: {
-      //     ...
-      // },
   },
   csrfToken: {
-      name: "next-auth.csrf-token",
-      // options: {
-      // ...
-      // },  
+      name: "next-auth.csrf-token", 
     },
 };
 
@@ -44,8 +37,7 @@ export const authOptions = {
         password: {label: 'password', type: 'password'},
       },
       async authorize(credentials, req) {
-        const {email, password} = credentials;
-        // const user = {email: 'test@test.com', password: '123456'};
+        const { email, password} = credentials;
 
         const urlencoded = new URLSearchParams();
         urlencoded.append('email', email);
@@ -63,11 +55,12 @@ export const authOptions = {
 
         if (response.ok){
         const data = await response.json();
-        console.log('data from nextAuth :>> ', data);
+        console.log(' data from nextAuth :>> ', data);
         if (data.token){
 
-          // return data;
+          console.log('data.user :>> ', data.user);
           return { ...data, email: credentials!.email, name:data.user._id , user: data.user }
+
         }
         }
         return null;
@@ -92,22 +85,27 @@ export const authOptions = {
     strategy: 'jwt',
   },
   callbacks: { 
+
     async jwt({token, user}: { token: JWT; user:SessionUser }) {
-      console.log('user in JWT:>> ', user);
       console.log('token in JWT :>> ', token);
+      // token.user = user
+      console.log('user in JWT:>> ', user);
+
 
       return {...token, user};
     },
 
     async session({session, user, token}:{session:Session, user:SessionUser, token:JWT}) {
-      console.log('How does my session callback param look :>> ', session);
-;console.log('user :>> ', user);
+      // console.log('How does my session look :>> ', session);
       
       // session.user.id = token.user._id;
-      session!.user = token.user;
-
-  session.token = token;
-      console.log('How does my session callback param look after :>> ', session);
+      // session!.user = token.token;
+      // session.user = user
+      
+      // session.token = token;
+      // session.user.name =token.id
+      console.log('user in SESSION:>> ', user);
+      console.log('token in SESSION:>> ', token);
 
 
   return session;
