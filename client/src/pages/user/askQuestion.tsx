@@ -1,5 +1,5 @@
-import {gql, useMutation} from '@apollo/client';
-import {useState} from 'react';
+import {gql, useMutation, useQuery} from '@apollo/client';
+import {ChangeEvent, ChangeEventHandler, FormEvent, useState} from 'react';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
@@ -12,7 +12,29 @@ type questionInput = {
   problem_description: string;
   solutions_tried: string;
   github_repo: string;
+  module: string;
 };
+
+type Tag = {
+  id: string;
+  name: string;
+  course_type: string;
+};
+
+type AllTagsQuery = {
+  getAllTags: Tag[];
+};
+
+// * GET ALL TAGS
+const GET_ALLTAGS = gql`
+  query GetAllTags {
+    getAllTags {
+      id
+      name
+      course_type
+    }
+  }
+`;
 
 // * POST QUESTION QUERY
 const POST_NEWQUESTION = gql`
@@ -24,28 +46,43 @@ const POST_NEWQUESTION = gql`
   }
 `;
 
-// TODO: Uporządkuj kod i dodaj trochę opisów
-// TODO: Dodaj query z tagami żeby dodać je do pytania
-// TODO: Dodaj moduł do pytani
+// TODO: Checkbox z tagami generaowany automatycznie
+// TODO: Wyświetl checkboxy tylko z własciwymi dla wyboru tagami
+// TODO: Sprawdź czy może połączyć mutację i wynik jednej dodać jako input do drugiej
+
+// TODO: Być może przenieś inputy do diva z kolumnami i dodaj spany
 // TODO: Popracuj nad walidacją pól
 // TODO: Popracuj nad responsywnością
-// TODO: Być może przenieś inputy do diva z kolumnami i dodaj spany
+// TODO: Uporządkuj kod i dodaj trochę opisów
 
 // * ---------MAIN FUNCTION-------------
 function AskQuestion() {
+  // Data coming from Quill texteditor
   const [problemDescription, setProblemDescription] = useState('');
   const [solutionsTried, setSolutionsTried] = useState('');
+  const [filteredTags, setFilteredTags] = useState<Tag[]>([
+    {id: '', name: '', course_type: ''},
+  ]);
 
+  // --------Mutations-----------
   const [addQuestion, {data: questionData}] = useMutation(POST_NEWQUESTION);
-  const tagID = '6568f8bda18f4803e0fff7b7';
 
+  // --------Queries-------------
+  const {data: tagData} = useQuery<AllTagsQuery>(GET_ALLTAGS);
+
+  // Initialize question object
   const [questionInput, setQuestionInput] = useState<questionInput>({
     title: '',
     problem_description: '',
     solutions_tried: '',
     github_repo: '',
+    module: '',
   });
 
+  // ! TEMPORARY ID
+  const tagID = '6568f8bda18f4803e0fff7b7';
+
+  // --------Collecting user inputs-------------------
   const handleProblemDescription = (newContent: string) => {
     setProblemDescription(newContent);
   };
@@ -54,10 +91,35 @@ function AskQuestion() {
     setSolutionsTried(newContent);
   };
 
-  const getUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const getUserInput = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setQuestionInput({...questionInput, [e.target.name]: e.target.value});
   };
 
+  const handleCourseType = (e: ChangeEvent<HTMLSelectElement>) => {
+    const filterVal = e.target.value;
+    const filterData =
+      tagData &&
+      tagData.getAllTags.filter((tag) => {
+        return tag.course_type === filterVal;
+      });
+    setFilteredTags(
+      filterData ? filterData : [{id: '', name: '', course_type: ''}]
+    );
+  };
+
+  const handleTagSelection = (e: ChangeEvent<HTMLInputElement>) => {
+    // Input powinien mieć wartość id
+    // Na tym etapie tylko zbierz listę inputów które są zaznaczone
+    // Na etapie zadawania pytania zbierz tagi
+    // Potem przy dodawaniu pytania dodaj do pytania wszystkie zaznaczone tagi (być może zmiana modelu na backendzie)
+    // Do każdego wybranego taga dodaj id pytania (ta metoda jest i działa)
+    // Dodaj button który zakończy wybór tagów
+    console.log(e.target.checked);
+  };
+  console.log(filteredTags);
+  // Post a new question
   const postQuestion = () => {
     addQuestion({
       variables: {
@@ -71,10 +133,12 @@ function AskQuestion() {
           tags: ['6568f8bda18f4803e0fff7b7'],
           answers: [],
           saved_by: [],
+          module: questionInput.module,
         },
       },
     });
   };
+
   return (
     <>
       <div className="container mx-auto mt-10 w-7/12">
@@ -82,6 +146,8 @@ function AskQuestion() {
         <h3 className="text-xl text-[#6741D9]">
           Short description on guidelines to ask a good question
         </h3>
+
+        {/* Question Title */}
         <div className="grid grid-cols-8 gap-6">
           <input
             type="text"
@@ -110,6 +176,7 @@ function AskQuestion() {
           </div>
         </div>
 
+        {/* Problem description */}
         <div className="grid grid-cols-8 gap-6">
           <QuillEditor
             value={problemDescription}
@@ -139,6 +206,7 @@ function AskQuestion() {
           </div>
         </div>
 
+        {/* Solutions tried */}
         <div className="grid grid-cols-8 gap-6">
           <QuillEditor
             value={solutionsTried}
@@ -168,19 +236,22 @@ function AskQuestion() {
           </div>
         </div>
 
+        {/* Tags and module */}
         <select
-          name="tags"
-          id="tags"
+          name="course_type"
+          id="course_type"
           className="mb-6 ml-1 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
+          onChange={handleCourseType}
         >
-          <option value="none">Select Tags</option>
-          <option value="HTML">HTML</option>
-          <option value="CSS">CSS</option>
+          <option value="none">Course type</option>
+          <option value="Web Development">Web Development</option>
+          <option value="Data Analytics">Data Science</option>
         </select>
         <select
-          name="tags"
-          id="tags"
+          name="module"
+          id="module"
           className="mb-6 ml-72 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
+          onChange={getUserInput}
         >
           <option value="none">Select Module</option>
           <option value="MODULE 1">Module 1</option>
@@ -188,6 +259,19 @@ function AskQuestion() {
           <option value="MODULE 3">Module 3</option>
         </select>
 
+        {/* TAGS */}
+        <div>
+          <label htmlFor="html">HTML</label>
+          <input
+            type="checkbox"
+            id="html"
+            name="html"
+            value={'html'}
+            onChange={handleTagSelection}
+          />
+        </div>
+
+        {/* Github Repo */}
         <input
           type="text"
           placeholder="Link your github repo"
@@ -196,6 +280,7 @@ function AskQuestion() {
           onChange={getUserInput}
         />
 
+        {/* Submit and Cancel button */}
         <div className="mb-32 mr-48 flex justify-end">
           <button className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white">
             cancel
