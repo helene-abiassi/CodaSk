@@ -1,8 +1,6 @@
 import React from 'react';
 
-type Props = {};
-
-function Tags({}: Props) {
+function Tags() {
   return <div>Tags</div>;
 }
 
