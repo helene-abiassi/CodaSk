@@ -181,8 +181,6 @@ const uploadImage = async (req, res) => {
 };
 
 const logIn = async (req, res) => {
-  console.log("request received from server");
-
   try {
     const existingUser = await userModel.findOne({ email: req.body.email });
     if (!existingUser) {
@@ -227,6 +225,7 @@ const logIn = async (req, res) => {
 };
 
 const getProfile = async (req, res) => {
+  //!Needs to be adapted to profileById
   console.log("req.USER :>> ", req.user);
 
   if (req.user) {

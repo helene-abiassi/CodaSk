@@ -37,14 +37,14 @@ function LogInForm() {
     try {
       const result = await signIn('credentials', {
         ...user,
-        redirect: false, // Set redirect to false to handle the result yourself
+        redirect: false,
       });
 
       if (result?.error) {
         console.error('Login failed:', result.error);
       } else {
-        console.log('Logged in successfully:', result?.user);
         router.push(`../user/profile/${id}`);
+        console.log('Result of login successfully:', result);
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -53,6 +53,41 @@ function LogInForm() {
 
   return (
     <div className="m-24 max-w-xl rounded-2xl bg-[#EDE9E6] p-10">
+      <br />
+
+      <form onSubmit={handleLogin}>
+        <label htmlFor="email">
+          Email
+          <input
+            onChange={handleLogInInput}
+            type="text"
+            name="email"
+            placeholder="email"
+            required
+          />
+        </label>
+        <br />
+        <label htmlFor="password">
+          Password
+          <input
+            onChange={handleLogInInput}
+            type={passwordType}
+            name="password"
+            placeholder="password"
+            required
+          />
+        </label>
+
+        <button
+          type="submit"
+          className="rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
+        >
+          login
+        </button>
+      </form>
+      <br />
+      <button onClick={changePasswordType}> {showOrHide}</button>
+      <br />
       <br />
       <button className="rounded border-b-4 border-[#D9D9D9] bg-[#6741D9] px-4 py-2 font-bold text-white hover:border-black hover:bg-[#9AFF80] hover:text-black">
         <svg
@@ -105,39 +140,6 @@ function LogInForm() {
       <hr />
       <br />
       <br />
-      <form>
-        <label htmlFor="email">
-          Email
-          <input
-            onChange={handleLogInInput}
-            type="text"
-            name="email"
-            placeholder="email"
-            required
-          />
-        </label>
-        <br />
-        <label htmlFor="password">
-          Password
-          <input
-            onChange={handleLogInInput}
-            type={passwordType}
-            name="password"
-            placeholder="password"
-            required
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
-        >
-          login
-        </button>
-      </form>
-      <br />
-      <br />
-      <button onClick={changePasswordType}> {showOrHide}</button>
     </div>
   );
 }
