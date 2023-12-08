@@ -13,10 +13,11 @@ declare module "next-auth"{
 }
 
 interface SessionUser {
-    id?: string,
+    _id?: string,
+    name?:string,
     email?: string,
     password?: string | null,
-    accessToken?:string
+    // accessToken?:string
 }
 
 declare module "next-auth/jwt" {

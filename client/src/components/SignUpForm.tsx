@@ -1,5 +1,5 @@
 import {User, UserPhoto} from '@/types/custom_types';
-import Image from 'next/image';
+import {signIn} from 'next-auth/react';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
@@ -29,7 +29,6 @@ function SignUpForm() {
     answers: [],
     saved_tags: [],
   });
-  const [selectedFile, setSelectedFile] = useState<File | string>('');
 
   const [passwordType, setPasswordType] = useState('password');
   const [showOrHide, setShowOrHide] = useState('show');
@@ -48,33 +47,6 @@ function SignUpForm() {
     console.log('show console log :>> ');
   };
 
-  const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedFile(e.target.files?.[0] || '');
-  };
-
-  const handleFileSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formdata = new FormData();
-    formdata.append('user_photo', selectedFile);
-
-    const requestOptions = {
-      method: 'POST',
-      body: formdata,
-    };
-
-    try {
-      const response = await fetch(
-        'http://localhost:5008/api/users/imageupload',
-        requestOptions
-      );
-      const result = (await response.json()) as UserPhoto;
-      setNewUser({...newUser, user_photo: result.user_photo});
-    } catch (error) {
-      console.log('error :>> ', error);
-    }
-  };
-
   const handleRegisterInput = (e: ChangeEvent<HTMLInputElement>) => {
     setNewUser({...newUser, [e.target.name]: e.target.value});
   };
@@ -82,14 +54,14 @@ function SignUpForm() {
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const {email, password, first_name, last_name} = newUser;
-    if (first_name.trim() === '') {
-      alert('First name cannot be empty');
-      return;
-    } else if (last_name.trim() === '') {
-      alert('Last name cannot be empty');
-      return;
-    } else if (!email.includes('@') && password.length < 6) {
+    const {email, password} = newUser;
+    // if (first_name.trim() === '') {
+    //   alert('First name cannot be empty');
+    //   return;
+    // } else if (last_name.trim() === '') {
+    //   alert('Last name cannot be empty');
+    //   return;
+    if (!email.includes('@') && password.length < 6) {
       alert(
         'Your email seems to be invalid. \n Your password should be at least 6 characters'
       );
@@ -107,8 +79,7 @@ function SignUpForm() {
       myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
 
       const urlencoded = new URLSearchParams();
-      urlencoded.append('first_name', newUser.first_name);
-      urlencoded.append('last_name', newUser.last_name);
+
       urlencoded.append('email', newUser.email);
       urlencoded.append('password', newUser.password);
       urlencoded.append('user_photo', newUser.user_photo);
@@ -124,10 +95,18 @@ function SignUpForm() {
           'http://localhost:5008/api/users/signup',
           requestOptions
         );
-        const result = await response.json();
         if (response.ok) {
-          router.push('../user/moreinfo');
+          const result = await response.json();
+          console.log('result in register:>> ', result);
+
+          setNewUser(result);
+          alert('Thank you for signing up!  🤓');
+          await signIn('credentials', {
+            ...newUser,
+            redirect: false,
+          });
         }
+        router.push('../user/moreinfo');
       } catch (error) {
         console.log('error in your /signup fetch:>> ', error);
       }
@@ -192,45 +171,8 @@ function SignUpForm() {
         <br />
         <hr />
         <br />
-        <Image
-          alt="user_photo"
-          src={newUser.user_photo}
-          width={100}
-          height={100}
-        />
-        <form onSubmit={handleFileSubmit}>
-          <label htmlFor="user_photo">
-            <input onChange={handleFileInput} type="file" name="user_photo" />
-          </label>
-          <br />
-          <button className="rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]">
-            upload
-          </button>
-        </form>
 
-        <br />
-        <br />
         <form onSubmit={handleRegister}>
-          <label htmlFor="first_name">
-            First name
-            <input
-              onChange={handleRegisterInput}
-              type="text"
-              name="first_name"
-              placeholder="first name"
-              required
-            />
-          </label>
-          <label htmlFor="last_name">
-            Last name
-            <input
-              onChange={handleRegisterInput}
-              type="text"
-              name="last_name"
-              placeholder="last name"
-              required
-            />
-          </label>
           <label htmlFor="email">
             Email
             <input

@@ -43,7 +43,9 @@ function LogInForm() {
       if (result?.error) {
         console.error('Login failed:', result.error);
       } else {
-        router.push(`../user/profile/${id}`);
+        // router.push(`../user/moreinfo`);
+        router.push(`/`);
+
         console.log('Result of login successfully:', result);
       }
     } catch (error) {
@@ -60,7 +62,7 @@ function LogInForm() {
           Email
           <input
             onChange={handleLogInInput}
-            type="text"
+            type="email"
             name="email"
             placeholder="email"
             required

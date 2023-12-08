@@ -1,5 +1,5 @@
 import React from 'react';
-import CompleteProfileForm from '../components/CompleteProfileForm';
+import CompleteProfileForm from '../../components/CompleteProfileForm';
 import Image from 'next/image';
 
 type Props = {};

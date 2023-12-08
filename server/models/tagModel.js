@@ -3,11 +3,12 @@ import mongoose from "mongoose";
 const tagSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
   },
   description: {
     type: String,
-    required: true,
+  },
+  course_type: {
+    type: String,
   },
   related_questions: [
     {

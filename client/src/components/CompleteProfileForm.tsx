@@ -1,14 +1,15 @@
-import {User} from '@/types/custom_types';
+import {User, UserPhoto} from '@/types/custom_types';
 import {useSession} from 'next-auth/react';
+import Image from 'next/image';
 import {useRouter} from 'next/router';
 import React, {ChangeEvent, FormEvent, useState} from 'react';
 
 function CompleteProfileForm() {
   const session = useSession();
-  const token = session.data?.token;
 
-  const id = token?.name as string;
+  const id = session!.data?.user?.name;
 
+  console.log('session :>> ', session);
   console.log('id :>> ', id);
 
   const cohortNames = [
@@ -61,6 +62,7 @@ function CompleteProfileForm() {
     answers: [],
     saved_tags: [],
   });
+  const [selectedFile, setSelectedFile] = useState<File | string>('');
 
   const router = useRouter();
 
@@ -96,6 +98,33 @@ function CompleteProfileForm() {
     });
   };
 
+  const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile(e.target.files?.[0] || '');
+  };
+
+  const handleFileSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formdata = new FormData();
+    formdata.append('user_photo', selectedFile);
+
+    const requestOptions = {
+      method: 'POST',
+      body: formdata,
+    };
+
+    try {
+      const response = await fetch(
+        'http://localhost:5008/api/users/imageupload',
+        requestOptions
+      );
+      const result = (await response.json()) as UserPhoto;
+      setuserInfo({...userInfo, user_photo: result.user_photo});
+    } catch (error) {
+      console.log('error :>> ', error);
+    }
+  };
+
   const handleCompleteProfile = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const myHeaders = new Headers();
@@ -103,7 +132,10 @@ function CompleteProfileForm() {
 
     try {
       const urlencoded = new URLSearchParams();
-      urlencoded.append('_id', id);
+      urlencoded.append('_id', id!);
+      urlencoded.append('first_name', userInfo.first_name);
+      urlencoded.append('last_name', userInfo.last_name);
+      urlencoded.append('user_photo', userInfo.user_photo);
       urlencoded.append('bio', userInfo.bio);
       urlencoded.append('country', userInfo.location.country);
       urlencoded.append('city', userInfo.location.city);
@@ -125,12 +157,12 @@ function CompleteProfileForm() {
           'http://localhost:5008/api/users/completeProfile',
           requestOptions
         );
-        const result = await response.json();
+        console.log('response :>> ', response);
         if (response.ok) {
-          alert(
-            'Thank you for signing up! \n Please log in to access your profile 🤓'
-          );
-          router.push('../user/login');
+          const result = await response.json();
+          console.log('result from update :>> ', result);
+          setuserInfo(result);
+          router.push(`../user/profile/${id}`);
         }
       } catch (error) {
         console.log('error in your /completeProfile route:>> ', error);
@@ -144,7 +176,46 @@ function CompleteProfileForm() {
     <div>
       <div>
         <div className="moreInfoForm m-16 max-w-lg rounded-2xl bg-[#EDE9E6] p-10">
+          <Image
+            alt="user_photo"
+            src={userInfo.user_photo}
+            width={100}
+            height={100}
+          />
+          <form onSubmit={handleFileSubmit}>
+            <label htmlFor="user_photo">
+              <input onChange={handleFileInput} type="file" name="user_photo" />
+            </label>
+            <br />
+            <button className="rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]">
+              upload
+            </button>
+          </form>
+
+          <br />
+          <br />
           <form onSubmit={handleCompleteProfile}>
+            <label htmlFor="first_name">
+              First name
+              <input
+                onChange={handleInfoInput}
+                type="text"
+                name="first_name"
+                placeholder="first name"
+                required
+              />
+            </label>
+            <label htmlFor="last_name">
+              Last name
+              <input
+                onChange={handleInfoInput}
+                type="text"
+                name="last_name"
+                placeholder="last name"
+                required
+              />
+            </label>
+
             <label htmlFor="bio">
               Bio
               <input
@@ -203,6 +274,7 @@ function CompleteProfileForm() {
                 type="radio"
                 name="course_type"
                 id="web_development"
+                value="Web Development"
               />
               Web Development
             </label>
@@ -212,6 +284,7 @@ function CompleteProfileForm() {
                 type="radio"
                 name="course_type"
                 id="data_analytics"
+                value="Data Analytics"
               />
               Data Analytics
             </label>

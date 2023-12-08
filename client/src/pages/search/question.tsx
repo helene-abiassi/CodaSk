@@ -30,10 +30,12 @@ function Question({}: Props) {
   // console.log('USER', session.data?.user?.email);
 
   const {data} = useQuery<questionQuery>(GET_QUESTIONS);
+  console.log('data :>> ', data);
 
   return (
     <>
       <div>
+        <h1>TEST</h1>
         {data &&
           data.getAllQuestions.map((q) => {
             return (
