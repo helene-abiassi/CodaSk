@@ -58,6 +58,7 @@ type Tag {
     name: String!
     description: String!
     related_questions: [Question]
+    course_type: String
 }
 
 type Query {
@@ -87,6 +88,7 @@ type Mutation {
     
     # ----- UPDATING ELEMENTS ------------
     updateQuestion(id: ID, editInput: editQuestionInput): Question
+    updateTag(id:ID, editInput: editTagInput): Tag
 }
 
 
@@ -96,7 +98,7 @@ input newQuestionInput {
     title: String!
     problem_description: String!
     solution_tried: String!
-    posted_on: String!
+    posted_on: Date!
     module: String
     github_repo: String!
     tags: [String!]!
@@ -112,6 +114,10 @@ input editQuestionInput {
     module: String,
     github_repo: String,
     tags: [String!],
+}
+
+input editTagInput {
+    id: ID!
 }
 `;
 

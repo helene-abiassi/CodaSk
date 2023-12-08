@@ -120,6 +120,7 @@ const resolvers = {
   Mutation: {
     // *----- ADDING MUTATIONS ---------
     async addQuestion(_, args) {
+      console.log(args);
       const newQuestion = new questionModel({
         ...args.newQuestion,
       });
@@ -133,7 +134,6 @@ const resolvers = {
 
     // *----- UPDATING MUTATIONS ---------
     async updateQuestion(_, args) {
-      console.log(args);
       const updatedQuestion = await questionModel.findByIdAndUpdate(
         args.id,
         {
@@ -150,6 +150,19 @@ const resolvers = {
       );
 
       return updatedQuestion;
+    },
+    async updateTag(_, args) {
+      console.log(args);
+      const updateTag = await tagModel.findByIdAndUpdate(
+        args.id,
+        {
+          $addToSet: {
+            related_questions: args.editInput.id,
+          },
+        },
+        { new: true }
+      );
+      return updateTag;
     },
   },
 };

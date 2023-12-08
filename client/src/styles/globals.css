@@ -16,3 +16,14 @@
     @apply text-xl font-semibold;
   }
 } */
+
+/* ? -----QUILL SETUP-------- */
+.ql-toolbar.ql-snow {
+  border: none !important;
+  height: 15%;
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+  height: 85%;
+}

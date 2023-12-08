@@ -24,11 +24,6 @@ const GET_QUESTIONS = gql`
 `;
 
 function Question({}: Props) {
-  // const session = useSession();
-  // console.log('session :>> ', session);
-
-  // console.log('USER', session.data?.user?.email);
-
   const {data} = useQuery<questionQuery>(GET_QUESTIONS);
   console.log('data :>> ', data);
 
