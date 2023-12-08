@@ -28,11 +28,14 @@ export default function Home() {
               width={900}
               height={900}
               alt="homepage-photo"
+              // src={
+              //   'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1701873171/codask/website_photos/homepage_photo.png'
+              // }
               src={
-                'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1701873171/codask/website_photos/homepage_photo.png'
+                'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1702067424/codask/website_photos/ezgif.com-video-to-gif_efni18.gif'
               }
             />
-            <h1 className="lg:text-6x m-4 text-center font-bold text-[#6741D9] md:text-3xl">
+            <h1 className="lg:text-6x m-4 pb-8 pt-6 text-center font-bold text-[#6741D9] md:text-3xl">
               Welcome to Codask,
               <br />a learning platform and community <br />
               for Codac students and alumnis!
@@ -40,47 +43,60 @@ export default function Home() {
 
             <div
               id="purpleCTAcontainer"
-              className="grid min-w-full content-center rounded-lg bg-[#B197FC] p-4"
+              className="flex min-w-full flex-col justify-around rounded-lg bg-[#B197FC] p-10 pb-10"
             >
-              <h2>Stuck on a problem? Let us help...</h2>
+              <h2 className="text-center text-3xl font-extrabold dark:text-white">
+                Stuck on a problem? Let us help...
+              </h2>
               <br />
-              <div
-                id="greyCTABox"
-                className="w-max rounded-lg bg-[#D9D9D9] p-5"
-              >
-                <Link
-                  className="text-center  text-[#6741D9] md:text-xl"
-                  href={'/search/questions'}
+
+              <div className="flex flex-row justify-around">
+                <div
+                  id="greyCTABox"
+                  className="shadow-custom h-40 w-40 rounded-lg bg-[#D9D9D9] p-5"
                 >
-                  Search by questions
-                </Link>
-              </div>
-              <div
-                id="greyCTABox"
-                className="w-max rounded-lg bg-[#D9D9D9] p-5"
-              >
-                <Link
-                  className="text-center text-[#6741D9] md:text-xl"
-                  href={'/search/tags'}
+                  <Link
+                    className="text-center text-xl font-bold text-[#6741D9] "
+                    href={'/search/questions'}
+                  >
+                    Search by questions
+                  </Link>
+                </div>
+
+                <div
+                  id="greyCTABox"
+                  className="shadow-custom h-40 w-40 rounded-lg bg-[#D9D9D9] p-5"
                 >
-                  Search by tags
-                </Link>
-              </div>
-              <div
-                id="greyCTABox"
-                className="w-max rounded-lg bg-[#D9D9D9] p-5"
-              >
-                <Link
-                  className="text-center text-[#6741D9] md:text-xl"
-                  href={'/search/modules'}
+                  <Link
+                    className="text-center text-xl font-bold text-[#6741D9]"
+                    href={'/search/tags'}
+                  >
+                    Search by tags
+                  </Link>
+                </div>
+                <div
+                  id="greyCTABox"
+                  className="shadow-custom h-40 w-40 rounded-lg bg-[#D9D9D9] p-5"
                 >
-                  {' '}
-                  Search by modules
-                </Link>
+                  <Link
+                    className="text-center text-xl font-bold text-[#6741D9]"
+                    href={'/search/modules'}
+                  >
+                    {' '}
+                    Search by modules
+                  </Link>
+                </div>
               </div>
             </div>
             <br />
-            <p className="text-[#E91E63]">Happy learning and happy coding!</p>
+            <br />
+            <pre>
+              <code className="text-[#E91E63]">
+                Happy learning and happy coding!
+              </code>
+            </pre>
+            <p></p>
+            <br />
             <br />
           </div>
         </div>
