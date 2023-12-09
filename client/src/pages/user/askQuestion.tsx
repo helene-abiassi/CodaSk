@@ -142,7 +142,9 @@ function AskQuestion() {
   return (
     <>
       <div className="container mx-auto mt-10 w-7/12">
-        <h1 className="text-3xl text-[#6741D9]">Ask a question</h1>
+        <h1 className="text-3xl font-semibold text-[#6741D9]">
+          Ask a question
+        </h1>
         <h3 className="text-xl text-[#6741D9]">
           Short description on guidelines to ask a good question
         </h3>
@@ -153,7 +155,7 @@ function AskQuestion() {
             type="text"
             name="title"
             placeholder="What is your question"
-            className="col-span-6 my-6 h-12 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
+            className="shadow-custom col-span-6 my-6 h-12 rounded-2xl bg-[#EDE9E6] p-2 text-[#6741D9]"
             onChange={getUserInput}
           />
           <div className="col-span-2 flex">
@@ -184,7 +186,7 @@ function AskQuestion() {
             onChange={handleProblemDescription}
             modules={quillModules}
             formats={quillFormats}
-            className="col-span-6 mb-6 h-52 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
+            className="shadow-custom col-span-6 mb-6 h-52 rounded-2xl bg-[#EDE9E6] p-2 text-[#6741D9]"
           />
           <div className="col-span-2 flex">
             <div className="relative mx-2 my-auto">
@@ -214,7 +216,7 @@ function AskQuestion() {
             onChange={handleTriedSolutions}
             modules={quillModules}
             formats={quillFormats}
-            className="col-span-6 mb-6 h-52 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
+            className="shadow-custom col-span-6 mb-6 h-52 rounded-2xl bg-[#EDE9E6] p-2 text-[#6741D9]"
           />
           <div className="col-span-2 flex">
             <div className="relative mx-2 my-auto">
@@ -240,7 +242,7 @@ function AskQuestion() {
         <select
           name="course_type"
           id="course_type"
-          className="mb-6 ml-1 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
+          className="shadow-custom mb-6 ml-1 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9]"
           onChange={handleCourseType}
         >
           <option value="none">Course type</option>
@@ -250,7 +252,7 @@ function AskQuestion() {
         <select
           name="module"
           id="module"
-          className="mb-6 ml-72 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
+          className="shadow-custom mb-6 ml-72 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9]"
           onChange={getUserInput}
         >
           <option value="none">Select Module</option>
@@ -275,7 +277,7 @@ function AskQuestion() {
         <input
           type="text"
           placeholder="Link your github repo"
-          className="mb-10 ml-1 block w-64 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
+          className="shadow-custom mb-10 ml-1 block w-64 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9]"
           name="github_repo"
           onChange={getUserInput}
         />

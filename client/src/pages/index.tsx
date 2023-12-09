@@ -23,14 +23,12 @@ export default function Home() {
         <div>
           <br />
           <div className="grid justify-items-center">
+            <i className="fa fa-github"></i>
             <Image
               className=" rounded-lg"
               width={900}
               height={900}
               alt="homepage-photo"
-              // src={
-              //   'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1701873171/codask/website_photos/homepage_photo.png'
-              // }
               src={
                 'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1702067424/codask/website_photos/ezgif.com-video-to-gif_efni18.gif'
               }

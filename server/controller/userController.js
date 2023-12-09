@@ -56,7 +56,7 @@ const getUserById = async (req, res) => {
         data: userByID,
       });
     } else {
-      res.status(200).json({
+      res.status(404).json({
         number: userByID.length,
         errorMessage: "OH NO! No such user with this id exists",
       });

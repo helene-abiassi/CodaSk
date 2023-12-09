@@ -13,6 +13,7 @@ function CompleteProfileForm() {
   console.log('id :>> ', id);
 
   const cohortNames = [
+    'Blue Ants',
     'Petrol Raccoons',
     'Salmon Pink Treehoppers',
     'Orange Pigs',
