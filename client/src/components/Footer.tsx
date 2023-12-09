@@ -4,7 +4,7 @@ function Footer() {
   return (
     <div>
       <div className="ml-48 h-full bg-black text-white">
-        <div>
+        <div className="text-center">
           <p>
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -58,7 +58,7 @@ function CodaskNav() {
               </li>
               <li>
                 <Link
-                  href={'/ask'}
+                  href={'/user/askQuestion'}
                   className="mx-1 hover:font-semibold focus:font-semibold"
                 >
                   |{' '}

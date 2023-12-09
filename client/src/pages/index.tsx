@@ -57,7 +57,7 @@ export default function Home() {
                 >
                   <Link
                     className="text-center text-xl font-bold text-[#6741D9] "
-                    href={'/search/questions'}
+                    href={'/user/askQuestion'}
                   >
                     Search by questions
                   </Link>

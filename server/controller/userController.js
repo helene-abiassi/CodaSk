@@ -12,14 +12,14 @@ import { generateToken } from "../utilities/tokenServices.js";
 const getAllUsers = async (req, res) => {
   try {
     const allUsers = await userModel.find().populate([
-      // {
-      //   path: "questions",
-      //   select: ["author", "title", "posted_on"],
-      //   populate: {
-      //     path: "author",
-      //     select: ["first_name", "last_name"],
-      //   },
-      // },
+      {
+        path: "questions",
+        select: ["author", "title", "posted_on"],
+        populate: {
+          path: "author",
+          select: ["first_name", "last_name"],
+        },
+      },
       {
         path: "answers",
         select: ["author", "message", "votes", "posted_on"],
@@ -28,10 +28,10 @@ const getAllUsers = async (req, res) => {
           select: ["first_name", "last_name"],
         },
       },
-      // {
-      //   path: "saved_tags",
-      //   select: ["name"],
-      // },
+      {
+        path: "saved_tags",
+        select: ["name"],
+      },
     ]);
 
     res.json({

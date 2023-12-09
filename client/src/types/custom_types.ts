@@ -17,7 +17,7 @@ export interface User extends UserPhoto {
     github: string;
     member_since: Date | string;
     last_seen: Date | string;
-    questions: [];
+    questions: Questions[];
     answers: [];
     saved_tags: [];
   }
