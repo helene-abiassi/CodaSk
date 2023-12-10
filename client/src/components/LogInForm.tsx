@@ -55,32 +55,41 @@ function LogInForm() {
   };
 
   return (
-    <div className="m-24 max-w-xl rounded-2xl bg-[#EDE9E6] p-10">
-      <br />
-
+    <div className="mt-8 w-96 rounded-2xl bg-[#EDE9E6] p-10">
       <form onSubmit={handleLogin}>
-        <label htmlFor="email">
-          Email
+        <div className="flex  w-full flex-col">
+          <label
+            className="mb-1 ml-1 font-medium text-[#6741D9]"
+            htmlFor="email"
+          >
+            Email{' '}
+          </label>
           <input
+            className="shadow-custom  rounded-2xl bg-[#EDE9E6] p-2"
             onChange={handleLogInInput}
             type="email"
             name="email"
             placeholder="email"
             required
           />
-        </label>
-        <br />
-        <label htmlFor="password">
-          Password
+
+          <br />
+          <label
+            className="mb-1 ml-1 font-medium text-[#6741D9]"
+            htmlFor="password"
+          >
+            Password
+          </label>
           <input
+            className="shadow-custom  rounded-2xl bg-[#EDE9E6] p-2"
             onChange={handleLogInInput}
             type={passwordType}
             name="password"
             placeholder="password"
             required
           />
-        </label>
-
+        </div>
+        <br />
         <button
           type="submit"
           className="rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
@@ -89,8 +98,13 @@ function LogInForm() {
         </button>
       </form>
       <br />
-      <button onClick={changePasswordType}> {showOrHide}</button>
-      <br />
+      <button
+        className="relative -right-60 -top-32 p-3"
+        onClick={changePasswordType}
+      >
+        {' '}
+        {showOrHide}
+      </button>
       <br />
       <button className="rounded border-b-4 border-[#D9D9D9] bg-[#6741D9] px-4 py-2 font-bold text-white hover:border-black hover:bg-[#9AFF80] hover:text-black">
         <FaGithub style={{fontSize: '2em'}} />
@@ -102,11 +116,6 @@ function LogInForm() {
         <FaGoogle style={{fontSize: '2em'}} />
         log in with Google
       </button>
-      <br />
-      <br />
-      <hr />
-      <br />
-      <br />
     </div>
   );
 }

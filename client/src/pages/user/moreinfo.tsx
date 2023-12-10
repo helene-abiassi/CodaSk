@@ -11,7 +11,7 @@ function MoreInfo({}: Props) {
         <div className="flex flex-col ">
           <div className=" flex flex-row items-center justify-center">
             <h1 className="lg:text-6x text-center font-medium text-white md:text-3xl">
-              Tell us more <br /> about yourself...
+              tell us more <br /> about yourself...
             </h1>
             <Image
               className=" z-10 "

@@ -7,17 +7,25 @@ type Props = {};
 function Login({}: Props) {
   return (
     <>
-      <div className="h-full w-full bg-[#6741D9]">
-        <br />
-        <LogInForm />
-        <Image
-          width={300}
-          height={300}
-          alt="green-cloud"
-          src={
-            'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1701535913/codask/website_photos/pngtree-element-abstract-yellow-pastel-blob-png-image_6568008_l2qiel.png'
-          }
-        />
+      <div className="h-full bg-[#6741D9]">
+        <div className="flex flex-col items-center justify-center">
+          <h1 className=" mt-4 text-center font-medium text-white md:text-3xl">
+            please log in
+          </h1>
+          <div className=" justify-center">
+            <LogInForm />
+          </div>
+
+          <Image
+            className="relative -top-48 left-72 "
+            width={340}
+            height={340}
+            alt="green-cloud"
+            src={
+              'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1701535913/codask/website_photos/pngtree-element-abstract-yellow-pastel-blob-png-image_6568008_l2qiel.png'
+            }
+          />
+        </div>
       </div>
     </>
   );
