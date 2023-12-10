@@ -2,14 +2,13 @@ import {User, UserPhoto} from '@/types/custom_types';
 import {useSession} from 'next-auth/react';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
-import React, {ChangeEvent, FormEvent, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 
 function CompleteProfileForm() {
   const session = useSession();
 
-  const id = session!.data?.user?.name;
-
-  console.log('session :>> ', session);
+  const id = session!.data?.user?.name as string;
+  // console.log('session :>> ', session);
   console.log('id :>> ', id);
 
   const cohortNames = [
@@ -75,8 +74,7 @@ function CompleteProfileForm() {
     console.log('e.target.value :>> ', e.target.value);
     setuserInfo({
       ...userInfo,
-      user_permission: e.target.value,
-      cohort_name: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -163,7 +161,7 @@ function CompleteProfileForm() {
           const result = await response.json();
           console.log('result from update :>> ', result);
           setuserInfo(result);
-          router.push(`../user/profile/${id}`);
+          router.push(`../profile/${id}`);
         }
       } catch (error) {
         console.log('error in your /completeProfile route:>> ', error);
@@ -172,6 +170,8 @@ function CompleteProfileForm() {
       console.log('error :>> ', error);
     }
   };
+
+  useEffect(() => {}, [id]);
 
   return (
     <div>

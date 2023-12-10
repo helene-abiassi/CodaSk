@@ -43,7 +43,7 @@ export default function Home() {
               id="purpleCTAcontainer"
               className="flex min-w-full flex-col justify-around rounded-lg bg-[#B197FC] p-10 pb-10"
             >
-              <h2 className="text-center text-3xl font-extrabold dark:text-white">
+              <h2 className="mb-4 text-center text-3xl font-semibold dark:text-white">
                 Stuck on a problem? Let us help...
               </h2>
               <br />

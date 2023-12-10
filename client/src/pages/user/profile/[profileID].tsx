@@ -20,7 +20,7 @@ function Profile() {
   const router = useRouter();
   const id = session.data?.user?.name as string;
 
-  console.log('id :>> ', id);
+  // console.log('id :>> ', id);
 
   const getProfile = async () => {
     var requestOptions = {
@@ -37,7 +37,7 @@ function Profile() {
 
         const userData = results!.data[0];
 
-        console.log('USERDATA :>> ', userData);
+        // console.log('USERDATA :>> ', userData);
         setUser(userData);
       } else {
         console.log('Error when fetching your user data');
@@ -47,7 +47,11 @@ function Profile() {
     }
   };
 
-  const deleteAccount = async (userId: string) => {
+  const goHome = () => {
+    router.push('../login');
+  };
+
+  const handleDeleteAccount = async (userId: string) => {
     if (window.confirm('Are you SURE you want to delete your account?')) {
       const requestOptions = {
         method: 'DELETE',
@@ -57,12 +61,18 @@ function Profile() {
           `http://localhost:5008/api/users/deleteuser/${userId}`,
           requestOptions
         );
-        signOut();
-        router.push('../register');
+        signOut({redirect: false});
+        goHome;
       } catch (error) {
         console.log('error when deleting a user:>> ', error);
       }
     }
+  };
+
+  const handleLogOut = () => {
+    window.confirm('Are you sure you want to log out?');
+    signOut({redirect: false});
+    goHome();
   };
 
   useEffect(() => {
@@ -88,7 +98,7 @@ function Profile() {
           <span className="flex flex-row pb-2 text-[#6741D9]">
             <MdLocationOn style={{fontSize: '1.5em', color: 'black'}} />
             <p className=" text-lg font-semibold">
-              {user?.location.city}, {user?.location.country}
+              {user?.location?.city}, {user?.location?.country}
             </p>
           </span>
         </div>
@@ -122,7 +132,7 @@ function Profile() {
             </Link>
             <span> | </span>
             <button
-              onClick={() => signOut()}
+              onClick={handleLogOut}
               className="rounded-full pl-1 font-semibold text-[#6741D9] hover:bg-[#B197FC] hover:p-2 hover:text-white"
             >
               log out
@@ -153,7 +163,7 @@ function Profile() {
       </div>
 
       {/* MIDDLE SECTION */}
-      <div className="greyBoxUser mx-80 max-w-5xl rounded-2xl bg-[#EDE9E6] p-10">
+      <div className="greyBoxUser mx-44 max-w-5xl rounded-2xl bg-[#EDE9E6] p-10">
         <h4 className="ml-6 text-lg font-semibold text-[#6741D9]">Bio</h4>
         <div className="shadow-custom mb-6 rounded-2xl p-5">
           <p className="font-medium">{user?.bio}</p>
@@ -254,7 +264,7 @@ function Profile() {
           className=" rounded-full text-[#6741D9]
           hover:bg-[#B197FC] hover:p-2 hover:text-white"
           onClick={() => {
-            deleteAccount(id);
+            handleDeleteAccount(id);
           }}
         >
           delete account
