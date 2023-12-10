@@ -3,6 +3,7 @@ import {ChangeEvent, ChangeEventHandler, FormEvent, useState} from 'react';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
+import BackButton from '@/components/BackButton';
 
 const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
 
@@ -141,6 +142,9 @@ function AskQuestion() {
 
   return (
     <>
+      <div className="ml-20 mt-4">
+        <BackButton />
+      </div>
       <div className="container mx-auto mt-10 w-7/12">
         <h1 className="text-3xl font-semibold text-[#6741D9]">
           Ask a question

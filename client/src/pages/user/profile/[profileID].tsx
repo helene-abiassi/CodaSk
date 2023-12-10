@@ -153,7 +153,7 @@ function Profile() {
       </div>
 
       {/* MIDDLE SECTION */}
-      <div className="greyBoxUser mx-32 max-w-5xl rounded-2xl bg-[#EDE9E6] p-10">
+      <div className="greyBoxUser mx-80 max-w-5xl rounded-2xl bg-[#EDE9E6] p-10">
         <h4 className="ml-6 text-lg font-semibold text-[#6741D9]">Bio</h4>
         <div className="shadow-custom mb-6 rounded-2xl p-5">
           <p className="font-medium">{user?.bio}</p>
