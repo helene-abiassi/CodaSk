@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import LogInForm from '../../components/LogInForm';
 import Image from 'next/image';
+import Link from 'next/link';
 
 type Props = {};
 
@@ -14,6 +15,12 @@ function Login({}: Props) {
           </h1>
           <div className=" justify-center">
             <LogInForm />
+            <br />
+            <p className="text-center font-medium text-white">
+              <Link href={'/user/register'}>
+                Don't have an account yet? sign up!
+              </Link>
+            </p>
           </div>
 
           <Image

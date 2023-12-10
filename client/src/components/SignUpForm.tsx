@@ -56,12 +56,6 @@ function SignUpForm() {
     e.preventDefault();
 
     const {email, password} = newUser;
-    // if (first_name.trim() === '') {
-    //   alert('First name cannot be empty');
-    //   return;
-    // } else if (last_name.trim() === '') {
-    //   alert('Last name cannot be empty');
-    //   return;
     if (!email.includes('@') && password.length < 6) {
       alert(
         'Your email seems to be invalid. \n Your password should be at least 6 characters'
@@ -122,7 +116,59 @@ function SignUpForm() {
 
   return (
     <div>
-      <div className="m-16 max-w-xl rounded-2xl bg-[#EDE9E6] p-10">
+      <div className="m-8 w-96 rounded-2xl bg-[#EDE9E6] p-10">
+        <form onSubmit={handleRegister}>
+          <div className="flex flex-col">
+            <label
+              className="mb-1 ml-1 font-medium text-[#6741D9]"
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <input
+              className="shadow-custom  rounded-2xl bg-[#EDE9E6] p-2"
+              onChange={handleRegisterInput}
+              type="text"
+              name="email"
+              placeholder="email"
+              required
+            />
+            <br />
+          </div>
+          <div className="flex flex-col">
+            <label
+              className="mb-1 ml-1 font-medium text-[#6741D9]"
+              htmlFor="password"
+            >
+              Password
+            </label>
+            <input
+              className="shadow-custom  rounded-2xl bg-[#EDE9E6] p-2"
+              onChange={handleRegisterInput}
+              type={passwordType}
+              name="password"
+              placeholder="password"
+              required
+            />
+          </div>
+
+          <br />
+          <button
+            type="submit"
+            className="rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
+          >
+            sign up
+          </button>
+        </form>
+        <button
+          className="relative -right-60 -top-28 p-4"
+          onClick={changePasswordType}
+        >
+          {' '}
+          {showOrHide}
+        </button>
+        <hr />
+
         <button className="w-max rounded border-b-4 border-[#D9D9D9] bg-[#6741D9] px-4 py-2 font-bold text-white hover:border-black hover:bg-[#9AFF80] hover:text-black">
           <FaGithub style={{fontSize: '2em'}} />
           sign up with Github
@@ -133,45 +179,6 @@ function SignUpForm() {
           <FaGoogle style={{fontSize: '2em'}} />
           sign up with Google
         </button>
-        <br />
-        <hr />
-        <br />
-
-        <form onSubmit={handleRegister}>
-          <label htmlFor="email">
-            Email
-            <input
-              onChange={handleRegisterInput}
-              type="text"
-              name="email"
-              placeholder="email"
-              required
-            />
-          </label>
-          <label htmlFor="password">
-            Password
-            <input
-              onChange={handleRegisterInput}
-              type={passwordType}
-              name="password"
-              placeholder="password"
-              required
-            />
-          </label>
-
-          <br />
-          <button
-            type="submit"
-            className="rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
-          >
-            sign up
-          </button>
-        </form>
-        <button onClick={changePasswordType}> {showOrHide}</button>
-
-        <p>
-          Already have an account? <Link href={'/user/login'}>Log in</Link>
-        </p>
       </div>
     </div>
   );

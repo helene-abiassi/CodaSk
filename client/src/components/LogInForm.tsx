@@ -97,9 +97,9 @@ function LogInForm() {
           login
         </button>
       </form>
-      <br />
+
       <button
-        className="relative -right-60 -top-32 p-3"
+        className="relative -right-60 -top-28 p-4"
         onClick={changePasswordType}
       >
         {' '}
