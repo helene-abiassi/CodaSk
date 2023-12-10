@@ -176,7 +176,7 @@ function CompleteProfileForm() {
   return (
     <div>
       <div>
-        <div className="moreInfoForm m-16 max-w-lg rounded-2xl bg-[#EDE9E6] p-10">
+        <div className="moreInfoForm mx-16 max-w-3xl rounded-2xl bg-[#EDE9E6] p-10">
           <Image
             alt="user_photo"
             src={userInfo.user_photo}
@@ -192,154 +192,245 @@ function CompleteProfileForm() {
               upload
             </button>
           </form>
-
           <br />
           <br />
           <form onSubmit={handleCompleteProfile}>
-            <label htmlFor="first_name">
-              First name
-              <input
-                onChange={handleInfoInput}
-                type="text"
-                name="first_name"
-                placeholder="first name"
-                required
-              />
-            </label>
-            <label htmlFor="last_name">
-              Last name
-              <input
-                onChange={handleInfoInput}
-                type="text"
-                name="last_name"
-                placeholder="last name"
-                required
-              />
-            </label>
+            <div className="flex flex-row justify-around">
+              <div className="flex flex-col">
+                <label
+                  className="mb-1 ml-1 font-medium text-[#6741D9]"
+                  htmlFor="first_name"
+                >
+                  first name{' '}
+                </label>
+                <input
+                  className="shadow-custom mb-6 w-28 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleInfoInput}
+                  type="text"
+                  name="first_name"
+                  placeholder="first name"
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  className="mb-1 ml-1 font-medium text-[#6741D9]"
+                  htmlFor="last_name"
+                >
+                  last name{' '}
+                </label>
+                <input
+                  className="shadow-custom mb-6 w-28 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleInfoInput}
+                  type="text"
+                  name="last_name"
+                  placeholder="last name"
+                  required
+                />
+              </div>
+            </div>
+            <br />
 
-            <label htmlFor="bio">
-              Bio
-              <input
-                onChange={handleInfoInput}
-                type="text"
-                name="bio"
-                id="bio"
-                placeholder="Write a short bio..."
-              />
-            </label>
+            <div className="flex flex-row justify-around">
+              <div className="flex flex-col">
+                <label
+                  className="mb-1 ml-1 font-medium text-[#6741D9]"
+                  htmlFor="bio"
+                >
+                  bio{' '}
+                </label>
+                <input
+                  className="shadow-custom mb-6 h-20 w-80 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleInfoInput}
+                  type="text"
+                  name="bio"
+                  id="bio"
+                  placeholder="Write a short bio..."
+                />
+              </div>
+            </div>
+
+            <br />
+
+            <div className="flex flex-row justify-around">
+              <div className="flex flex-col">
+                <label
+                  className="mb-1 ml-1 font-medium text-[#6741D9]"
+                  htmlFor="city"
+                >
+                  city{' '}
+                </label>
+                <input
+                  className="shadow-custom mb-6 w-28 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleLocationInput}
+                  type="text"
+                  name="city"
+                  placeholder="city"
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  className="mb-1 ml-1 font-medium text-[#6741D9]"
+                  htmlFor="country"
+                >
+                  country{' '}
+                </label>
+                <input
+                  className="shadow-custom mb-6 w-28 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleLocationInput}
+                  type="text"
+                  name="country"
+                  placeholder="country"
+                  required
+                />
+              </div>
+            </div>
+            <br />
+
+            <div className="flex flex-row">
+              <div className="flex flex-row align-middle">
+                <label
+                  className="mx-2 mb-1 font-medium text-[#6741D9]"
+                  htmlFor="user_permission"
+                >
+                  you're a{' '}
+                </label>
+                <select
+                  className="mx-2 rounded-full bg-black px-2 font-medium text-white"
+                  onChange={handleDropdownInput}
+                  name="user_permission"
+                  id="user_permission"
+                  placeholder="student type"
+                >
+                  <option value={'user_permission'}>student type</option>
+                  {studentTypes.map((optionValue, index) => (
+                    <option key={index} value={optionValue}>
+                      {optionValue}
+                    </option>
+                  ))}
+                </select>
+                <span className="mx-2 font-medium text-[#6741D9]">in</span>
+              </div>
+              <div className="flex flex-col">
+                <label
+                  className="mx-2 font-medium text-[#6741D9]"
+                  htmlFor="course_type"
+                >
+                  <input
+                    className="mx-2 font-medium text-[#6741D9]"
+                    onChange={handleRadioChange}
+                    type="radio"
+                    name="course_type"
+                    id="web_development"
+                    value="Web Development"
+                  />
+                  Web Development
+                </label>
+                <label
+                  className="mx-2 font-medium text-[#6741D9]"
+                  htmlFor="course_type "
+                >
+                  <input
+                    className="mx-2 font-medium text-[#6741D9]"
+                    onChange={handleRadioChange}
+                    type="radio"
+                    name="course_type"
+                    id="data_analytics"
+                    value="Data Analytics"
+                  />
+                  Data Analytics
+                </label>
+              </div>
+            </div>
             <br />
             <br />
-            <label htmlFor="city">
-              City
-              <input
-                onChange={handleLocationInput}
-                type="text"
-                name="city"
-                id="city"
-                placeholder="city"
-              />
-            </label>
-            <label htmlFor="country">
-              Country
-              <input
-                onChange={handleLocationInput}
-                type="text"
-                name="country"
-                id="country"
-                placeholder="country"
-              />
-            </label>
-            <br />
-            <br />
-            <label htmlFor="user_permission">
-              You are a
-              <select
-                onChange={handleDropdownInput}
-                name="user_permission"
-                id="user_permission"
-                placeholder="Student Type"
+            <div className="flex flex-row justify-around">
+              <label
+                className="mx-2 font-medium text-[#6741D9]"
+                htmlFor="cohort_name"
               >
-                <option value={'user_permission'}>Student Type</option>
+                from the
+                <select
+                  className="shadow-custom mb-6 w-36 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleDropdownInput}
+                  name="cohort_name"
+                  id="cohort_name"
+                  placeholder="cohort name"
+                >
+                  <option value={''}>cohort name</option>
+                  {cohortNames.map((optionValue, index) => (
+                    <option key={index} value={optionValue}>
+                      {optionValue}
+                    </option>
+                  ))}
+                </select>{' '}
+              </label>
+              <span className="mx-2 font-medium text-[#6741D9]">on</span>
 
-                {studentTypes.map((optionValue, index) => (
-                  <option key={index} value={optionValue}>
-                    {optionValue}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <span>in</span>
-            <label htmlFor="course_type">
-              <input
-                onChange={handleRadioChange}
-                type="radio"
-                name="course_type"
-                id="web_development"
-                value="Web Development"
-              />
-              Web Development
-            </label>
-            <label htmlFor="course_type">
-              <input
-                onChange={handleRadioChange}
-                type="radio"
-                name="course_type"
-                id="data_analytics"
-                value="Data Analytics"
-              />
-              Data Analytics
-            </label>
+              <div className="flex flex-col ">
+                <label
+                  className="mx-2 font-medium text-[#6741D9]"
+                  htmlFor="course_date"
+                ></label>
+                <input
+                  className="shadow-custom mb-6 w-36 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleInfoInput}
+                  type="date"
+                  name=""
+                  id=""
+                />
+              </div>
+            </div>
             <br />
             <br />
 
-            <label htmlFor="cohort_name">
-              <select
-                onChange={handleDropdownInput}
-                name="cohort_name"
-                id="cohort_name"
-                placeholder="Cohort name"
-              >
-                <option value={''}>Cohort name</option>
-
-                {cohortNames.map((optionValue, index) => (
-                  <option key={index} value={optionValue}>
-                    {optionValue}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label htmlFor="course_date">
-              Course start date
-              <input onChange={handleInfoInput} type="date" name="" id="" />
-            </label>
+            <div className="flex flex-row justify-around">
+              <div className="flex flex-col">
+                <label
+                  className="mb-1 ml-1 font-medium text-[#6741D9]"
+                  htmlFor="github"
+                >
+                  github{' '}
+                </label>
+                <input
+                  className="shadow-custom mb-6 w-28 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleInfoInput}
+                  type="text"
+                  name="github"
+                  placeholder="github"
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  className="mb-1 ml-1 font-medium text-[#6741D9]"
+                  htmlFor="website"
+                >
+                  website{' '}
+                </label>
+                <input
+                  className="shadow-custom mb-6 w-28 rounded-2xl bg-[#EDE9E6] p-2"
+                  onChange={handleInfoInput}
+                  type="text"
+                  name="website"
+                  placeholder="website"
+                  required
+                />
+              </div>
+            </div>
             <br />
-            <br />
-            <label htmlFor="github">
-              Github{' '}
-              <input
-                onChange={handleInfoInput}
-                type="text"
-                name="github"
-                id="github"
-              />
-            </label>
-            <label htmlFor="website">
-              Website{' '}
-              <input
-                onChange={handleInfoInput}
-                type="text"
-                name="website"
-                id="website"
-              />
-            </label>
-
             <button className="rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]">
               continue
             </button>
-          </form>
-          <p>You can also set this up later in your profile!</p>
+          </form>{' '}
         </div>
+        <br />
+        <pre>
+          <code className="text-center text-white">
+            You can also set this up later in your profile!
+          </code>
+        </pre>
       </div>
       <br />
     </div>

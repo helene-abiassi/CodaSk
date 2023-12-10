@@ -116,7 +116,7 @@ function Profile() {
           <div>
             <Link
               className="rounded-full font-semibold text-[#6741D9] hover:bg-[#B197FC] hover:p-2 hover:text-white"
-              href={'/user/moreinfo'}
+              href={'/user/profile/updateprofile'}
             >
               edit
             </Link>
