@@ -1,16 +1,27 @@
 import {useSession} from 'next-auth/react';
 import {BsPatchQuestion} from 'react-icons/bs';
+import {FaRegEnvelope} from 'react-icons/fa';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 
 function CodaskNav() {
   const {data: session, status, update} = useSession();
-  // console.log('session in NAV :>> ', session);
+  console.log('session in NAV :>> ', session);
+  console.log('status in NAV :>> ', status);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const id = session?.user?.name;
 
-  useEffect(() => {}, [status]);
+  useEffect(() => {
+    console.log('%c status', 'color:purple', status);
+    if (session) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [status]);
 
   return (
     <>
@@ -29,7 +40,8 @@ function CodaskNav() {
         />
 
         <ul className="flex">
-          {!session ? (
+          {/* {!session ? ( */}
+          {!isLoggedIn ? (
             <>
               <li>
                 <Link
@@ -53,11 +65,14 @@ function CodaskNav() {
               <li>
                 <Link
                   href={`/user/profile/${id}`}
-                  className="mx-1 text-2xl text-white"
+                  className="mx-1 text-2xl text-white hover:font-semibold focus:font-semibold"
                 >
                   👀 |{' '}
                 </Link>
               </li>
+              {/* <li className="mx-1 text-2xl text-white ">
+                <FaRegEnvelope /> |{' '}
+              </li> */}
               <li>
                 {' '}
                 <Link href={'/user/askQuestion'} className="">

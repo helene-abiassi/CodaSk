@@ -101,7 +101,8 @@ function SignUpForm() {
             redirect: false,
           });
         }
-        router.push('../user/moreinfo');
+        await router.push('../user/moreinfo');
+        location.reload();
       } catch (error) {
         console.log('error in your /signup fetch:>> ', error);
       }
@@ -169,7 +170,14 @@ function SignUpForm() {
         </button>
         <hr />
 
-        <button className="w-max rounded border-b-4 border-[#D9D9D9] bg-[#6741D9] px-4 py-2 font-bold text-white hover:border-black hover:bg-[#9AFF80] hover:text-black">
+        <button
+          onClick={() => {
+            signIn('github', {
+              redirect: false,
+            });
+          }}
+          className="w-max rounded border-b-4 border-[#D9D9D9] bg-[#6741D9] px-4 py-2 font-bold text-white hover:border-black hover:bg-[#9AFF80] hover:text-black"
+        >
           <FaGithub style={{fontSize: '2em'}} />
           sign up with Github
         </button>

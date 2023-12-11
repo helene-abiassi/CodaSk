@@ -20,10 +20,8 @@ function Profile() {
   const router = useRouter();
   const id = session.data?.user?.name as string;
 
-  // console.log('id :>> ', id);
-
   const getProfile = async () => {
-    var requestOptions = {
+    const requestOptions = {
       method: 'GET',
     };
     try {
@@ -47,10 +45,6 @@ function Profile() {
     }
   };
 
-  const goHome = () => {
-    router.push('../login');
-  };
-
   const handleDeleteAccount = async (userId: string) => {
     if (window.confirm('Are you SURE you want to delete your account?')) {
       const requestOptions = {
@@ -61,18 +55,21 @@ function Profile() {
           `http://localhost:5008/api/users/deleteuser/${userId}`,
           requestOptions
         );
-        signOut({redirect: false});
-        goHome;
+        await signOut({redirect: false});
+        await router.push('/');
+        location.reload();
       } catch (error) {
         console.log('error when deleting a user:>> ', error);
       }
     }
   };
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
     window.confirm('Are you sure you want to log out?');
-    signOut({redirect: false});
-    goHome();
+    await signOut({redirect: false});
+    setUser(null);
+    await router.push('../login');
+    location.reload();
   };
 
   useEffect(() => {
@@ -197,62 +194,76 @@ function Profile() {
 
       {/* BOTTOM SECTION */}
       <div className="mx-28 flex flex-row justify-between ">
-        <div className="greyProfileBox my-12 max-w-md rounded-2xl bg-[#EDE9E6]">
+        <div className="greyProfileBox my-12 w-64 max-w-md rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your questions</h4>
           </div>
           <div className="p-4">
-            {user?.questions.map((question: Questions, quIndex: number) => {
-              return (
-                <div key={quIndex} className="w-60">
-                  <p className="... mb-3 overflow-hidden truncate">
-                    {question?.title}
-                  </p>
-                  <p className="... mb-3 overflow-hidden truncate">
-                    kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh kjhfgwhdhw
-                  </p>
-                  <p className="text-[#6741D9]">view all</p>
-                </div>
-              );
-            })}
+            {user?.questions && user?.questions?.length <= 0 ? (
+              <p>Nothing saved yet</p>
+            ) : (
+              user?.questions.map((question: Questions, quIndex: number) => {
+                return (
+                  <div key={quIndex} className="w-60">
+                    <p className="... mb-3 overflow-hidden truncate">
+                      {question?.title}
+                    </p>
+                    <p className="... mb-3 overflow-hidden truncate">
+                      kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh kjhfgwhdhw
+                    </p>
+                    <p className="text-[#6741D9]">view all</p>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
-        <div className="greyProfileBox my-12 max-w-md rounded-2xl bg-[#EDE9E6]">
+        <div className="greyProfileBox my-12 w-64 max-w-md rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your answers</h4>
           </div>
           <div className="p-4">
-            {user?.answers.map((answer: Answers, ansIndex: number) => {
-              return (
-                <div key={ansIndex} className="w-60">
-                  <p className="... mb-3 overflow-hidden truncate">
-                    {answer?.message}
-                  </p>
-                  <p className="... mb-3 overflow-hidden truncate">
-                    kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh
-                  </p>
-                  <p className="text-[#6741D9]">view all</p>
-                </div>
-              );
-            })}
+            {user?.answers && user?.answers?.length <= 0 ? (
+              <p>Nothing saved yet</p>
+            ) : (
+              user?.answers.map((answer: Answers, ansIndex: number) => {
+                return (
+                  <div key={ansIndex} className="w-60">
+                    <p className="... mb-3 overflow-hidden truncate">
+                      {answer?.message}
+                    </p>
+                    <p className="... mb-3 overflow-hidden truncate">
+                      kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh kjhfgwhdhw
+                    </p>
+                    <p className="text-[#6741D9]">view all</p>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
-        <div className="greyProfileBox my-12 max-w-md rounded-2xl bg-[#EDE9E6]">
+        <div className="greyProfileBox my-12 w-64 max-w-md rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your tags</h4>
           </div>
           <div className="p-4">
-            {user?.saved_tags.map((tag: Tags, tgIndex: number) => {
-              return (
-                <div key={tgIndex} className="w-60">
-                  <p>{tag?.name}</p>
-                  <p className="... mb-3 overflow-hidden truncate">
-                    kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh
-                  </p>
-                  <p className="text-[#6741D9]">view all</p>
-                </div>
-              );
-            })}
+            {user?.saved_tags && user?.saved_tags?.length <= 0 ? (
+              <p>Nothing saved yet</p>
+            ) : (
+              user?.saved_tags.map((tag: Tags, tagIndex: number) => {
+                return (
+                  <div key={tagIndex} className="w-60">
+                    <p className="... mb-3 overflow-hidden truncate">
+                      {tag?.name}
+                    </p>
+                    <p className="... mb-3 overflow-hidden truncate">
+                      kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh kjhfgwhdhw
+                    </p>
+                    <p className="text-[#6741D9]">view all</p>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>

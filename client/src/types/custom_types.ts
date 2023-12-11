@@ -10,7 +10,7 @@ export interface User extends UserPhoto {
       country: string;
     };
     course_type: string;
-    course_date: Date | string;
+    course_date?: Date | string;
     cohort_name: string;
     user_permission: string;
     website: string;

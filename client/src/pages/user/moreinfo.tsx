@@ -29,7 +29,7 @@ function MoreInfo({}: Props) {
             <br />
             <pre>
               <code className="text-center text-pink-600">
-                You can also set this up later in your profile!
+                Let's get to it!
               </code>
             </pre>{' '}
           </div>

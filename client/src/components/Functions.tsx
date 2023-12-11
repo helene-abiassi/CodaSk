@@ -14,4 +14,9 @@ const formatDateAndTime = (dateAndTime: Date | string) => {
   );
 };
 
-export {formatDate, formatDateAndTime};
+const formatInputDate = (date: Date | string) => {
+  const formattedDate = new Date().toISOString().split('T')[0];
+  return formattedDate;
+};
+
+export {formatDate, formatDateAndTime, formatInputDate};

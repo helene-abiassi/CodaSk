@@ -43,15 +43,14 @@ function CompleteProfileForm() {
     last_name: '',
     email: '',
     password: '',
-    user_photo:
-      'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1701637366/codask/website_photos/user_photo_default_l0kcos.png',
+    user_photo: '',
     bio: '',
     location: {
       city: '',
       country: '',
     },
     course_type: '',
-    course_date: Date(),
+    // course_date: Date(),
     cohort_name: '',
     user_permission: '',
     website: '',
@@ -65,6 +64,36 @@ function CompleteProfileForm() {
   const [selectedFile, setSelectedFile] = useState<File | string>('');
 
   const router = useRouter();
+
+  const getUserInfo = async () => {
+    if (!id) {
+      console.log(' whatxws going on?:>>');
+    }
+    // await location.reload();
+
+    const requestOptions = {
+      method: 'GET',
+    };
+    try {
+      const response = await fetch(
+        `http://localhost:5008/api/users/id/${id}`,
+        requestOptions
+      );
+      if (response.ok) {
+        const results = await response.json();
+        console.log('userInfo Results :>> ', results);
+
+        const userData = results!.data[0];
+
+        // console.log('USERDATA :>> ', userData);
+        setuserInfo(userData);
+      } else {
+        console.log('Error when fetching your user data');
+      }
+    } catch (error) {
+      console.log('error :>> ', error);
+    }
+  };
 
   const handleInfoInput = (e: ChangeEvent<HTMLInputElement>) => {
     setuserInfo({...userInfo, [e.target.name]: e.target.value});
@@ -118,7 +147,12 @@ function CompleteProfileForm() {
         requestOptions
       );
       const result = (await response.json()) as UserPhoto;
-      setuserInfo({...userInfo, user_photo: result.user_photo});
+      console.log('result single photo:>> ', result);
+
+      // setuserInfo({...userInfo, user_photo: result.user_photo});
+      setuserInfo((prevInfo) => {
+        return {...prevInfo, user_photo: result.user_photo};
+      });
     } catch (error) {
       console.log('error :>> ', error);
     }
@@ -139,7 +173,7 @@ function CompleteProfileForm() {
       urlencoded.append('country', userInfo.location.country);
       urlencoded.append('city', userInfo.location.city);
       urlencoded.append('course_type', userInfo.course_type);
-      urlencoded.append('course_date', userInfo.course_date as string);
+      // urlencoded.append('course_date', userInfo.course_date as string);
       urlencoded.append('cohort_name', userInfo.cohort_name);
       urlencoded.append('user_permission', userInfo.user_permission);
       urlencoded.append('website', userInfo.website);
@@ -161,7 +195,7 @@ function CompleteProfileForm() {
           const result = await response.json();
           console.log('result from update :>> ', result);
           setuserInfo(result);
-          router.push(`../profile/${id}`);
+          router.push(`http://localhost:3000/user/profile/${id}`);
         }
       } catch (error) {
         console.log('error in your /completeProfile route:>> ', error);
@@ -171,15 +205,21 @@ function CompleteProfileForm() {
     }
   };
 
-  useEffect(() => {}, [id]);
+  useEffect(() => {
+    getUserInfo();
+  }, [id]);
 
   return (
     <div>
       <div className="flex items-center">
         <div className="mr-5">
           <Image
+            className="rounded-full pb-2"
             alt="user_photo"
-            src={userInfo.user_photo}
+            src={
+              userInfo?.user_photo ||
+              'https://res.cloudinary.com/dfm1r4ikr/image/upload/v1701685725/codask/website_photos/user_photo_default.png'
+            }
             width={100}
             height={100}
           />
@@ -190,7 +230,10 @@ function CompleteProfileForm() {
               <input onChange={handleFileInput} type="file" name="user_photo" />
             </label>
             <br />
-            <button className="mt-4 rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]">
+            <button
+              type="submit"
+              className="mt-4 rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
+            >
               upload
             </button>
           </form>
@@ -211,6 +254,7 @@ function CompleteProfileForm() {
               first name{' '}
             </label>
             <input
+              value={userInfo?.first_name || ''}
               className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2"
               onChange={handleInfoInput}
               type="text"
@@ -227,6 +271,7 @@ function CompleteProfileForm() {
               last name{' '}
             </label>
             <input
+              value={userInfo?.last_name || ''}
               className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2"
               onChange={handleInfoInput}
               type="text"
@@ -247,6 +292,7 @@ function CompleteProfileForm() {
               bio{' '}
             </label>
             <input
+              value={userInfo?.bio || ''}
               className="shadow-custom mb-6 h-20  rounded-2xl bg-[#EDE9E6] p-2"
               onChange={handleInfoInput}
               type="text"
@@ -268,6 +314,7 @@ function CompleteProfileForm() {
               city{' '}
             </label>
             <input
+              value={userInfo?.location?.city || ''}
               className="shadow-custom rounded-2xl bg-[#EDE9E6] p-2"
               onChange={handleLocationInput}
               type="text"
@@ -284,6 +331,7 @@ function CompleteProfileForm() {
               country{' '}
             </label>
             <input
+              value={userInfo?.location?.country || ''}
               className="shadow-custom  rounded-2xl bg-[#EDE9E6] p-2"
               onChange={handleLocationInput}
               type="text"
@@ -302,6 +350,7 @@ function CompleteProfileForm() {
               github{' '}
             </label>
             <input
+              value={userInfo?.github || ''}
               className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2"
               onChange={handleInfoInput}
               type="text"
@@ -318,6 +367,7 @@ function CompleteProfileForm() {
               website{' '}
             </label>
             <input
+              value={userInfo?.website || ''}
               className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2"
               onChange={handleInfoInput}
               type="text"
@@ -344,6 +394,7 @@ function CompleteProfileForm() {
               name="user_permission"
               id="user_permission"
               placeholder="student type"
+              value={userInfo?.user_permission || 'user_permission'}
             >
               <option value={'user_permission'}>student type</option>
               {studentTypes.map((optionValue, index) => (
@@ -360,12 +411,13 @@ function CompleteProfileForm() {
               htmlFor="course_type"
             >
               <input
+                value="Web Development"
                 className="mx-2 font-medium "
                 onChange={handleRadioChange}
                 type="radio"
                 name="course_type"
                 id="web_development"
-                value="Web Development"
+                checked={userInfo?.course_type === 'Web Development'}
               />
               Web Development
             </label>
@@ -374,12 +426,13 @@ function CompleteProfileForm() {
               htmlFor="course_type "
             >
               <input
+                value="Data Analytics"
                 className="mx-2 font-medium "
                 onChange={handleRadioChange}
                 type="radio"
                 name="course_type"
                 id="data_analytics"
-                value="Data Analytics"
+                checked={userInfo?.course_type === 'Data Analytics'}
               />
               Data Analytics
             </label>
@@ -395,13 +448,14 @@ function CompleteProfileForm() {
           >
             from the
             <select
-              className="shadow-custom mb-6 w-36 rounded-2xl bg-[#EDE9E6] p-2 text-black"
+              className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2 text-black"
               onChange={handleDropdownInput}
               name="cohort_name"
               id="cohort_name"
               placeholder="cohort name"
+              value={userInfo?.cohort_name || 'cohort_name'}
             >
-              <option value={''}>cohort name</option>
+              <option value={'cohort_name'}>cohort name</option>
               {cohortNames.map((optionValue, index) => (
                 <option key={index} value={optionValue}>
                   {optionValue}
@@ -409,21 +463,32 @@ function CompleteProfileForm() {
               ))}
             </select>{' '}
           </label>
-          <span className="mx-2 font-medium text-[#6741D9]">on</span>
+          <span className="mx-2 font-medium text-[#6741D9]">
+            <Image
+              className="rounded-md"
+              src={`/${userInfo?.cohort_name}.png`}
+              width={35}
+              height={35}
+              alt={`Cohort ${userInfo?.cohort_name}`}
+            />{' '}
+            cohort{' '}
+          </span>
 
-          <div className="flex flex-col ">
+          {/* Removing date for now until I solve a specific issue- Also not really using it yet */}
+
+          {/* <div className="flex flex-col ">
             <label
               className="mx-2 text-[#6741D9]"
               htmlFor="course_date"
             ></label>
             <input
+              value={formatInputDate(userInfo.course_date)}
               className="shadow-custom mb-6 w-36 rounded-2xl bg-[#EDE9E6] p-2 font-medium"
               onChange={handleInfoInput}
               type="date"
               name=""
-              id=""
             />
-          </div>
+          </div> */}
         </div>
         <br />
         <button className=" rounded-full px-4 py-2 font-bold text-[#6741D9] hover:text-black ">

@@ -86,7 +86,7 @@ const getProfile = async (req, res) => {
         country: req.user.location.country,
         city: req.user.location.city,
         course_type: req.user.course_type,
-        course_date: req.user.course_date,
+        // course_date: req.user.course_date,
         cohort_name: req.user.cohort_name,
         user_permission: req.user.user_permission,
         website: req.user.website,
@@ -160,14 +160,14 @@ const completeProfile = async (req, res) => {
   const update = {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
-    user_photoe: req.body.user_photo,
+    user_photo: req.body.user_photo,
     bio: req.body.bio,
     location: {
       country: req.body.country,
       city: req.body.city,
     },
     course_type: req.body.course_type,
-    course_date: req.body.course_date,
+    // course_date: req.body.course_date,
     cohort_name: req.body.cohort_name,
     user_permission: req.body.user_permission,
     website: req.body.website,
@@ -192,10 +192,6 @@ const completeProfile = async (req, res) => {
 };
 
 const uploadImage = async (req, res) => {
-  console.log("REQ.FILE", req.file);
-  console.log(process.env.CLOUDINARY_CLOUDNAME);
-  console.log("API KEY", process.env.CLOUDINARY_APIKEY);
-
   if (req.file) {
     try {
       const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
