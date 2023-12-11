@@ -151,18 +151,23 @@ const resolvers = {
 
       return updatedQuestion;
     },
-    async updateTag(_, args) {
-      console.log(args);
-      const updateTag = await tagModel.findByIdAndUpdate(
-        args.id,
-        {
-          $addToSet: {
-            related_questions: args.editInput.id,
+    async updateTags(_, args) {
+      const updatedTags = [];
+      const tagsList = args.id;
+
+      tagsList.forEach(async (tagID) => {
+        const updateTag = await tagModel.findByIdAndUpdate(
+          tagID,
+          {
+            $addToSet: {
+              related_questions: args.editInput.id,
+            },
           },
-        },
-        { new: true }
-      );
-      return updateTag;
+          { new: true }
+        );
+        updatedTags.push(updateTag);
+      });
+      return updatedTags;
     },
   },
 };

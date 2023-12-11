@@ -49,8 +49,8 @@ const POST_NEWQUESTION = gql`
 
 // * UPDATE TAGS
 const UPDATE_TAGS = gql`
-  mutation Mutation($updateTagId: ID, $editInput: editTagInput) {
-    updateTag(id: $updateTagId, editInput: $editInput) {
+  mutation UpdateTags($updateTagsId: [ID], $editInput: editTagInput) {
+    updateTags(id: $updateTagsId, editInput: $editInput) {
       name
     }
   }
@@ -174,7 +174,7 @@ function AskQuestion() {
   const handleTagUpdate = () => {
     updateTag({
       variables: {
-        updateTagId: selectedTags[0],
+        updateTagsId: selectedTags,
         editInput: {
           id: questionData.addQuestion.id,
         },
