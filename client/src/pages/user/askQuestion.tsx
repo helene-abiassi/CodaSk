@@ -40,16 +40,33 @@ const GET_ALLTAGS = gql`
 const POST_NEWQUESTION = gql`
   mutation AddQuestion($newQuestion: newQuestionInput) {
     addQuestion(newQuestion: $newQuestion) {
+      id
       title
       posted_on
     }
   }
 `;
 
-// TODO: Checkbox z tagami generaowany automatycznie
-// TODO: Wyświetl checkboxy tylko z własciwymi dla wyboru tagami
-// TODO: Sprawdź czy może połączyć mutację i wynik jednej dodać jako input do drugiej
+// * UPDATE TAGS
+const UPDATE_TAGS = gql`
+  mutation Mutation($updateTagId: ID, $editInput: editTagInput) {
+    updateTag(id: $updateTagId, editInput: $editInput) {
+      name
+    }
+  }
+`;
 
+// * UPDATE QUESTION
+const UPDATE_QUESTION = gql`
+  mutation Mutation($updateQuestionId: ID, $editInput: editQuestionInput) {
+    updateQuestion(id: $updateQuestionId, editInput: $editInput) {
+      title
+    }
+  }
+`;
+
+// ! METODA UAUKTALNIAJĄCA NIE JEDEN A WSZYSTKIE TAGI (DLA JEDNEGO DZIAŁA)
+// ! PODMIEŃ NOWĄ METODĄ Z UPDATE TAG KTÓRĄ MASZ TERAZ
 // TODO: Być może przenieś inputy do diva z kolumnami i dodaj spany
 // TODO: Popracuj nad walidacją pól
 // TODO: Popracuj nad responsywnością
@@ -57,20 +74,7 @@ const POST_NEWQUESTION = gql`
 
 // * ---------MAIN FUNCTION-------------
 function AskQuestion() {
-  // Data coming from Quill texteditor
-  const [problemDescription, setProblemDescription] = useState('');
-  const [solutionsTried, setSolutionsTried] = useState('');
-  const [filteredTags, setFilteredTags] = useState<Tag[]>([
-    {id: '', name: '', course_type: ''},
-  ]);
-
-  // --------Mutations-----------
-  const [addQuestion, {data: questionData}] = useMutation(POST_NEWQUESTION);
-
-  // --------Queries-------------
-  const {data: tagData} = useQuery<AllTagsQuery>(GET_ALLTAGS);
-
-  // Initialize question object
+  // Initialize user question object
   const [questionInput, setQuestionInput] = useState<questionInput>({
     title: '',
     problem_description: '',
@@ -79,22 +83,45 @@ function AskQuestion() {
     module: '',
   });
 
-  // ! TEMPORARY ID
-  const tagID = '6568f8bda18f4803e0fff7b7';
+  // Filter tags by user selection
+  const [filteredTags, setFilteredTags] = useState<Tag[]>([
+    {id: '', name: '', course_type: ''},
+  ]);
+  const [selectedTags, setSelectedTags] = useState<String[]>([]);
+
+  // --------Queries-------------
+  const {data: tagData} = useQuery<AllTagsQuery>(GET_ALLTAGS);
+
+  // --------Mutations-----------
+  const [addQuestion, {data: questionData, called, error: addQuestionErr}] =
+    useMutation(POST_NEWQUESTION);
+  const [
+    updateTag,
+    {data: tagUpdateData, called: tagUpdateCalled, error: tagUpdateError},
+  ] = useMutation(UPDATE_TAGS);
+  const [
+    updateQuestion,
+    {
+      data: updatedQuestionData,
+      called: questionUpdateCalled,
+      error: questionUpdateErr,
+    },
+  ] = useMutation(UPDATE_QUESTION);
 
   // --------Collecting user inputs-------------------
-  const handleProblemDescription = (newContent: string) => {
-    setProblemDescription(newContent);
-  };
-
-  const handleTriedSolutions = (newContent: string) => {
-    setSolutionsTried(newContent);
-  };
-
   const getUserInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setQuestionInput({...questionInput, [e.target.name]: e.target.value});
+  };
+
+  // Quill editor data
+  const handleProblemDescription = (newContent: string) => {
+    setQuestionInput({...questionInput, ['problem_description']: newContent});
+  };
+
+  const handleTriedSolutions = (newContent: string) => {
+    setQuestionInput({...questionInput, ['solutions_tried']: newContent});
   };
 
   const handleCourseType = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -109,16 +136,9 @@ function AskQuestion() {
     );
   };
 
-  const handleTagSelection = (e: ChangeEvent<HTMLInputElement>) => {
-    // Input powinien mieć wartość id
-    // Na tym etapie tylko zbierz listę inputów które są zaznaczone
-    // Na etapie zadawania pytania zbierz tagi
-    // Potem przy dodawaniu pytania dodaj do pytania wszystkie zaznaczone tagi (być może zmiana modelu na backendzie)
-    // Do każdego wybranego taga dodaj id pytania (ta metoda jest i działa)
-    // Dodaj button który zakończy wybór tagów
-    console.log(e.target.checked);
-  };
-  console.log(filteredTags);
+  // ! TEMPORARY ID
+  const tagID = '6568f8bda18f4803e0fff7b7';
+
   // Post a new question
   const postQuestion = () => {
     addQuestion({
@@ -126,14 +146,45 @@ function AskQuestion() {
         newQuestion: {
           title: questionInput.title,
           author: '655f786db50fd7211a2c84ff',
-          problem_description: problemDescription,
-          solution_tried: solutionsTried,
+          problem_description: questionInput.problem_description,
+          solution_tried: questionInput.solutions_tried,
           posted_on: Date.now(),
           github_repo: questionInput.github_repo,
-          tags: ['6568f8bda18f4803e0fff7b7'],
+          tags: selectedTags,
           answers: [],
           saved_by: [],
           module: questionInput.module,
+        },
+      },
+    });
+  };
+
+  // Get array of selected tagId's
+  const handleTagSelection = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      selectedTags.push(e.target.value);
+    } else {
+      const indInArr = selectedTags.indexOf(e.target.value);
+      selectedTags.splice(indInArr, 1);
+    }
+    console.log(filteredTags);
+    // Do każdego wybranego taga dodaj id pytania (relatedQuestions: newQuestionID) w moment
+  };
+
+  const handleTagUpdate = () => {
+    updateTag({
+      variables: {
+        updateTagId: selectedTags[0],
+        editInput: {
+          id: questionData.addQuestion.id,
+        },
+      },
+    });
+    updateQuestion({
+      variables: {
+        updateQuestionId: questionData.addQuestion.id,
+        editInput: {
+          tags: selectedTags,
         },
       },
     });
@@ -179,7 +230,7 @@ function AskQuestion() {
         {/* Problem description */}
         <div className="grid grid-cols-8 gap-6">
           <QuillEditor
-            value={problemDescription}
+            value={questionInput.problem_description}
             placeholder="Describe your problem in details..."
             onChange={handleProblemDescription}
             modules={quillModules}
@@ -209,7 +260,7 @@ function AskQuestion() {
         {/* Solutions tried */}
         <div className="grid grid-cols-8 gap-6">
           <QuillEditor
-            value={solutionsTried}
+            value={questionInput.solutions_tried}
             placeholder="What solution(s) did you try?"
             onChange={handleTriedSolutions}
             modules={quillModules}
@@ -259,18 +310,6 @@ function AskQuestion() {
           <option value="MODULE 3">Module 3</option>
         </select>
 
-        {/* TAGS */}
-        <div>
-          <label htmlFor="html">HTML</label>
-          <input
-            type="checkbox"
-            id="html"
-            name="html"
-            value={'html'}
-            onChange={handleTagSelection}
-          />
-        </div>
-
         {/* Github Repo */}
         <input
           type="text"
@@ -279,19 +318,58 @@ function AskQuestion() {
           name="github_repo"
           onChange={getUserInput}
         />
+        {/* SUBMIT A QUESTION*/}
 
-        {/* Submit and Cancel button */}
-        <div className="mb-32 mr-48 flex justify-end">
-          <button className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white">
-            cancel
-          </button>
-          <button
-            className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white"
-            onClick={postQuestion}
-          >
-            submit
-          </button>
-        </div>
+        {!called ? (
+          <>
+            {/* Submit and Cancel button */}
+            <div className="mb-6 mr-48 flex justify-end">
+              <button className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white">
+                cancel
+              </button>
+              <button
+                className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white"
+                onClick={postQuestion}
+              >
+                submit
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p>Please select a tag:</p>
+            {filteredTags &&
+              filteredTags.map((tag) => {
+                return (
+                  <>
+                    <input
+                      type="checkbox"
+                      id={tag.name}
+                      name={tag.name}
+                      value={tag.id}
+                      onChange={handleTagSelection}
+                    />
+                    <label htmlFor="html">{tag.name}</label>
+                  </>
+                );
+              })}
+
+            {!questionUpdateCalled && !tagUpdateCalled ? (
+              <>
+                <button
+                  className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white"
+                  onClick={handleTagUpdate}
+                >
+                  Add tags
+                </button>
+              </>
+            ) : !questionUpdateErr && !tagUpdateError ? (
+              <p>Added successfully</p>
+            ) : (
+              <p>{tagUpdateError?.message}</p>
+            )}
+          </>
+        )}
       </div>
     </>
   );
