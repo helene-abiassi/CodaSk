@@ -2,7 +2,6 @@ import userModel from "../models/userModel.js";
 import { tagModel } from "../models/tagModel.js";
 import questionModel from "../models/questionModel.js";
 import { answerModel } from "../models/answerModel.js";
-// import questionModel from "../models/questionModel.js";
 import { v2 as cloudinary } from "cloudinary";
 import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
 import { generateToken } from "../utilities/tokenServices.js";
@@ -47,9 +46,32 @@ const getUserById = async (req, res) => {
   const id = req.params._id;
 
   try {
-    const userByID = await userModel.find({
-      _id: id,
-    });
+    const userByID = await userModel
+      .find({
+        _id: id,
+      })
+      .populate([
+        {
+          path: "questions",
+          select: ["author", "title", "posted_on"],
+          populate: {
+            path: "author",
+            select: ["first_name", "last_name"],
+          },
+        },
+        {
+          path: "answers",
+          select: ["author", "message", "votes", "posted_on"],
+          populate: {
+            path: "author",
+            select: ["first_name", "last_name"],
+          },
+        },
+        {
+          path: "saved_tags",
+          select: ["name"],
+        },
+      ]);
     if (userByID.length > 0) {
       res.status(200).json({
         number: userByID.length,

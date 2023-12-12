@@ -15,7 +15,7 @@ function CodaskNav() {
   const id = session?.user?.name;
 
   useEffect(() => {
-    console.log('%c status', 'color:purple', status);
+    // console.log('%c status', 'color:purple', status);
     if (session) {
       setIsLoggedIn(true);
     } else {
@@ -25,7 +25,7 @@ function CodaskNav() {
 
   return (
     <>
-      <nav className="static flex justify-between bg-[#6741D9] p-6">
+      <nav className=" static flex justify-between border-b-2 border-b-[#EDE9E6] bg-[#6741D9] p-6">
         <Link
           href={'/'}
           className="mx-1 hover:font-semibold focus:font-semibold"
@@ -40,7 +40,6 @@ function CodaskNav() {
         />
 
         <ul className="flex">
-          {/* {!session ? ( */}
           {!isLoggedIn ? (
             <>
               <li>

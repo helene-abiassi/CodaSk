@@ -18,7 +18,8 @@ function Profile() {
   const session = useSession();
 
   const router = useRouter();
-  const id = session.data?.user?.name as string;
+  const id = session?.data?.user?.name as string;
+  console.log('id :>> ', id);
 
   const getProfile = async () => {
     const requestOptions = {
@@ -162,7 +163,7 @@ function Profile() {
       {/* MIDDLE SECTION */}
       <div className="greyBoxUser mx-44 max-w-5xl rounded-2xl bg-[#EDE9E6] p-10">
         <h4 className="ml-6 text-lg font-semibold text-[#6741D9]">Bio</h4>
-        <div className="shadow-custom mb-6 rounded-2xl p-5">
+        <div className="mb-6 rounded-2xl p-5 shadow-custom">
           <p className="font-medium">{user?.bio}</p>
         </div>
         <div className="ml-6 flex flex-row justify-between">
@@ -208,9 +209,6 @@ function Profile() {
                     <p className="... mb-3 overflow-hidden truncate">
                       {question?.title}
                     </p>
-                    <p className="... mb-3 overflow-hidden truncate">
-                      kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh kjhfgwhdhw
-                    </p>
                     <p className="text-[#6741D9]">view all</p>
                   </div>
                 );
@@ -232,9 +230,6 @@ function Profile() {
                     <p className="... mb-3 overflow-hidden truncate">
                       {answer?.message}
                     </p>
-                    <p className="... mb-3 overflow-hidden truncate">
-                      kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh kjhfgwhdhw
-                    </p>
                     <p className="text-[#6741D9]">view all</p>
                   </div>
                 );
@@ -255,9 +250,6 @@ function Profile() {
                   <div key={tagIndex} className="w-60">
                     <p className="... mb-3 overflow-hidden truncate">
                       {tag?.name}
-                    </p>
-                    <p className="... mb-3 overflow-hidden truncate">
-                      kjhfgwhdhw hwefihwfeliuew hiuefwhiuwefh kjhfgwhdhw
                     </p>
                     <p className="text-[#6741D9]">view all</p>
                   </div>

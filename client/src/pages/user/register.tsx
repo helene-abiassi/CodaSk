@@ -13,6 +13,7 @@ function Register({}: Props) {
           please sign up
         </h1>
         <br />
+        <br />
         <Image
           className="relative -top-32 left-72 z-10"
           width={300}
