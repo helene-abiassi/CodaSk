@@ -39,8 +39,7 @@ function NewQuestionForm({
   setFilteredTags,
   postQuestion,
 }: Props) {
-  console.log('PROP--->', questionInput);
-
+  // --------Collecting user inputs-------------------
   const getUserInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
