@@ -2,7 +2,6 @@ import userModel from "../models/userModel.js";
 import { tagModel } from "../models/tagModel.js";
 import questionModel from "../models/questionModel.js";
 import { answerModel } from "../models/answerModel.js";
-// import questionModel from "../models/questionModel.js";
 import { v2 as cloudinary } from "cloudinary";
 import { hashPassword, verifyPassword } from "../utilities/passwordServices.js";
 import { generateToken } from "../utilities/tokenServices.js";
@@ -12,14 +11,14 @@ import { generateToken } from "../utilities/tokenServices.js";
 const getAllUsers = async (req, res) => {
   try {
     const allUsers = await userModel.find().populate([
-      // {
-      //   path: "questions",
-      //   select: ["author", "title", "posted_on"],
-      //   populate: {
-      //     path: "author",
-      //     select: ["first_name", "last_name"],
-      //   },
-      // },
+      {
+        path: "questions",
+        select: ["author", "title", "posted_on"],
+        populate: {
+          path: "author",
+          select: ["first_name", "last_name"],
+        },
+      },
       {
         path: "answers",
         select: ["author", "message", "votes", "posted_on"],
@@ -28,10 +27,10 @@ const getAllUsers = async (req, res) => {
           select: ["first_name", "last_name"],
         },
       },
-      // {
-      //   path: "saved_tags",
-      //   select: ["name"],
-      // },
+      {
+        path: "saved_tags",
+        select: ["name"],
+      },
     ]);
 
     res.json({
@@ -47,16 +46,39 @@ const getUserById = async (req, res) => {
   const id = req.params._id;
 
   try {
-    const userByID = await userModel.find({
-      _id: id,
-    });
+    const userByID = await userModel
+      .find({
+        _id: id,
+      })
+      .populate([
+        {
+          path: "questions",
+          select: ["author", "title", "posted_on"],
+          populate: {
+            path: "author",
+            select: ["first_name", "last_name"],
+          },
+        },
+        {
+          path: "answers",
+          select: ["author", "message", "votes", "posted_on"],
+          populate: {
+            path: "author",
+            select: ["first_name", "last_name"],
+          },
+        },
+        {
+          path: "saved_tags",
+          select: ["name"],
+        },
+      ]);
     if (userByID.length > 0) {
       res.status(200).json({
         number: userByID.length,
         data: userByID,
       });
     } else {
-      res.status(200).json({
+      res.status(404).json({
         number: userByID.length,
         errorMessage: "OH NO! No such user with this id exists",
       });
@@ -86,7 +108,7 @@ const getProfile = async (req, res) => {
         country: req.user.location.country,
         city: req.user.location.city,
         course_type: req.user.course_type,
-        course_date: req.user.course_date,
+        // course_date: req.user.course_date,
         cohort_name: req.user.cohort_name,
         user_permission: req.user.user_permission,
         website: req.user.website,
@@ -160,14 +182,14 @@ const completeProfile = async (req, res) => {
   const update = {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
-    user_photoe: req.body.user_photo,
+    user_photo: req.body.user_photo,
     bio: req.body.bio,
     location: {
       country: req.body.country,
       city: req.body.city,
     },
     course_type: req.body.course_type,
-    course_date: req.body.course_date,
+    // course_date: req.body.course_date,
     cohort_name: req.body.cohort_name,
     user_permission: req.body.user_permission,
     website: req.body.website,
@@ -192,10 +214,6 @@ const completeProfile = async (req, res) => {
 };
 
 const uploadImage = async (req, res) => {
-  console.log("REQ.FILE", req.file);
-  console.log(process.env.CLOUDINARY_CLOUDNAME);
-  console.log("API KEY", process.env.CLOUDINARY_APIKEY);
-
   if (req.file) {
     try {
       const uploadedImage = await cloudinary.uploader.upload(req.file.path, {

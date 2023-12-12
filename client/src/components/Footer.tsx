@@ -1,35 +1,37 @@
+import Link from 'next/link';
 import React from 'react';
+import {FaGithub} from 'react-icons/fa';
 
 function Footer() {
   return (
-    <div>
-      <div className="ml-48 h-full bg-black text-white">
-        <div>
-          <p>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="40"
-              height="40"
-              viewBox="0 0 52 52"
-              fill="none"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M26.0564 4.33325C14.1202 4.33325 4.44604 14.0074 4.44604 25.9436C4.44604 35.4899 10.6362 43.5911 19.2249 46.4511C20.306 46.6461 20.696 45.9809 20.696 45.4089C20.696 44.8954 20.6787 43.5348 20.6722 41.7343C14.6597 43.0386 13.39 38.8353 13.39 38.8353C12.4107 36.3393 10.9915 35.6741 10.9915 35.6741C9.03071 34.3329 11.141 34.3633 11.141 34.3633C13.312 34.5149 14.4495 36.5906 14.4495 36.5906C16.3779 39.8926 19.5109 38.9393 20.7372 38.3867C20.9344 36.9893 21.4977 36.0359 22.113 35.4964C17.316 34.9526 12.272 33.0979 12.272 24.8148C12.272 22.4596 13.1149 20.5269 14.4907 19.0189C14.2719 18.4708 13.5244 16.2716 14.7052 13.2989C14.7052 13.2989 16.5187 12.7161 20.6462 15.5111C22.409 15.0315 24.2274 14.7868 26.0542 14.7831C27.8811 14.786 29.6996 15.0308 31.4622 15.5111C35.5919 12.7139 37.4032 13.2989 37.4032 13.2989C38.584 16.2716 37.843 18.4708 37.6177 19.0189C39.0044 20.5269 39.8364 22.4574 39.8364 24.8148C39.8364 33.1196 34.788 34.9439 29.9737 35.4791C30.7429 36.1464 31.4362 37.4638 31.4362 39.4788C31.4362 42.3691 31.4102 44.7004 31.4102 45.4089C31.4102 45.9874 31.7959 46.6591 32.8987 46.4468C41.483 43.5824 47.6667 35.4878 47.6667 25.9436C47.6667 14.0074 37.9925 4.33325 26.0564 4.33325Z"
-                fill="#D9D9D9"
-              />
-            </svg>
-            CODASK
-          </p>
-          <p>Hélène Abi Assi | Thair Orfali | Rafał Zając</p>
-        </div>
+    <div className="flex h-full w-full justify-around bg-black p-8 text-white">
+      <Link href={'https://github.com/helene-abiassi/CodaSk'} target="_blank">
+        <FaGithub style={{fontSize: '2em'}} />
+      </Link>
+      <div className="text-center">
+        <p>CODASK</p>
 
-        <div>
-          {' '}
-          <p>About</p>
-          <p>Contact</p>
-        </div>
+        <p>
+          <Link href={'https://github.com/helene-abiassi'} target="_blank">
+            Hélène Abi Assi
+          </Link>{' '}
+          |{' '}
+          <Link href={'https://github.com/ThairOr'} target="_blank">
+            Thair Orfali{' '}
+          </Link>
+          |{' '}
+          <Link href={'https://github.com/RZajacc'} target="_blank">
+            Rafał Zając
+          </Link>
+        </p>
+      </div>
+
+      <div>
+        {' '}
+        <p>
+          <Link href={'/about'}>About</Link>
+        </p>
+        <p>Contact</p>
       </div>
     </div>
   );
