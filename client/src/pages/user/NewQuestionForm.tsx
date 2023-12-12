@@ -2,27 +2,9 @@ import React, {ChangeEvent, useState} from 'react';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
+import {AllTagsQuery, Tag, questionInput} from '@/types/askQuestionTypes';
 
 const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
-
-type Tag = {
-  id: string;
-  name: string;
-  course_type: string;
-};
-
-type AllTagsQuery = {
-  getAllTags: Tag[];
-};
-
-// * TYPES
-type questionInput = {
-  title: string;
-  problem_description: string;
-  solutions_tried: string;
-  github_repo: string;
-  module: string;
-};
 
 type Props = {
   tagData: AllTagsQuery | undefined;
@@ -199,7 +181,7 @@ function NewQuestionForm({
 
         <>
           {/* Submit and Cancel button */}
-          <div className="mb-6 mr-48 flex justify-end">
+          <div className="mb-6 mr-60 flex justify-end">
             <button className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white">
               cancel
             </button>

@@ -2,28 +2,14 @@ import {gql, useMutation, useQuery} from '@apollo/client';
 import {useState} from 'react';
 import NewQuestionForm from './NewQuestionForm';
 import AssignTags from './AssignTags';
+import {
+  AllTagsQuery,
+  Tag,
+  addQuestionDataType,
+  questionInput,
+} from '@/types/askQuestionTypes';
 
-
-// * TYPES
-type questionInput = {
-  title: string;
-  problem_description: string;
-  solutions_tried: string;
-  github_repo: string;
-  module: string;
-};
-
-type Tag = {
-  id: string;
-  name: string;
-  course_type: string;
-};
-
-type AllTagsQuery = {
-  getAllTags: Tag[];
-};
-
-// * GET ALL TAGS
+// --------QUERIES--------------
 const GET_ALLTAGS = gql`
   query GetAllTags {
     getAllTags {
@@ -34,18 +20,15 @@ const GET_ALLTAGS = gql`
   }
 `;
 
-// * POST QUESTION QUERY
+// --------MUTATIONS-------------
 const POST_NEWQUESTION = gql`
   mutation AddQuestion($newQuestion: newQuestionInput) {
     addQuestion(newQuestion: $newQuestion) {
       id
-      title
-      posted_on
     }
   }
 `;
 
-// * UPDATE TAGS
 const UPDATE_TAGS = gql`
   mutation UpdateTags($updateTagsId: [ID], $editInput: editTagInput) {
     updateTags(id: $updateTagsId, editInput: $editInput) {
@@ -54,7 +37,6 @@ const UPDATE_TAGS = gql`
   }
 `;
 
-// * UPDATE QUESTION
 const UPDATE_QUESTION = gql`
   mutation Mutation($updateQuestionId: ID, $editInput: editQuestionInput) {
     updateQuestion(id: $updateQuestionId, editInput: $editInput) {
@@ -63,7 +45,10 @@ const UPDATE_QUESTION = gql`
   }
 `;
 
-// * ---------MAIN FUNCTION-------------
+// TODO - Dodaj typy do mutacji
+// TODO - Przemyśl typ i format wybranych tagów
+// TODO - Dodaj typy propów assignTags
+
 function AskQuestion() {
   // Initialize user question object
   const [questionInput, setQuestionInput] = useState<questionInput>({
@@ -78,7 +63,9 @@ function AskQuestion() {
   const [filteredTags, setFilteredTags] = useState<Tag[]>([
     {id: '', name: '', course_type: ''},
   ]);
-  const [selectedTags, setSelectedTags] = useState<String[]>([]);
+
+  // ! Tutaj do przerobienia + nowy typ
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   // --------Queries-------------
   const {data: tagData} = useQuery<AllTagsQuery>(GET_ALLTAGS);
@@ -86,19 +73,15 @@ function AskQuestion() {
   // --------Mutations-----------
   const [
     addQuestion,
-    {data: questionData, called: addQuestionCalled, error: addQuestionErr},
-  ] = useMutation(POST_NEWQUESTION);
-  const [
-    updateTag,
-    {data: tagUpdateData, called: tagUpdateCalled, error: tagUpdateError},
-  ] = useMutation(UPDATE_TAGS);
+    {data: addQuestionData, called: addQuestionCalled, error: addQuestionErr},
+  ] = useMutation<addQuestionDataType>(POST_NEWQUESTION);
+
+  const [updateTag, {called: updateTagCalled, error: updateTagError}] =
+    useMutation(UPDATE_TAGS);
+
   const [
     updateQuestion,
-    {
-      data: updatedQuestionData,
-      called: questionUpdateCalled,
-      error: questionUpdateErr,
-    },
+    {called: updateQuestionCalled, error: UpdateQuestionErr},
   ] = useMutation(UPDATE_QUESTION);
 
   // ! TEMPORARY ID
@@ -129,13 +112,15 @@ function AskQuestion() {
       variables: {
         updateTagsId: selectedTags,
         editInput: {
-          id: questionData.addQuestion.id,
+          id: addQuestionData ? addQuestionData.addQuestion.id : undefined,
         },
       },
     });
     updateQuestion({
       variables: {
-        updateQuestionId: questionData.addQuestion.id,
+        updateQuestionId: addQuestionData
+          ? addQuestionData.addQuestion.id
+          : undefined,
         editInput: {
           tags: selectedTags,
         },
@@ -152,7 +137,6 @@ function AskQuestion() {
           setQuestionInput={setQuestionInput}
           setFilteredTags={setFilteredTags}
           postQuestion={postQuestion}
-
         />
       ) : !addQuestionErr ? (
         <AssignTags
@@ -160,10 +144,10 @@ function AskQuestion() {
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
           handleTagUpdate={handleTagUpdate}
-          questionUpdateCalled={questionUpdateCalled}
-          tagUpdateCalled={tagUpdateCalled}
-          questionUpdateErr={questionUpdateErr}
-          tagUpdateError={tagUpdateError}
+          updateQuestionCalled={updateQuestionCalled}
+          updateTagCalled={updateTagCalled}
+          UpdateQuestionErr={UpdateQuestionErr}
+          updateTagError={updateTagError}
         />
       ) : (
         <p>{addQuestionErr.message}</p>
