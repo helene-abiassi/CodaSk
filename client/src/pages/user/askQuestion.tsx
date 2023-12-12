@@ -150,7 +150,11 @@ function AskQuestion() {
           updateTagError={updateTagError}
         />
       ) : (
-        <p>{addQuestionErr.message}</p>
+        <>
+          <div className="container mx-auto mb-6 mt-10 w-8/12 text-center">
+            <p className="text-3xl text-red-600">{addQuestionErr.message}</p>
+          </div>
+        </>
       )}
     </>
   );

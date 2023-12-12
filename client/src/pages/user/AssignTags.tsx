@@ -1,5 +1,6 @@
 import {Tag} from '@/types/askQuestionTypes';
 import Link from 'next/link';
+import {ApolloError} from '@apollo/client';
 import React, {ChangeEvent} from 'react';
 import {c} from 'vitest/dist/reporters-5f784f42.js';
 
@@ -8,14 +9,10 @@ type Props = {
   selectedTags: Tag[];
   setSelectedTags: (data: Tag[]) => void;
   handleTagUpdate: () => void;
-  updateQuestionCalled: () => boolean;
+  updateQuestionCalled: boolean;
   updateTagCalled: boolean;
-  UpdateQuestionErr: {
-    message: string;
-  };
-  updateTagError: {
-    message: string;
-  };
+  UpdateQuestionErr: ApolloError | undefined;
+  updateTagError: ApolloError | undefined;
 };
 
 function AssignTags({
@@ -110,19 +107,33 @@ function AssignTags({
           </>
         ) : !UpdateQuestionErr && !updateTagError ? (
           <>
-            {/* ---------STYLING HERE--------------- */}
-            <p>Congratulations, everything went well!</p>
-            <Link
-              href={'/search/question'}
-              className="mx-1 hover:font-semibold focus:font-semibold"
-            >
-              Take me to all questions
-            </Link>
+            <div>
+              <h1 className="text-3xl text-[#6741D9]">
+                Congratulations, everything went well!
+              </h1>
+              <h3 className="text-xl text-[#6741D9]">
+                To see all questions click on the link below:
+              </h3>
+              <div className="mb-8 ml-48 mt-8">
+                <Link
+                  href={'/search/question'}
+                  className="rounded-xl bg-black p-2 text-white hover:font-semibold focus:font-semibold"
+                >
+                  Go to questions
+                </Link>
+              </div>
+            </div>
           </>
         ) : (
           <>
-            <p>{UpdateQuestionErr.message}</p>
-            <p>{updateTagError.message}</p>
+            <div className="container mx-auto mt-10 w-8/12 text-center">
+              <p className="text-3xl text-red-600">
+                {UpdateQuestionErr ? UpdateQuestionErr.message : ''}
+              </p>
+              <p className="text-3xl text-red-600">
+                {updateTagError ? updateTagError.message : ''}
+              </p>
+            </div>
           </>
         )}
       </div>
