@@ -6,32 +6,59 @@ type Props = {};
 function CodaskSidebar({}: Props) {
   return (
     <>
-      <section className="fixed h-full w-48 bg-gray-200 ">
+      <section className="fixed top-20 h-full w-48 ">
         <div className="mx-4 my-10">
-          <h3 className="text-lg font-bold text-pink-500">Search by: </h3>
+          <h3 className="mb-2 text-lg font-extralight">SEARCH BY: </h3>
           <ul>
             <li>
-              <Link href={'/search/question'}>Questions</Link>
+              <Link className="font-light" href={'/search/question'}>
+                Questions
+              </Link>
             </li>
             <li>
-              <Link href={'/search/tags'}>Tags</Link>
+              <Link className="font-light" href={'/search/tags'}>
+                Tags
+              </Link>
             </li>
             <li>
-              <Link href={'/search/modules'}>Modules</Link>
+              <Link className="font-light" href={'/search/modules'}>
+                Modules
+              </Link>
             </li>
           </ul>
         </div>
-        <div className="mx-4 my-20">
-          <h3 className="text-lg font-bold text-pink-500">Discover: </h3>
+        <hr />
+        <div className="mx-4 my-10">
+          <h3 className="mb-2 text-lg font-extralight">DISCOVER: </h3>
           <ul>
             <li>
-              <Link href={'/discover/studentProjects'}>Student Projects</Link>
+              <Link className="font-light" href={'/discover/studentProjects'}>
+                Student Projects
+              </Link>
             </li>
             <li>
-              <Link href={'/discover/polls'}>Polls</Link>
+              <Link className="font-light" href={'/discover/polls'}>
+                Polls
+              </Link>
             </li>
             <li>
-              <Link href={'/discover/discussions'}>Discussions</Link>
+              <Link className="font-light" href={'/discover/discussions'}>
+                Discussions
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <hr />
+        <div className="mx-4 my-10">
+          <ul>
+            <li className="mb-5 text-lg font-extralight">
+              <Link href={'/discover/studentProjects'}>CONNECT</Link>
+            </li>
+            <li className="mb-5 text-lg font-extralight">
+              <Link href={'/discover/polls'}>ABOUT</Link>
+            </li>
+            <li className="mb-5 text-lg font-extralight">
+              <Link href={'/discover/discussions'}>CONTACT</Link>
             </li>
           </ul>
         </div>
