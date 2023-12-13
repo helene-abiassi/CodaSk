@@ -17,6 +17,12 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "vite.config.js", "src/test/setup.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "vite.config.js",
+    "src/test/setup.js"
+  ],
   "exclude": ["node_modules"]
 }
