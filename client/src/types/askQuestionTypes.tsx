@@ -1,10 +1,10 @@
-// User input from corrresonding fields
 export type questionInput = {
   title: string;
   problem_description: string;
   solutions_tried: string;
   github_repo: string;
   module: string;
+  course_type: string;
 };
 
 // ----Queries and Mutations types------

@@ -1,5 +1,5 @@
 import {gql, useMutation, useQuery} from '@apollo/client';
-import {useState} from 'react';
+import {RefObject, useRef, useState} from 'react';
 import NewQuestionForm from './NewQuestionForm';
 import AssignTags from './AssignTags';
 import {
@@ -8,6 +8,7 @@ import {
   addQuestionDataType,
   questionInput,
 } from '@/types/askQuestionTypes';
+import {validateInputs} from '@/utils/questionValidator';
 
 // --------QUERIES--------------
 const GET_ALLTAGS = gql`
@@ -45,10 +46,6 @@ const UPDATE_QUESTION = gql`
   }
 `;
 
-// TODO - Dodaj typy do mutacji
-// TODO - Przemyśl typ i format wybranych tagów
-// TODO - Dodaj typy propów assignTags
-
 function AskQuestion() {
   // Initialize user question object
   const [questionInput, setQuestionInput] = useState<questionInput>({
@@ -57,14 +54,17 @@ function AskQuestion() {
     solutions_tried: '',
     github_repo: '',
     module: '',
+    course_type: 'none',
   });
+
+  // Input validation errors
+  const [errorArr, setErrorArr] = useState<String[]>([]);
 
   // Filter tags by user selection
   const [filteredTags, setFilteredTags] = useState<Tag[]>([
     {id: '', name: '', course_type: ''},
   ]);
 
-  // ! Tutaj do przerobienia + nowy typ
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   // --------Queries-------------
@@ -87,24 +87,43 @@ function AskQuestion() {
   // ! TEMPORARY ID
   const userID = '656b4777d89e223b1e928c33';
 
-  // Post a new question
-  const postQuestion = () => {
-    addQuestion({
-      variables: {
-        newQuestion: {
-          title: questionInput.title,
-          author: userID,
-          problem_description: questionInput.problem_description,
-          solution_tried: questionInput.solutions_tried,
-          posted_on: Date.now(),
-          github_repo: questionInput.github_repo,
-          tags: selectedTags,
-          answers: [],
-          saved_by: [],
-          module: questionInput.module,
+  // References to fields that require validation
+  const titleRef = useRef<HTMLInputElement>(null);
+  const problemDescRef = useRef<HTMLSpanElement>(null);
+  const solutionTriedRef = useRef<HTMLSpanElement>(null);
+  const courseTypeRef = useRef<HTMLSelectElement>(null);
+
+  const postQuestion = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const errArr = validateInputs(
+      questionInput,
+      titleRef,
+      problemDescRef,
+      solutionTriedRef,
+      courseTypeRef
+    );
+
+    if (errArr.length !== 0) {
+      setErrorArr(errArr);
+    } else {
+      addQuestion({
+        variables: {
+          newQuestion: {
+            title: questionInput.title,
+            author: userID,
+            problem_description: questionInput.problem_description,
+            solution_tried: questionInput.solutions_tried,
+            posted_on: Date.now(),
+            github_repo: questionInput.github_repo,
+            tags: selectedTags,
+            answers: [],
+            saved_by: [],
+            module: questionInput.module,
+          },
         },
-      },
-    });
+      });
+    }
   };
 
   const handleTagUpdate = () => {
@@ -137,6 +156,11 @@ function AskQuestion() {
           setQuestionInput={setQuestionInput}
           setFilteredTags={setFilteredTags}
           postQuestion={postQuestion}
+          titleRef={titleRef}
+          problemDescRef={problemDescRef}
+          solutionTriedRef={solutionTriedRef}
+          courseTypeRef={courseTypeRef}
+          errorArr={errorArr}
         />
       ) : !addQuestionErr ? (
         <AssignTags

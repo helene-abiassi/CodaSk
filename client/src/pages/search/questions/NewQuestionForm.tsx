@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useRef} from 'react';
+import React, {ChangeEvent, RefObject, useRef} from 'react';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
@@ -11,7 +11,12 @@ type Props = {
   questionInput: questionInput;
   setQuestionInput: ({}: questionInput) => void;
   setFilteredTags: ([{}]: Tag[]) => void;
-  postQuestion: () => void;
+  postQuestion: (e: React.FormEvent<HTMLFormElement>) => void;
+  titleRef: RefObject<HTMLInputElement>;
+  problemDescRef: RefObject<HTMLSpanElement>;
+  solutionTriedRef: RefObject<HTMLSpanElement>;
+  courseTypeRef: RefObject<HTMLSelectElement>;
+  errorArr: String[];
 };
 
 function NewQuestionForm({
@@ -20,6 +25,11 @@ function NewQuestionForm({
   setQuestionInput,
   setFilteredTags,
   postQuestion,
+  titleRef,
+  problemDescRef,
+  solutionTriedRef,
+  courseTypeRef,
+  errorArr,
 }: Props) {
   // --------Collecting user inputs-------------------
   const getUserInput = (
@@ -44,21 +54,15 @@ function NewQuestionForm({
       tagData.getAllTags.filter((tag) => {
         return tag.course_type === filterVal;
       });
+    setQuestionInput({...questionInput, ['course_type']: e.target.value});
     setFilteredTags(
       filterData ? filterData : [{id: '', name: '', course_type: ''}]
     );
   };
 
-  const divRef = useRef<HTMLDivElement>(null);
-
-  const testPost = (e) => {
-    e.preventDefault();
-
-    // console.log(divRef.current);
-  };
   return (
     <>
-      <form onSubmit={testPost}>
+      <form onSubmit={postQuestion}>
         <div className="container mx-auto mt-10 w-7/12">
           <h1 className="text-3xl text-[#6741D9]">Ask a question</h1>
           <h3 className="text-xl text-[#6741D9]">
@@ -70,9 +74,10 @@ function NewQuestionForm({
             <input
               type="text"
               name="title"
-              placeholder="What is your question"
-              className="col-span-6 my-6 h-12 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
+              placeholder="*What is your question"
+              className="col-span-6 my-6 h-12 rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
               onChange={getUserInput}
+              ref={titleRef}
             />
             <div className="col-span-2 flex">
               <div className="relative mx-2 my-auto">
@@ -97,12 +102,12 @@ function NewQuestionForm({
           {/* Problem description */}
           <div className="grid grid-cols-8 gap-6">
             <span
-              className="col-span-6 mb-6 h-52 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
-              ref={divRef}
+              className="min-h-40 col-span-6 mb-6 rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
+              ref={problemDescRef}
             >
               <QuillEditor
                 value={questionInput.problem_description}
-                placeholder="Describe your problem in details..."
+                placeholder="*Describe your problem in details..."
                 onChange={handleProblemDescription}
                 modules={quillModules}
                 formats={quillFormats}
@@ -130,14 +135,18 @@ function NewQuestionForm({
 
           {/* Solutions tried */}
           <div className="grid grid-cols-8 gap-6">
-            <QuillEditor
-              value={questionInput.solutions_tried}
-              placeholder="What solution(s) did you try?"
-              onChange={handleTriedSolutions}
-              modules={quillModules}
-              formats={quillFormats}
-              className="col-span-6 mb-6 h-52 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
-            />
+            <span
+              className="col-span-6 mb-6 rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
+              ref={solutionTriedRef}
+            >
+              <QuillEditor
+                value={questionInput.solutions_tried}
+                placeholder="*What solution(s) did you try?"
+                onChange={handleTriedSolutions}
+                modules={quillModules}
+                formats={quillFormats}
+              />
+            </span>
             <div className="col-span-2 flex">
               <div className="relative mx-2 my-auto">
                 <div className="bottom-full right-0 h-16 w-36 rounded bg-[#B197FC] px-4 py-1 text-xs text-[#D9D9D9]">
@@ -162,10 +171,11 @@ function NewQuestionForm({
           <select
             name="course_type"
             id="course_type"
-            className="mb-6 ml-1 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
+            className="mb-6 ml-1 rounded-lg border-2 bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
             onChange={handleCourseType}
+            ref={courseTypeRef}
           >
-            <option value="none">Course type</option>
+            <option value="none">*Course type</option>
             <option value="Web Development">Web Development</option>
             <option value="Data Analytics">Data Science</option>
           </select>
@@ -189,21 +199,26 @@ function NewQuestionForm({
             name="github_repo"
             onChange={getUserInput}
           />
-          {/* SUBMIT A QUESTION*/}
+          {/* Validation errors */}
+          {errorArr &&
+            errorArr.map((err) => {
+              return <p className="p-1 font-medium text-red-500">{err}</p>;
+            })}
+          <h3 className="mb-6 mt-6 text-xl text-[#6741D9]">
+            * - Required fields
+          </h3>
 
-          <>
-            {/* Submit and Cancel button */}
-            <div className="mb-6 mr-60 flex justify-end">
-              <button className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white">
-                cancel
-              </button>
-              <input
-                type="submit"
-                value={'Submit'}
-                className="mx-1 my-1 cursor-pointer rounded-xl bg-black px-3 py-[0.10rem] text-white"
-              />
-            </div>
-          </>
+          {/* Submit and Cancel button */}
+          <div className="mb-6 mr-60 flex justify-end">
+            <button className="mx-1 my-1 rounded-xl bg-black px-3 py-[0.10rem] text-white">
+              cancel
+            </button>
+            <input
+              type="submit"
+              value={'Submit'}
+              className="mx-1 my-1 cursor-pointer rounded-xl bg-black px-3 py-[0.10rem] text-white"
+            />
+          </div>
         </div>
       </form>
     </>
