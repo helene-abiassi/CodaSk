@@ -5,11 +5,12 @@ import {FaRegEnvelope} from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 import {useEffect, useState} from 'react';
+import SearchBox from './SearchBox';
 
 function CodaskNav() {
   const {data: session, status, update} = useSession();
-  console.log('session in NAV :>> ', session);
-  console.log('status in NAV :>> ', status);
+  // console.log('session in NAV :>> ', session);
+  // console.log('status in NAV :>> ', status);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const id = session?.user?.name;
@@ -26,6 +27,7 @@ function CodaskNav() {
   return (
     <>
       <nav className=" static flex justify-between border-b-2 border-b-[#EDE9E6] bg-[#6741D9] p-6">
+        {/* LEFT SECTION */}
         <Link
           href={'/'}
           className="mx-1 hover:font-semibold focus:font-semibold"
@@ -33,12 +35,17 @@ function CodaskNav() {
           <Image src={'/favicon.ico'} alt="Logo" width={30} height={30} />
         </Link>
 
-        <input
+        {/* MIDDLE SECTION */}
+        {/* <input
           type="text"
           placeholder="search for keywords, tags, questions..."
           className="placeholder:text-gray-black rounded-lg bg-[#EDE9E6] p-1 text-black placeholder:text-center placeholder:text-sm placeholder:font-thin"
-        />
+        /> */}
+        <div className="w-5/12">
+          <SearchBox />
+        </div>
 
+        {/* RIGHT SECTION */}
         <ul className="flex">
           {!isLoggedIn ? (
             <>
@@ -74,7 +81,7 @@ function CodaskNav() {
               </li> */}
               <li>
                 {' '}
-                <Link href={'/user/askQuestion'} className="">
+                <Link href={'/user/askQuestion'}>
                   <BsPatchQuestion style={{fontSize: '2em', color: 'white'}} />
                 </Link>
               </li>

@@ -8,7 +8,6 @@ function CompleteProfileForm() {
   const session = useSession();
 
   const id = session!.data?.user?.name as string;
-  // console.log('session :>> ', session);
   console.log('id :>> ', id);
 
   const cohortNames = [
@@ -255,7 +254,7 @@ function CompleteProfileForm() {
             </label>
             <input
               value={userInfo?.first_name || ''}
-              className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2"
+              className="mb-6 rounded-2xl bg-[#EDE9E6] p-2 shadow-custom"
               onChange={handleInfoInput}
               type="text"
               name="first_name"
@@ -272,7 +271,7 @@ function CompleteProfileForm() {
             </label>
             <input
               value={userInfo?.last_name || ''}
-              className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2"
+              className="mb-6 rounded-2xl bg-[#EDE9E6] p-2 shadow-custom"
               onChange={handleInfoInput}
               type="text"
               name="last_name"
@@ -293,7 +292,7 @@ function CompleteProfileForm() {
             </label>
             <input
               value={userInfo?.bio || ''}
-              className="shadow-custom mb-6 h-20  rounded-2xl bg-[#EDE9E6] p-2"
+              className="mb-6 h-20 rounded-2xl  bg-[#EDE9E6] p-2 shadow-custom"
               onChange={handleInfoInput}
               type="text"
               name="bio"
@@ -315,7 +314,7 @@ function CompleteProfileForm() {
             </label>
             <input
               value={userInfo?.location?.city || ''}
-              className="shadow-custom rounded-2xl bg-[#EDE9E6] p-2"
+              className="rounded-2xl bg-[#EDE9E6] p-2 shadow-custom"
               onChange={handleLocationInput}
               type="text"
               name="city"
@@ -332,7 +331,7 @@ function CompleteProfileForm() {
             </label>
             <input
               value={userInfo?.location?.country || ''}
-              className="shadow-custom  rounded-2xl bg-[#EDE9E6] p-2"
+              className="rounded-2xl  bg-[#EDE9E6] p-2 shadow-custom"
               onChange={handleLocationInput}
               type="text"
               name="country"
@@ -351,7 +350,7 @@ function CompleteProfileForm() {
             </label>
             <input
               value={userInfo?.github || ''}
-              className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2"
+              className="mb-6 rounded-2xl bg-[#EDE9E6] p-2 shadow-custom"
               onChange={handleInfoInput}
               type="text"
               name="github"
@@ -368,7 +367,7 @@ function CompleteProfileForm() {
             </label>
             <input
               value={userInfo?.website || ''}
-              className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2"
+              className="mb-6 rounded-2xl bg-[#EDE9E6] p-2 shadow-custom"
               onChange={handleInfoInput}
               type="text"
               name="website"
@@ -448,7 +447,7 @@ function CompleteProfileForm() {
           >
             from the
             <select
-              className="shadow-custom mb-6 rounded-2xl bg-[#EDE9E6] p-2 text-black"
+              className="mb-6 rounded-2xl bg-[#EDE9E6] p-2 text-black shadow-custom"
               onChange={handleDropdownInput}
               name="cohort_name"
               id="cohort_name"
@@ -491,9 +490,23 @@ function CompleteProfileForm() {
           </div> */}
         </div>
         <br />
-        <button className=" rounded-full px-4 py-2 font-bold text-[#6741D9] hover:text-black ">
-          save
-        </button>
+        <div className="flex flex-row justify-between">
+          <button
+            onClick={() => {
+              router.back();
+            }}
+            type="button"
+            className="mx-1 my-1 w-min rounded-xl bg-black p-3 py-[0.10rem] text-white"
+          >
+            cancel
+          </button>
+          <button
+            type="submit"
+            className="mx-1 my-1 w-min rounded-xl bg-black p-3 py-[0.10rem] text-white"
+          >
+            save
+          </button>
+        </div>
       </form>
     </div>
   );
