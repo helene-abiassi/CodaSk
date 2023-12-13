@@ -8,17 +8,8 @@ function BackButton() {
   };
 
   return (
-    <div>
-      <button
-        style={{
-          fontSize: '36pt',
-          color: 'black',
-          backgroundColor: 'transparent',
-        }}
-        onClick={goBack}
-      >
-        ←
-      </button>
+    <div className="text-4xl text-black">
+      <button onClick={goBack}>←</button>
     </div>
   );
 }

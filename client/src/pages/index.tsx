@@ -1,4 +1,4 @@
-import {useSession} from 'next-auth/react';
+// import {useSession} from 'next-auth/react';
 import {Inter} from 'next/font/google';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -7,7 +7,7 @@ import Link from 'next/link';
 const inter = Inter({subsets: ['latin']});
 
 export default function Home() {
-  const {data: session} = useSession();
+  // const {data: session} = useSession();
 
   return (
     <>
@@ -51,7 +51,7 @@ export default function Home() {
               <div className="flex flex-row justify-around">
                 <div
                   id="greyCTABox"
-                  className="shadow-custom h-40 w-40 rounded-lg bg-[#D9D9D9] p-5"
+                  className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
                 >
                   <Link
                     className="text-center text-xl font-bold text-[#6741D9] "
@@ -63,7 +63,7 @@ export default function Home() {
 
                 <div
                   id="greyCTABox"
-                  className="shadow-custom h-40 w-40 rounded-lg bg-[#D9D9D9] p-5"
+                  className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
                 >
                   <Link
                     className="text-center text-xl font-bold text-[#6741D9]"
@@ -74,7 +74,7 @@ export default function Home() {
                 </div>
                 <div
                   id="greyCTABox"
-                  className="shadow-custom h-40 w-40 rounded-lg bg-[#D9D9D9] p-5"
+                  className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
                 >
                   <Link
                     className="text-center text-xl font-bold text-[#6741D9]"
