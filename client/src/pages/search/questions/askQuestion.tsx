@@ -146,7 +146,6 @@ function AskQuestion() {
       },
     });
   };
-
   return (
     <>
       {!addQuestionCalled ? (
