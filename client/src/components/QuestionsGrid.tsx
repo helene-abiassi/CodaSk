@@ -1,11 +1,13 @@
-import {gql, useQuery} from '@apollo/client';
+import {ApolloClient, InMemoryCache, gql} from '@apollo/client';
 import React from 'react';
+import {GetServerSideProps} from 'next';
 import QuestionCard from './QuestionCard';
 
-export type questionQuery = {
+type questionQuery = {
   getAllQuestions: [
     {
       author: {
+        id: string;
         first_name: string;
         user_photo: string;
       };
@@ -34,40 +36,18 @@ export type questionQuery = {
   ];
 };
 
-const GET_QUESTIONS = gql`
-  query getAllQuestions {
-    getAllQuestions {
-      author {
-        first_name
-        user_photo
-      }
-      posted_on
-      title
-      problem_description
-      solution_tried
-      module
-      tags {
-        name
-      }
-      answers {
-        id
-      }
-      saved_by {
-        first_name
-      }
-      status
-    }
-  }
-`;
+type Props = {
+  data: questionQuery;
+};
 
-function QuestionsGrid() {
-  const {data} = useQuery<questionQuery>(GET_QUESTIONS);
-  console.log('data in QGrid :>> ', data);
+function QuestionsGrid({data}: Props) {
+  console.log('data in GRID :>> ', data);
 
   return (
-    <div>
+    <div className="flex flex-col">
+      {/* FILTER BOX */}
       <div className="sortByBox flex flex-row border-b-2 border-b-[#D9D9D9] p-2">
-        <span className="flex flex-row  font-light text-[#6741D9]">
+        <span className="flex flex-row  text-lg font-normal text-[#6741D9]">
           Sort by:
           <ul className="flex flex-row">
             <li className=" px-1" value={'Newest'}>

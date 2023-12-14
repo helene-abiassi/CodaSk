@@ -1,35 +1,96 @@
 import {useSession} from 'next-auth/react';
 import React from 'react';
-import {useQuery, gql} from '@apollo/client';
+import {useQuery, gql, ApolloClient, InMemoryCache} from '@apollo/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import QuestionsGrid from '@/components/QuestionsGrid';
+import {GetServerSideProps} from 'next';
 
-type Props = {};
-
-type questionQuery = {
+export type questionQuery = {
   getAllQuestions: [
     {
       author: {
+        id: string;
         first_name: string;
+        user_photo: string;
       };
+      posted_on: Date;
       title: string;
+      problem_description: string;
+      solution_tried: string;
       module: string;
-      github_repo: string;
+      tags: [
+        {
+          name: string;
+        },
+      ];
+      answers: [
+        {
+          id: string;
+        },
+      ];
+      saved_by: [
+        {
+          first_name: string;
+        },
+      ];
+      status: string;
     },
   ];
+};
+
+type ComponentProps = {
+  data: questionQuery;
 };
 
 const GET_QUESTIONS = gql`
   query getAllQuestions {
     getAllQuestions {
+      author {
+        id
+        first_name
+        user_photo
+      }
+      posted_on
       title
+      problem_description
+      solution_tried
+      module
+      tags {
+        name
+      }
+      answers {
+        id
+      }
+      saved_by {
+        first_name
+      }
+      status
     }
   }
 `;
 
-function Question({}: Props) {
-  const {data} = useQuery<questionQuery>(GET_QUESTIONS);
+export const getServerSideProps: GetServerSideProps<
+  ComponentProps
+> = async () => {
+  const client = new ApolloClient({
+    uri: 'http://localhost:5008/graphql',
+    cache: new InMemoryCache(),
+  });
+
+  const {data} = await client.query({
+    query: GET_QUESTIONS,
+  });
+
+  return {
+    props: {
+      data: data,
+    },
+  };
+};
+
+function Question({data}: ComponentProps) {
+  console.log('data in Question page :>> ', data);
 
   const handleChatButton = () => {
     //!Replace alert with modal
@@ -37,7 +98,7 @@ function Question({}: Props) {
   };
 
   return (
-    <div className="h-screen">
+    <div className="h-full w-full">
       {/* TOP SECTION */}
       <div className="flex flex-row items-start justify-between px-6 py-6">
         <h1 className=" mx-8 mt-4 text-left font-medium text-[#6741D9] md:text-3xl">
@@ -46,7 +107,7 @@ function Question({}: Props) {
         <div className="flex flex-col">
           <Link
             className="my-2 rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
-            href={'/user/askQuestion'}
+            href={'/search/questions/askQuestion'}
           >
             Ask a question
           </Link>
@@ -61,7 +122,7 @@ function Question({}: Props) {
 
       {/* GRID SECTION */}
       <div className="mx-8">
-        <QuestionsGrid />
+        <QuestionsGrid data={data} />
       </div>
     </div>
   );

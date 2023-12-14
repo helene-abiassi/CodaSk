@@ -11,7 +11,7 @@ function CodaskSidebar({}: Props) {
           <h3 className="mb-2 text-lg font-extralight">SEARCH BY: </h3>
           <ul>
             <li>
-              <Link className="font-light" href={'/search/question'}>
+              <Link className="font-light" href={'/search/questions'}>
                 Questions
               </Link>
             </li>
