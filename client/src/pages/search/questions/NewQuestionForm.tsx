@@ -1,4 +1,4 @@
-import React, {ChangeEvent, RefObject, useRef} from 'react';
+import React, {ChangeEvent} from 'react';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';

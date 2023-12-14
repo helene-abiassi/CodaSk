@@ -68,6 +68,7 @@ function AskQuestion() {
     {id: '', name: '', course_type: ''},
   ]);
 
+  // List of tags selected by a user
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   // --------Queries-------------
@@ -90,8 +91,11 @@ function AskQuestion() {
   // ! TEMPORARY ID
   const userID = '656b4777d89e223b1e928c33';
 
+  // Post a new question if no errors in form
   const postQuestion = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Inform app that function was attempted to use
     setPostQCalled(true);
     const errArr = validateInputs(questionInput);
 
@@ -117,10 +121,15 @@ function AskQuestion() {
     }
   };
 
+  // Reduce array of objects to array of strings with their id
+  const selectedTagId = selectedTags.map((tag) => {
+    return tag.id;
+  });
+
   const handleTagUpdate = () => {
     updateTag({
       variables: {
-        updateTagsId: selectedTags,
+        updateTagsId: selectedTagId,
         editInput: {
           id: addQuestionData ? addQuestionData.addQuestion.id : undefined,
         },
@@ -132,7 +141,7 @@ function AskQuestion() {
           ? addQuestionData.addQuestion.id
           : undefined,
         editInput: {
-          tags: selectedTags,
+          tags: selectedTagId,
         },
       },
     });

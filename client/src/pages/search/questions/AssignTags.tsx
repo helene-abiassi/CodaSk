@@ -2,7 +2,6 @@ import {Tag} from '@/types/askQuestionTypes';
 import Link from 'next/link';
 import {ApolloError} from '@apollo/client';
 import React, {ChangeEvent} from 'react';
-import {c} from 'vitest/dist/reporters-5f784f42.js';
 
 type Props = {
   filteredTags: Tag[];
@@ -59,20 +58,21 @@ function AssignTags({
               {filteredTags &&
                 filteredTags.map((tag) => {
                   return (
-                    <>
-                      <div className="m-1 w-44 rounded-lg border-2 border-[#6741D9] bg-[#EDE9E6] p-1 text-[#6741D9]">
-                        <input
-                          type="checkbox"
-                          id={tag.name}
-                          name={tag.name}
-                          value={tag.id}
-                          onChange={handleTagSelection}
-                        />
-                        <label htmlFor="html" className="p-1">
-                          {tag.name}
-                        </label>
-                      </div>
-                    </>
+                    <div
+                      className="m-1 w-44 rounded-lg border-2 border-[#6741D9] bg-[#EDE9E6] p-1 text-[#6741D9]"
+                      key={tag.id}
+                    >
+                      <input
+                        type="checkbox"
+                        id={tag.name}
+                        name={tag.name}
+                        value={tag.id}
+                        onChange={handleTagSelection}
+                      />
+                      <label htmlFor="html" className="p-1">
+                        {tag.name}
+                      </label>
+                    </div>
                   );
                 })}
             </div>
