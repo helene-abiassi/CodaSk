@@ -1,5 +1,5 @@
 import {gql, useMutation, useQuery} from '@apollo/client';
-import {RefObject, useRef, useState} from 'react';
+import {useState} from 'react';
 import NewQuestionForm from './NewQuestionForm';
 import AssignTags from './AssignTags';
 import {
@@ -57,6 +57,9 @@ function AskQuestion() {
     course_type: 'none',
   });
 
+  // Check if postQuestion was called (important for inputs styling)
+  const [postQCalled, setPostQCalled] = useState(false);
+
   // Input validation errors
   const [errorArr, setErrorArr] = useState<String[]>([]);
 
@@ -65,6 +68,7 @@ function AskQuestion() {
     {id: '', name: '', course_type: ''},
   ]);
 
+  // List of tags selected by a user
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   // --------Queries-------------
@@ -87,22 +91,13 @@ function AskQuestion() {
   // ! TEMPORARY ID
   const userID = '656b4777d89e223b1e928c33';
 
-  // References to fields that require validation
-  const titleRef = useRef<HTMLInputElement>(null);
-  const problemDescRef = useRef<HTMLSpanElement>(null);
-  const solutionTriedRef = useRef<HTMLSpanElement>(null);
-  const courseTypeRef = useRef<HTMLSelectElement>(null);
-
+  // Post a new question if no errors in form
   const postQuestion = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const errArr = validateInputs(
-      questionInput,
-      titleRef,
-      problemDescRef,
-      solutionTriedRef,
-      courseTypeRef
-    );
+    // Inform app that function was attempted to use
+    setPostQCalled(true);
+    const errArr = validateInputs(questionInput);
 
     if (errArr.length !== 0) {
       setErrorArr(errArr);
@@ -126,10 +121,15 @@ function AskQuestion() {
     }
   };
 
+  // Reduce array of objects to array of strings with their id
+  const selectedTagId = selectedTags.map((tag) => {
+    return tag.id;
+  });
+
   const handleTagUpdate = () => {
     updateTag({
       variables: {
-        updateTagsId: selectedTags,
+        updateTagsId: selectedTagId,
         editInput: {
           id: addQuestionData ? addQuestionData.addQuestion.id : undefined,
         },
@@ -141,7 +141,7 @@ function AskQuestion() {
           ? addQuestionData.addQuestion.id
           : undefined,
         editInput: {
-          tags: selectedTags,
+          tags: selectedTagId,
         },
       },
     });
@@ -156,11 +156,8 @@ function AskQuestion() {
           setQuestionInput={setQuestionInput}
           setFilteredTags={setFilteredTags}
           postQuestion={postQuestion}
-          titleRef={titleRef}
-          problemDescRef={problemDescRef}
-          solutionTriedRef={solutionTriedRef}
-          courseTypeRef={courseTypeRef}
           errorArr={errorArr}
+          postQCalled={postQCalled}
         />
       ) : !addQuestionErr ? (
         <AssignTags

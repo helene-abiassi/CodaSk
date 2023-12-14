@@ -1,4 +1,4 @@
-import React, {ChangeEvent, RefObject, useRef} from 'react';
+import React, {ChangeEvent} from 'react';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
@@ -12,11 +12,8 @@ type Props = {
   setQuestionInput: ({}: questionInput) => void;
   setFilteredTags: ([{}]: Tag[]) => void;
   postQuestion: (e: React.FormEvent<HTMLFormElement>) => void;
-  titleRef: RefObject<HTMLInputElement>;
-  problemDescRef: RefObject<HTMLSpanElement>;
-  solutionTriedRef: RefObject<HTMLSpanElement>;
-  courseTypeRef: RefObject<HTMLSelectElement>;
   errorArr: String[];
+  postQCalled: boolean;
 };
 
 function NewQuestionForm({
@@ -25,11 +22,8 @@ function NewQuestionForm({
   setQuestionInput,
   setFilteredTags,
   postQuestion,
-  titleRef,
-  problemDescRef,
-  solutionTriedRef,
-  courseTypeRef,
   errorArr,
+  postQCalled,
 }: Props) {
   // --------Collecting user inputs-------------------
   const getUserInput = (
@@ -75,9 +69,14 @@ function NewQuestionForm({
               type="text"
               name="title"
               placeholder="*What is your question"
-              className="col-span-6 my-6 h-12 rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
+              className={
+                postQCalled
+                  ? questionInput.title == ''
+                    ? 'title_err'
+                    : 'title_ok'
+                  : 'title_base'
+              }
               onChange={getUserInput}
-              ref={titleRef}
             />
             <div className="col-span-2 flex">
               <div className="relative mx-2 my-auto">
@@ -102,8 +101,14 @@ function NewQuestionForm({
           {/* Problem description */}
           <div className="grid grid-cols-8 gap-6">
             <span
-              className="min-h-40 col-span-6 mb-6 rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
-              ref={problemDescRef}
+              className={
+                postQCalled
+                  ? questionInput.problem_description === '' ||
+                    questionInput.problem_description === '<p><br></p>'
+                    ? 'quill_err'
+                    : 'quill_ok'
+                  : 'quill_base'
+              }
             >
               <QuillEditor
                 value={questionInput.problem_description}
@@ -136,8 +141,14 @@ function NewQuestionForm({
           {/* Solutions tried */}
           <div className="grid grid-cols-8 gap-6">
             <span
-              className="col-span-6 mb-6 rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom"
-              ref={solutionTriedRef}
+              className={
+                postQCalled
+                  ? questionInput.solutions_tried === '' ||
+                    questionInput.solutions_tried === '<p><br></p>'
+                    ? 'quill_err'
+                    : 'quill_ok'
+                  : 'quill_base'
+              }
             >
               <QuillEditor
                 value={questionInput.solutions_tried}
@@ -171,9 +182,14 @@ function NewQuestionForm({
           <select
             name="course_type"
             id="course_type"
-            className="mb-6 ml-1 rounded-lg border-2 bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom"
             onChange={handleCourseType}
-            ref={courseTypeRef}
+            className={
+              postQCalled
+                ? questionInput.course_type == 'none'
+                  ? 'coursetype_err'
+                  : 'coursetype_ok'
+                : 'coursetype_base'
+            }
           >
             <option value="none">*Course type</option>
             <option value="Web Development">Web Development</option>
@@ -201,8 +217,12 @@ function NewQuestionForm({
           />
           {/* Validation errors */}
           {errorArr &&
-            errorArr.map((err) => {
-              return <p className="p-1 font-medium text-red-500">{err}</p>;
+            errorArr.map((err, idx) => {
+              return (
+                <p className="p-1 font-medium text-red-500" key={idx}>
+                  {err}
+                </p>
+              );
             })}
           <h3 className="mb-6 mt-6 text-xl text-[#6741D9]">
             * - Required fields
