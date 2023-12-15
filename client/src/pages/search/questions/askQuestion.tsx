@@ -8,7 +8,7 @@ import {
   addQuestionDataType,
   questionInput,
 } from '@/types/askQuestionTypes';
-import {validateInputs} from '@/utils/questionValidator';
+import {validateInputs} from '@/utils/QuestionValidator';
 
 // --------QUERIES--------------
 const GET_ALLTAGS = gql`
