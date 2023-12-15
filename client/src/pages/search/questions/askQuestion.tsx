@@ -146,6 +146,7 @@ function AskQuestion() {
       },
     });
   };
+  console.log(questionInput);
   return (
     <>
       {!addQuestionCalled ? (
