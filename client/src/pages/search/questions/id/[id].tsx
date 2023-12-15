@@ -47,7 +47,22 @@ function QuestionDetails() {
     },
   });
 
-  // Function stored in utils. Divides string into [{}]
+  // LOGIC TO GET THE posted at move to utils
+  const published = new Date(
+    data ? data.getQuestionById.posted_on : ''
+  ).getTime();
+  const now = new Date().getTime();
+
+  const diff = Math.floor((now - published) / (1000 * 3600 * 24));
+  if (diff === 0) {
+    console.log('Today');
+  } else if (diff === 1) {
+    console.log('yesterday');
+  } else {
+    console.log(diff + ' days ago');
+  }
+
+  // Calling a func
   const problemDesc = divideString(
     data ? data.getQuestionById.problem_description : ''
   );
@@ -60,6 +75,8 @@ function QuestionDetails() {
     <>
       {/* Displaying problem description depending on text type */}
       <div className="mx-auto mt-6 w-2/3">
+        {data ? data.getQuestionById.title : ''}
+        {/* <p>posted {diff === 0 ? diff===1 ? "yesterday" : 'today' : ''}</p> */}
         {problemDesc &&
           problemDesc.map((problem, idx) => {
             return (

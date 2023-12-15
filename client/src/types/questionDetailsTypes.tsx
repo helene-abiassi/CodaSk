@@ -1,20 +1,20 @@
 export type UserType = {
-  first_name: String;
+  first_name: string;
 };
 
 export type Tag = {
-  id: String;
-  name: String;
+  id: string;
+  name: string;
 };
 
 export type QuestionType = {
   author: UserType;
-  github_repo: String;
-  module: String;
-  posted_on: String;
-  problem_description: String;
-  solutions_tried: String;
-  title: String;
+  github_repo: string;
+  module: string;
+  posted_on: string;
+  problem_description: string;
+  solutions_tried: string;
+  title: string;
   tags: Tag[];
 };
 

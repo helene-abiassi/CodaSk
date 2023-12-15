@@ -9,8 +9,8 @@
  */
 
 type EntriesType = {
-  type: String;
-  data: String;
+  type: string;
+  data: string;
 };
 
 export const divideString = (quillText: String): EntriesType[] => {
