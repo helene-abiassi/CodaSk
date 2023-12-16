@@ -11,10 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import QuestionsGrid from '@/components/QuestionsGrid';
 import {GetServerSideProps} from 'next';
-<<<<<<< HEAD
 import QuestionButtons from '@/components/QuestionButtons';
-=======
->>>>>>> main
 
 export type questionQuery = {
   getAllQuestions: [
@@ -91,33 +88,6 @@ export const DELETE_QUESTION = gql`
     }
   }
 `;
-<<<<<<< HEAD
-=======
-
-export const getServerSideProps: GetServerSideProps<
-  ComponentProps
-> = async () => {
-  const client = new ApolloClient({
-    uri: 'http://localhost:5008/graphql',
-    cache: new InMemoryCache(),
-  });
-
-  const {data} = await client.query({
-    query: GET_QUESTIONS,
-  });
-
-  return {
-    props: {
-      data: data,
-    },
-  };
-};
-
-function Question({data}: ComponentProps) {
-  const [deleteQuestion] = useMutation(DELETE_QUESTION);
-
-  // console.log('dataTOFINDID :>> ', data);
->>>>>>> main
 
 export const getServerSideProps: GetServerSideProps<
   ComponentProps
@@ -148,30 +118,16 @@ function Question({data}: ComponentProps) {
         <h1 className=" mx-8 mt-4 text-left font-medium text-[#6741D9] md:text-3xl">
           Search among {data?.getAllQuestions.length} questions
         </h1>
-<<<<<<< HEAD
         <div>
-          <QuestionButtons />
-=======
-        <div className="flex flex-col">
-          <Link
-            className="my-2 rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
-            href={'/search/questions/askQuestion'}
-          >
-            Ask a question
-          </Link>
-          <button
-            className="my-2 mb-3 rounded-full bg-[#B197FC] px-4 py-2 font-medium text-white hover:bg-black"
-            onClick={handleChatButton}
-          >
-            Ask ChatGPT
-          </button>
->>>>>>> main
+          <div className="flex flex-col">
+            <QuestionButtons />
+          </div>
         </div>
-      </div>
 
-      {/* GRID SECTION */}
-      <div className="mx-8">
-        <QuestionsGrid data={data} deleteQuestion={deleteQuestion} />
+        {/* GRID SECTION */}
+        <div className="mx-8">
+          <QuestionsGrid data={data} deleteQuestion={deleteQuestion} />
+        </div>
       </div>
     </div>
   );

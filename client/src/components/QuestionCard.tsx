@@ -153,7 +153,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                   </div>
                   <div>
                     <p className="...  overflow-hidden truncate text-ellipsis pr-4">
-                      {q.problem_description}{' '}
+                      {q?.problem_description}{' '}
                     </p>
                   </div>
                   {/* TAG BODY */}
@@ -253,7 +253,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                   </div>
                   <div>
                     <p className="...  overflow-hidden truncate text-ellipsis pr-4">
-                      {q.problem_description}{' '}
+                      {q?.problem_description}{' '}
                     </p>
                   </div>
                   {/* TAG BODY */}
