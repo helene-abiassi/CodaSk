@@ -38,7 +38,7 @@ function NewQuestionForm({
   };
 
   const handleTriedSolutions = (newContent: string) => {
-    setQuestionInput({...questionInput, ['solutions_tried']: newContent});
+    setQuestionInput({...questionInput, ['solution_tried']: newContent});
   };
 
   const handleCourseType = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -143,15 +143,15 @@ function NewQuestionForm({
             <span
               className={
                 postQCalled
-                  ? questionInput.solutions_tried === '' ||
-                    questionInput.solutions_tried === '<p><br></p>'
+                  ? questionInput.solution_tried === '' ||
+                    questionInput.solution_tried === '<p><br></p>'
                     ? 'quill_err'
                     : 'quill_ok'
                   : 'quill_base'
               }
             >
               <QuillEditor
-                value={questionInput.solutions_tried}
+                value={questionInput.solution_tried}
                 placeholder="*What solution(s) did you try?"
                 onChange={handleTriedSolutions}
                 modules={quillModules}

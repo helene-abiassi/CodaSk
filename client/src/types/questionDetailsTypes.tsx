@@ -13,7 +13,7 @@ export type QuestionType = {
   module: string;
   posted_on: string;
   problem_description: string;
-  solutions_tried: string;
+  solution_tried: string;
   title: string;
   tags: Tag[];
 };

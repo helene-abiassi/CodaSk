@@ -1,7 +1,7 @@
 export type questionInput = {
   title: string;
   problem_description: string;
-  solutions_tried: string;
+  solution_tried: string;
   github_repo: string;
   module: string;
   course_type: string;
