@@ -1,11 +1,15 @@
-import {gql, useQuery} from '@apollo/client';
-import React from 'react';
+import {ApolloClient, InMemoryCache, gql} from '@apollo/client';
+import React, {useEffect} from 'react';
+import {GetServerSideProps} from 'next';
 import QuestionCard from './QuestionCard';
+import {questionByTagQuery} from '@/pages/search/questions/tagged/[tag]';
 
-export type questionQuery = {
+type questionQuery = {
   getAllQuestions: [
     {
+      id: string;
       author: {
+        id: string;
         first_name: string;
         user_photo: string;
       };
@@ -16,6 +20,7 @@ export type questionQuery = {
       module: string;
       tags: [
         {
+          id: string;
           name: string;
         },
       ];
@@ -34,40 +39,24 @@ export type questionQuery = {
   ];
 };
 
-const GET_QUESTIONS = gql`
-  query getAllQuestions {
-    getAllQuestions {
-      author {
-        first_name
-        user_photo
-      }
-      posted_on
-      title
-      problem_description
-      solution_tried
-      module
-      tags {
-        name
-      }
-      answers {
-        id
-      }
-      saved_by {
-        first_name
-      }
-      status
-    }
-  }
-`;
+type Props = {
+  data: questionQuery;
+  tagdata: questionByTagQuery;
+  deleteQuestion: ({
+    variables: {deleteQuestionId},
+  }: {
+    variables: {deleteQuestionId: string};
+  }) => void;
+};
 
-function QuestionsGrid() {
-  const {data} = useQuery<questionQuery>(GET_QUESTIONS);
-  console.log('data in QGrid :>> ', data);
+function QuestionsGrid({data, tagdata, deleteQuestion}: Props) {
+  useEffect(() => {}, [data]);
 
   return (
-    <div>
+    <div className="flex flex-col">
+      {/* FILTER BOX */}
       <div className="sortByBox flex flex-row border-b-2 border-b-[#D9D9D9] p-2">
-        <span className="flex flex-row  font-light text-[#6741D9]">
+        <span className="flex flex-row  text-lg font-normal text-[#6741D9]">
           Sort by:
           <ul className="flex flex-row">
             <li className=" px-1" value={'Newest'}>
@@ -85,7 +74,11 @@ function QuestionsGrid() {
           </ul>
         </span>
       </div>
-      <QuestionCard data={data} />
+      <QuestionCard
+        tagdata={tagdata}
+        data={data}
+        deleteQuestion={deleteQuestion}
+      />
     </div>
   );
 }
