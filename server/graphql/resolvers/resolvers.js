@@ -24,6 +24,23 @@ const resolvers = {
       return await questionModel.find();
     },
 
+    async getQuestionsByTagName(_, args) {
+      try {
+        const tag = await tagModel.findById(args.tag);
+
+        if (!tag) {
+          throw new Error("Tag not found");
+        }
+
+        const questionsWithTag = await questionModel.find({
+          tags: { $in: [tag.id] },
+        });
+        return questionsWithTag;
+      } catch (error) {
+        console.log("error in QbyTag :>> ", error);
+      }
+    },
+
     //   *------ANSWERS-------*
     async getAnswerById(_, args) {
       return await answerModel.findById(args.id);
