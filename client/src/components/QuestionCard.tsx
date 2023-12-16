@@ -135,10 +135,10 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
 
               {/* VOTE UP BODY */}
               <div className=" flex h-full flex-row items-center ">
-                <div className="mx-4 my-2 text-center text-[#6741D9]">
+                {/* <div className="mx-4 my-2 text-center text-[#6741D9]">
                   <FaArrowAltCircleUp />
                   <p>{q.saved_by.length} votes</p>
-                </div>
+                </div> */}
                 {/* TEXT BODY */}
                 <div className="questionBoxBody mx-4 max-w-6xl  p-4 ">
                   <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
@@ -235,10 +235,10 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
 
               {/* VOTE UP BODY */}
               <div className=" flex h-full flex-row items-center ">
-                <div className="mx-4 my-2 text-center text-[#6741D9]">
+                {/* <div className="mx-4 my-2 text-center text-[#6741D9]">
                   <FaArrowAltCircleUp />
                   <p>{q.saved_by.length} votes</p>
-                </div>
+                </div> */}
                 {/* TEXT BODY */}
                 <div className="questionBoxBody mx-4 max-w-6xl  p-4 ">
                   <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
