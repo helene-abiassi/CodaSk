@@ -2,11 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @layer components {
-  .btn {
-    @apply rounded-lg bg-violet-600 p-3 hover:font-bold hover:text-white;
+@layer components {
+  .title_base {
+    @apply col-span-6 my-6 h-12 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom;
   }
-} */
+  .title_err {
+    @apply col-span-6 my-6 h-12 rounded-3xl border-2 border-red-500 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom;
+  }
+  .title_ok {
+    @apply col-span-6 my-6 h-12 rounded-3xl border-2 border-green-500 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom;
+  }
+  .quill_base {
+    @apply col-span-6 mb-6 rounded-3xl bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom;
+  }
+  .quill_err {
+    @apply col-span-6 mb-6 rounded-3xl border-2 border-red-500 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom;
+  }
+  .quill_ok {
+    @apply col-span-6 mb-6 rounded-3xl border-2 border-green-500 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom;
+  }
+  .coursetype_base {
+    @apply mb-6 ml-1 rounded-lg bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom;
+  }
+  .coursetype_err {
+    @apply mb-6 ml-1 rounded-lg border-2 border-red-500 bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom;
+  }
+  .coursetype_ok {
+    @apply mb-6 ml-1 rounded-lg border-2 border-green-500 bg-[#EDE9E6] p-1 text-[#6741D9] shadow-custom;
+  }
+}
 
 /* @layer base {
   h1 {
