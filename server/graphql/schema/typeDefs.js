@@ -83,6 +83,7 @@ type Query {
 type Mutation {
     # ----- ADDING NEW ELEMENTS ------------
     addQuestion(newQuestion: newQuestionInput): Question
+    addAnswer(newAnswer: newAnswerInput): Answer
     
     # ----- DELETING ELEMENTS ------------
     deleteQuestion(id: ID): Question
@@ -106,6 +107,14 @@ input newQuestionInput {
     answers: [ID!]
     saved_by: [ID!]
     status: String
+}
+
+input newAnswerInput {
+    author: ID!
+    posted_on: Date!
+    message: String!
+    question: ID!
+    votes: [ID!]
 }
 
 input editQuestionInput {

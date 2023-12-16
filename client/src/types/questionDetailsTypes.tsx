@@ -1,5 +1,6 @@
 export type UserType = {
   first_name: string;
+  user_photo: string;
 };
 
 export type Tag = {
@@ -8,6 +9,7 @@ export type Tag = {
 };
 
 export type QuestionType = {
+  id: string;
   author: UserType;
   github_repo: string;
   module: string;

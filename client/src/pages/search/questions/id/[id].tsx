@@ -7,6 +7,7 @@ import {questionDetailsType} from '@/types/questionDetailsTypes';
 import {getPostedOnInDays} from '@/utils/GetPostedOnInDays';
 import Link from 'next/link';
 import {deleteInlineStyles} from '@/utils/CleanInlineStyles';
+import Image from 'next/image';
 
 // Example question ID's untill routing to page works
 // ! EXAMPLE WITH 1 CODE Snippet
@@ -26,6 +27,7 @@ const temp6 = '657d930af9586ac6bfd57403';
 const GET_QUESTION_BY_ID = gql`
   query GetQuestionById($getQuestionByIdId: ID!) {
     getQuestionById(id: $getQuestionByIdId) {
+      id
       title
       posted_on
       module
@@ -38,6 +40,7 @@ const GET_QUESTION_BY_ID = gql`
       }
       author {
         first_name
+        user_photo
       }
     }
   }
@@ -70,17 +73,15 @@ function QuestionDetails() {
 
   const codeSnippetClass =
     'bg-black text-white mt-4 p-6 rounded-xl shadow-custom';
-  const normalText = 'text-[#6741D9] mt-2';
+  const normalText = 'text-[#6741D9] mt-4';
 
   // Delete a question
   const handleDeleteQuestion = () => {
     console.log('Delete a question');
   };
-
+  console.log(data);
   // Quill spans contain inline styles that are hard to override
 
-  // TODO Dodaj pytanie z modułem i trochę większą ilością tekstu do stylowania
-  // TODO Od tekstu help (problem desc) wszystko jest divem z cieniem dookoła
   return (
     <>
       {/* Displaying problem description depending on text type */}
@@ -90,7 +91,11 @@ function QuestionDetails() {
             {data ? data.getQuestionById.title : ''}
           </h1>
           <div className="flex">
-            <Link href={`/search/questions/`}>
+            <Link
+              href={`/search/questions/updatequestion/${
+                data ? data.getQuestionById.id : ''
+              }`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="23"
@@ -209,7 +214,7 @@ function QuestionDetails() {
               data.getQuestionById.tags.map((tag) => {
                 return (
                   <Link
-                    href={'/search/questions'}
+                    href={`/search/questions/tagged/${tag.id}`}
                     className="mx-1 bg-black p-2 text-white"
                   >
                     {tag.name}
@@ -218,16 +223,14 @@ function QuestionDetails() {
               })}
           </div>
           <div className="mr-6 flex">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="30"
-              height="30"
-              viewBox="0 0 50 50"
-              fill="none"
-            >
-              <circle cx="25" cy="25" r="25" fill="#D9D9D9" />
-            </svg>
-            <span className="mx-2">
+            <Image
+              src={data ? data.getQuestionById.author.user_photo : ''}
+              alt="userImage"
+              width={35}
+              height={35}
+              className="rounded-full"
+            />
+            <span className="mx-2 text-lg">
               {data ? data.getQuestionById.author.first_name : ''}
             </span>
           </div>
