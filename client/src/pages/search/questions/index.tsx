@@ -11,6 +11,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import QuestionsGrid from '@/components/QuestionsGrid';
 import {GetServerSideProps} from 'next';
+<<<<<<< HEAD
+import QuestionButtons from '@/components/QuestionButtons';
+=======
+>>>>>>> main
 
 export type questionQuery = {
   getAllQuestions: [
@@ -87,6 +91,8 @@ export const DELETE_QUESTION = gql`
     }
   }
 `;
+<<<<<<< HEAD
+=======
 
 export const getServerSideProps: GetServerSideProps<
   ComponentProps
@@ -111,11 +117,29 @@ function Question({data}: ComponentProps) {
   const [deleteQuestion] = useMutation(DELETE_QUESTION);
 
   // console.log('dataTOFINDID :>> ', data);
+>>>>>>> main
 
-  const handleChatButton = () => {
-    //!Replace alert with modal
-    alert('🙄 You should never ask ChatGPT!!!');
+export const getServerSideProps: GetServerSideProps<
+  ComponentProps
+> = async () => {
+  const client = new ApolloClient({
+    uri: 'http://localhost:5008/graphql',
+    cache: new InMemoryCache(),
+  });
+
+  const {data} = await client.query({
+    query: GET_QUESTIONS,
+  });
+
+  return {
+    props: {
+      data: data,
+    },
   };
+};
+
+function Question({data}: ComponentProps) {
+  const [deleteQuestion] = useMutation(DELETE_QUESTION);
 
   return (
     <div className="h-full w-full">
@@ -124,6 +148,10 @@ function Question({data}: ComponentProps) {
         <h1 className=" mx-8 mt-4 text-left font-medium text-[#6741D9] md:text-3xl">
           Search among {data?.getAllQuestions.length} questions
         </h1>
+<<<<<<< HEAD
+        <div>
+          <QuestionButtons />
+=======
         <div className="flex flex-col">
           <Link
             className="my-2 rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
@@ -137,6 +165,7 @@ function Question({data}: ComponentProps) {
           >
             Ask ChatGPT
           </button>
+>>>>>>> main
         </div>
       </div>
 
