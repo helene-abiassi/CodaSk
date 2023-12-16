@@ -8,7 +8,7 @@ import {
   addQuestionDataType,
   questionInput,
 } from '@/types/askQuestionTypes';
-import {validateInputs} from '@/utils/questionValidator';
+import {validateInputs} from '@/utils/QuestionValidator';
 
 // --------QUERIES--------------
 const GET_ALLTAGS = gql`
@@ -51,7 +51,7 @@ function AskQuestion() {
   const [questionInput, setQuestionInput] = useState<questionInput>({
     title: '',
     problem_description: '',
-    solutions_tried: '',
+    solution_tried: '',
     github_repo: '',
     module: '',
     course_type: 'none',
@@ -108,7 +108,7 @@ function AskQuestion() {
             title: questionInput.title,
             author: userID,
             problem_description: questionInput.problem_description,
-            solution_tried: questionInput.solutions_tried,
+            solution_tried: questionInput.solution_tried,
             posted_on: Date.now(),
             github_repo: questionInput.github_repo,
             tags: selectedTags,
@@ -146,7 +146,7 @@ function AskQuestion() {
       },
     });
   };
-
+  console.log(questionInput);
   return (
     <>
       {!addQuestionCalled ? (
