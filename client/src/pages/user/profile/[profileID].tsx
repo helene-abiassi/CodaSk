@@ -9,17 +9,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import React, {useEffect, useState} from 'react';
+import Modal from '@/components/Modal';
 
 type Props = {};
 
 function Profile() {
   const [user, setUser] = useState<User | null>();
+  const [showModal, setShowModal] = useState(false);
 
   const session = useSession();
 
   const router = useRouter();
   const id = session?.data?.user?.name as string;
-  console.log('id :>> ', id);
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   const getProfile = async () => {
     const requestOptions = {
@@ -248,10 +257,45 @@ function Profile() {
               user?.saved_tags.map((tag: Tags, tagIndex: number) => {
                 return (
                   <div key={tagIndex} className="w-60">
-                    <p className="... mb-3 overflow-hidden truncate">
-                      {tag?.name}
-                    </p>
-                    <p className="text-[#6741D9]">view all</p>
+                    <div className="mx-2 my-2 w-min bg-black p-1 text-white">
+                      <Link
+                        href={{
+                          pathname: `http://localhost:3000/search/questions/tagged/${tag?._id}`,
+                          query: {
+                            name: tag?.name,
+                          },
+                        }}
+                      >
+                        {tag?.name}
+                      </Link>
+                    </div>
+                    {/* <p className="text-[#6741D9]">view all</p> */}
+                    <button
+                      className="text-[#6741D9] hover:text-black"
+                      onClick={handleShowModal}
+                    >
+                      view all
+                    </button>
+                    {showModal && (
+                      <Modal
+                        title="your tags"
+                        message={
+                          <div className="mx-2 my-2 w-min bg-black p-1 text-white">
+                            <Link
+                              href={{
+                                pathname: `http://localhost:3000/search/questions/tagged/${tag?._id}`,
+                                query: {
+                                  name: tag?.name,
+                                },
+                              }}
+                            >
+                              {tag?.name}
+                            </Link>
+                          </div>
+                        }
+                        onClose={handleCloseModal}
+                      />
+                    )}
                   </div>
                 );
               })

@@ -119,15 +119,12 @@ function Question({data}: ComponentProps) {
           Search among {data?.getAllQuestions.length} questions
         </h1>
         <div>
-          <div className="flex flex-col">
-            <QuestionButtons />
-          </div>
+          <QuestionButtons />
         </div>
-
-        {/* GRID SECTION */}
-        <div className="mx-8">
-          <QuestionsGrid data={data} deleteQuestion={deleteQuestion} />
-        </div>
+      </div>
+      {/* GRID SECTION */}
+      <div className="mx-8">
+        <QuestionsGrid data={data} deleteQuestion={deleteQuestion} />
       </div>
     </div>
   );
