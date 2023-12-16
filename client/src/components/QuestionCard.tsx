@@ -5,6 +5,7 @@ import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
 import {useSession} from 'next-auth/react';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 
 type questionCardProp = {
   getAllQuestions: [
@@ -88,6 +89,12 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
   const session = useSession();
   const userID = session?.data?.user?.name as string;
 
+  const router = useRouter();
+
+  const handleQuestionRedirect = (questionID: string) => {
+    router.push(`http://localhost:3000/search/questions/id/${questionID}`);
+  };
+
   console.log('tagdata :>> ', tagdata);
 
   const handeleDeleteQuestion = async (questionID: string) => {
@@ -134,7 +141,12 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
               {/* QUESTION BOX BODY */}
 
               {/* VOTE UP BODY */}
-              <div className=" flex h-full flex-row items-center ">
+              <div
+                onClick={() => {
+                  handleQuestionRedirect(q.id);
+                }}
+                className="flex h-full cursor-pointer flex-row items-center "
+              >
                 {/* <div className="mx-4 my-2 text-center text-[#6741D9]">
                   <FaArrowAltCircleUp />
                   <p>{q.saved_by.length} votes</p>
@@ -211,7 +223,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
           return (
             <div
               key={index + 1}
-              className=" my-4 max-w-full rounded-2xl bg-[#EDE9E6]"
+              className=" my-4 max-w-full  rounded-2xl bg-[#EDE9E6]"
             >
               {/* QUESTION BOX HEADER */}
               <div className="questionBoxHeader flex flex-row items-center justify-between rounded-xl bg-black p-2 text-base font-light text-white">
@@ -234,11 +246,17 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
               {/* QUESTION BOX BODY */}
 
               {/* VOTE UP BODY */}
-              <div className=" flex h-full flex-row items-center ">
+              <div
+                onClick={() => {
+                  handleQuestionRedirect(q.id);
+                }}
+                className="flex h-full cursor-pointer flex-row items-center "
+              >
                 {/* <div className="mx-4 my-2 text-center text-[#6741D9]">
                   <FaArrowAltCircleUp />
                   <p>{q.saved_by.length} votes</p>
                 </div> */}
+
                 {/* TEXT BODY */}
                 <div className="questionBoxBody mx-4 max-w-6xl  p-4 ">
                   <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
