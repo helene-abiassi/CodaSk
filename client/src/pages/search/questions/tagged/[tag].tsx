@@ -1,4 +1,3 @@
-import {useSession} from 'next-auth/react';
 import React from 'react';
 import {
   useQuery,
@@ -7,13 +6,15 @@ import {
   InMemoryCache,
   useMutation,
 } from '@apollo/client';
+import {DELETE_QUESTION} from '..';
 import Link from 'next/link';
 import Image from 'next/image';
 import QuestionsGrid from '@/components/QuestionsGrid';
 import {GetServerSideProps} from 'next';
+import {useRouter} from 'next/router';
 
-export type questionQuery = {
-  getAllQuestions: [
+export type questionByTagQuery = {
+  getQuestionsByTagName: [
     {
       id: string;
       author: {
@@ -24,7 +25,6 @@ export type questionQuery = {
       posted_on: Date;
       title: string;
       problem_description: string;
-      solution_tried: string;
       module: string;
       tags: [
         {
@@ -48,12 +48,13 @@ export type questionQuery = {
 };
 
 type ComponentProps = {
-  data: questionQuery;
+  tagdata: questionByTagQuery;
+  tag: string;
 };
 
-const GET_QUESTIONS = gql`
-  query getAllQuestions {
-    getAllQuestions {
+const GET_QUESTIONS_BY_TAG = gql`
+  query getQuestionsByTagName($tag: ID!) {
+    getQuestionsByTagName(tag: $tag) {
       id
       author {
         id
@@ -80,37 +81,36 @@ const GET_QUESTIONS = gql`
   }
 `;
 
-export const DELETE_QUESTION = gql`
-  mutation DeleteQuestion($deleteQuestionId: ID) {
-    deleteQuestion(id: $deleteQuestionId) {
-      id
-    }
-  }
-`;
+export const getServerSideProps: GetServerSideProps<ComponentProps> = async (
+  context
+) => {
+  const {tag} = context.query;
 
-export const getServerSideProps: GetServerSideProps<
-  ComponentProps
-> = async () => {
   const client = new ApolloClient({
     uri: 'http://localhost:5008/graphql',
     cache: new InMemoryCache(),
   });
 
   const {data} = await client.query({
-    query: GET_QUESTIONS,
+    query: GET_QUESTIONS_BY_TAG,
+    variables: {tag: tag},
   });
 
   return {
     props: {
-      data: data,
+      tagdata: data,
+      tag: tag,
     },
   };
 };
 
-function Question({data}: ComponentProps) {
+function Question({tagdata, tag}: ComponentProps) {
+  console.log('tagdata :>> ', tagdata);
   const [deleteQuestion] = useMutation(DELETE_QUESTION);
 
-  // console.log('dataTOFINDID :>> ', data);
+  const router = useRouter();
+
+  console.log('router.query.name :>> ', router.query.name);
 
   const handleChatButton = () => {
     //!Replace alert with modal
@@ -118,11 +118,12 @@ function Question({data}: ComponentProps) {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full min-h-screen w-full">
       {/* TOP SECTION */}
       <div className="flex flex-row items-start justify-between px-6 py-6">
         <h1 className=" mx-8 mt-4 text-left font-medium text-[#6741D9] md:text-3xl">
-          Search among {data?.getAllQuestions.length} questions
+          Search among {tagdata?.getQuestionsByTagName.length} questions tagged{' '}
+          {router.query.name}
         </h1>
         <div className="flex flex-col">
           <Link
@@ -142,7 +143,7 @@ function Question({data}: ComponentProps) {
 
       {/* GRID SECTION */}
       <div className="mx-8">
-        <QuestionsGrid data={data} deleteQuestion={deleteQuestion} />
+        <QuestionsGrid tagdata={tagdata} deleteQuestion={deleteQuestion} />
       </div>
     </div>
   );
