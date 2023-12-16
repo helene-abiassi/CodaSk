@@ -138,10 +138,33 @@ const resolvers = {
     // *----- ADDING MUTATIONS ---------
     async addQuestion(_, args) {
       console.log(args);
-      const newQuestion = new questionModel({
+      const newQuestion = await questionModel({
         ...args.newQuestion,
       });
       return await newQuestion.save();
+    },
+    async addAnswer(_, args) {
+      console.log(args);
+      const newAnswer = await answerModel({
+        ...args.newAnswer,
+      });
+
+      const user = await userModel.findByIdAndUpdate(newAnswer.author, {
+        $addToSet: {
+          answers: newAnswer._id,
+        },
+      });
+
+      const question = await questionModel.findByIdAndUpdate(
+        newAnswer.question,
+        {
+          $addToSet: {
+            answers: newAnswer._id,
+          },
+        }
+      );
+
+      return await newAnswer.save();
     },
 
     // *----- DELETING MUTATIONS ---------
