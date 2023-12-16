@@ -24,6 +24,23 @@ const resolvers = {
       return await questionModel.find();
     },
 
+    async getQuestionsByTagName(_, args) {
+      try {
+        const tag = await tagModel.findById(args.tag);
+
+        if (!tag) {
+          throw new Error("Tag not found");
+        }
+
+        const questionsWithTag = await questionModel.find({
+          tags: { $in: [tag.id] },
+        });
+        return questionsWithTag;
+      } catch (error) {
+        console.log("error in QbyTag :>> ", error);
+      }
+    },
+
     //   *------ANSWERS-------*
     async getAnswerById(_, args) {
       return await answerModel.findById(args.id);
@@ -128,8 +145,26 @@ const resolvers = {
     },
 
     // *----- DELETING MUTATIONS ---------
+    // async deleteQuestion(_, args) {
+    //   return await questionModel.findByIdAndDelete(args.id);
+    // },
+
     async deleteQuestion(_, args) {
-      return await questionModel.findByIdAndDelete(args.id);
+      const deletedQuestion = await questionModel.findByIdAndDelete(args.id);
+
+      await userModel.updateMany(
+        { questions: args.id },
+        { $pull: { questions: args.id } }
+      );
+
+      await answerModel.deleteMany({ question: args.id });
+
+      await tagModel.updateMany(
+        { related_questions: args.id },
+        { $pull: { related_questions: args.id } }
+      );
+
+      return deletedQuestion;
     },
 
     // *----- UPDATING MUTATIONS ---------

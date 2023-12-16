@@ -1,11 +1,13 @@
 import {ApolloClient, InMemoryCache, gql} from '@apollo/client';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {GetServerSideProps} from 'next';
 import QuestionCard from './QuestionCard';
+import {questionByTagQuery} from '@/pages/search/questions/tagged/[tag]';
 
 type questionQuery = {
   getAllQuestions: [
     {
+      id: string;
       author: {
         id: string;
         first_name: string;
@@ -18,6 +20,7 @@ type questionQuery = {
       module: string;
       tags: [
         {
+          id: string;
           name: string;
         },
       ];
@@ -38,10 +41,16 @@ type questionQuery = {
 
 type Props = {
   data: questionQuery;
+  tagdata: questionByTagQuery;
+  deleteQuestion: ({
+    variables: {deleteQuestionId},
+  }: {
+    variables: {deleteQuestionId: string};
+  }) => void;
 };
 
-function QuestionsGrid({data}: Props) {
-  console.log('data in GRID :>> ', data);
+function QuestionsGrid({data, tagdata, deleteQuestion}: Props) {
+  useEffect(() => {}, [data]);
 
   return (
     <div className="flex flex-col">
@@ -65,7 +74,11 @@ function QuestionsGrid({data}: Props) {
           </ul>
         </span>
       </div>
-      <QuestionCard data={data} />
+      <QuestionCard
+        tagdata={tagdata}
+        data={data}
+        deleteQuestion={deleteQuestion}
+      />
     </div>
   );
 }

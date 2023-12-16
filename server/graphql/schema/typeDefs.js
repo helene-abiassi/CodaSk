@@ -37,7 +37,7 @@ type Question {
     problem_description: String!
     solution_tried: String!
     module: String
-    github_repo: String!
+    github_repo: String
     tags: [Tag]!
     answers: [Answer]
     saved_by: [User]
@@ -69,6 +69,7 @@ type Query {
     # -----Question queries-----
     getQuestionById(id: ID!): Question
     getAllQuestions: [Question]
+    getQuestionsByTagName(tag:ID!): [Question]
     
     # -----Answers queries-----
     getAnswerById(id: ID!): Answer
