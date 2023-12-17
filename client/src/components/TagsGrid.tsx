@@ -33,7 +33,7 @@ function TagsGrid({data}: Props) {
         <div className="flex flex-row items-center justify-center">
           <span className="flex flex-row  text-lg font-normal text-[#6741D9]">
             Sort by:
-            <ul className="flex flex-row">
+            <ul className="flex list-none flex-row">
               <li className=" px-1" value={'Newest'}>
                 Name<span className="font-semibold text-black"> | </span>
               </li>

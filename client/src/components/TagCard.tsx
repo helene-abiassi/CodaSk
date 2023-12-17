@@ -45,21 +45,30 @@ function TagCard({data}: Props) {
           return (
             <div key={index + 1} className="m-4 w-64 rounded-2xl bg-[#EDE9E6]">
               {/* TAG BOX HEADER */}
-              <div className="flex items-center justify-between rounded-xl bg-black p-2 text-base font-light text-white">
-                <div className="leftSideHeader flex items-center">
-                  <div className="m-2 flex flex-row items-center justify-between">
-                    <p>{tag?.name}</p>
-                    <button
-                      onClick={() => {
-                        handleBookMarkTag(tag?.id);
-                      }}
-                      className="mx-2"
-                    >
-                      <BsFillPinFill />
-                    </button>
-                  </div>
+              <div className="flex items-center rounded-xl bg-black p-2 text-base font-light text-white">
+                <div className="flex w-full items-center justify-between">
+                  <Link
+                    className="no-underline"
+                    href={{
+                      pathname: `http://localhost:3000/search/questions/tagged/${tag.id}`,
+                      query: {
+                        name: tag.name,
+                      },
+                    }}
+                  >
+                    {tag?.name}
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleBookMarkTag(tag?.id);
+                    }}
+                    className="mx-2"
+                  >
+                    <BsFillPinFill />
+                  </button>
                 </div>
               </div>
+
               {/* TAG BOX BODY */}
               <div className="flex h-full cursor-pointer flex-row items-center">
                 <div className="questionBoxBody mx-2 p-2">

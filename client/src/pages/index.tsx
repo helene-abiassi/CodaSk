@@ -7,14 +7,12 @@ import Link from 'next/link';
 const inter = Inter({subsets: ['latin']});
 
 export default function Home() {
-  // const {data: session} = useSession();
-
   return (
     <>
       <Head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Home</title>
+        <title>Codask</title>
         <meta name="description" />
         <meta name="keywords" content="" />
         <meta name="author" content="" />
@@ -53,7 +51,7 @@ export default function Home() {
                     className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
                   >
                     <Link
-                      className="text-center text-xl font-bold text-[#6741D9] "
+                      className="text-center text-xl font-bold text-[#6741D9] no-underline"
                       href={'/user/askQuestion'}
                     >
                       Search by questions
@@ -64,7 +62,7 @@ export default function Home() {
                     className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
                   >
                     <Link
-                      className="text-center text-xl font-bold text-[#6741D9]"
+                      className="text-center text-xl font-bold text-[#6741D9] no-underline"
                       href={'/search/tags'}
                     >
                       Search by tags
@@ -76,7 +74,7 @@ export default function Home() {
                     className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
                   >
                     <Link
-                      className="text-center text-xl font-bold text-[#6741D9]"
+                      className="text-center text-xl font-bold text-[#6741D9] no-underline"
                       href={'/search/modules'}
                     >
                       {' '}

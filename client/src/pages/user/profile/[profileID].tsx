@@ -112,6 +112,7 @@ function Profile() {
       <div className="flex flex-row">
         <div className="m-2  rounded-md bg-black p-2 text-white">
           <Link
+            className="no-underline"
             href={{
               pathname: `http://localhost:3000/search/questions/tagged/${tag?._id}`,
               query: {
@@ -144,7 +145,13 @@ function Profile() {
 
   const contributionsInModal = user?.answers.map(
     (answer: Answers, ansIndex: number) => (
-      <div key={ansIndex} className="mb-2 w-60 rounded-md p-1 shadow-md">
+      <div
+        onClick={() => {
+          handleQuestionRedirect(answer?.question._id);
+        }}
+        key={ansIndex}
+        className="mb-2 w-60 cursor-pointer rounded-md p-1 shadow-md"
+      >
         <p className="... mb-3 overflow-hidden truncate p-1 ">
           {answer?.message}
         </p>
@@ -202,7 +209,7 @@ function Profile() {
         <div className="rightHeader flex flex-col items-end justify-end">
           <div>
             <Link
-              className="rounded-full font-semibold text-[#6741D9] hover:bg-[#B197FC] hover:p-2 hover:text-white"
+              className="rounded-full font-semibold text-[#6741D9] no-underline hover:bg-[#B197FC] hover:p-2 hover:text-white"
               href={'/user/profile/updateprofile'}
             >
               edit
@@ -333,8 +340,11 @@ function Profile() {
                 user?.answers.map((answer: Answers, ansIndex: number) => {
                   return (
                     <div
+                      onClick={() => {
+                        handleQuestionRedirect(answer?.question._id);
+                      }}
                       key={ansIndex}
-                      className="mb-2 w-60 rounded-md p-1 shadow-md"
+                      className="mb-2 w-60 cursor-pointer rounded-md p-1 shadow-md"
                     >
                       <p className="... mb-3 overflow-hidden truncate p-1 ">
                         {answer?.message}
@@ -375,6 +385,7 @@ function Profile() {
                   <div key={tagIndex} className="w-60">
                     <div className="tagList mx-2 my-1 w-min rounded-md bg-black p-2 text-white">
                       <Link
+                        className="no-underline"
                         href={{
                           pathname: `http://localhost:3000/search/questions/tagged/${tag?._id}`,
                           query: {

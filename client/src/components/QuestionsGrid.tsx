@@ -58,7 +58,7 @@ function QuestionsGrid({data, tagdata, deleteQuestion}: Props) {
       <div className="sortByBox flex flex-row border-b-2 border-b-[#D9D9D9] p-2">
         <span className="flex flex-row  text-lg font-normal text-[#6741D9]">
           Sort by:
-          <ul className="flex flex-row">
+          <ul className="flex list-none flex-row">
             <li className=" px-1" value={'Newest'}>
               Newest<span className="font-semibold text-black"> | </span>
             </li>
@@ -74,6 +74,16 @@ function QuestionsGrid({data, tagdata, deleteQuestion}: Props) {
           </ul>
         </span>
       </div>
+      {data &&
+        data.getAllQuestions.length > 0 &&
+        tagdata &&
+        tagdata.getQuestionsByTagName.length > 0 && (
+          <QuestionCard
+            tagdata={tagdata}
+            data={data}
+            deleteQuestion={deleteQuestion}
+          />
+        )}
       <QuestionCard
         tagdata={tagdata}
         data={data}

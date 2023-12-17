@@ -15,7 +15,7 @@ function ErrorPage() {
         nothing to see here...
       </h1>
       <Image src={'/errorPage.png'} alt="error-page" width={600} height={600} />
-
+      <br />
       <button
         className="m-4 rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
         onClick={goHome}

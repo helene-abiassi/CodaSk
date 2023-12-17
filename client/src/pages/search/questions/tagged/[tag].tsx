@@ -127,7 +127,7 @@ function Question({tagdata, tag}: ComponentProps) {
         </h1>
         <div className="flex flex-col">
           <Link
-            className="my-2 rounded-full bg-black px-4 py-2 font-bold text-white hover:bg-[#B197FC]"
+            className="my-2 rounded-full bg-black px-4 py-2 font-bold text-white no-underline hover:bg-[#B197FC]"
             href={'/search/questions/askQuestion'}
           >
             Ask a question

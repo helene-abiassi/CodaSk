@@ -111,8 +111,26 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
     }
   };
 
+  const noQuestionsMessage =
+    (!tagdata?.getQuestionsByTagName ||
+      tagdata?.getQuestionsByTagName?.length === 0) &&
+    (!data?.getAllQuestions || data?.getAllQuestions?.length === 0) ? (
+      <div className="text-center">
+        <p className=" my-14  font-medium text-[#6741D9] md:text-3xl">
+          No questions match that search.
+        </p>
+        <Link
+          className="rounded-full font-normal no-underline hover:bg-[#B197FC] hover:p-2 hover:text-white "
+          href={'http://localhost:3000/search/questions/askQuestion'}
+        >
+          Be the first to ask one!
+        </Link>
+      </div>
+    ) : null;
+
   return (
     <div className="flex flex-col">
+      {noQuestionsMessage}
       {tagdata &&
         tagdata.getQuestionsByTagName?.map((q, index) => {
           return (
@@ -180,6 +198,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                               className="mx-2 my-2 w-min rounded-md bg-black p-1 text-white"
                             >
                               <Link
+                                className="no-underline"
                                 href={{
                                   pathname: `http://localhost:3000/search/questions/tagged/${tag.id}`,
                                   query: {
@@ -287,6 +306,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                               className="mx-2 my-2 w-min rounded-md bg-black p-1 text-white"
                             >
                               <Link
+                                className="no-underline"
                                 href={{
                                   pathname: `http://localhost:3000/search/questions/tagged/${tag.id}`,
                                   query: {
