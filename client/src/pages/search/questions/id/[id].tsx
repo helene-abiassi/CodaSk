@@ -1,6 +1,6 @@
-import {gql, useQuery} from '@apollo/client';
+import {gql, useMutation, useQuery} from '@apollo/client';
 import {useRouter} from 'next/router';
-import React from 'react';
+import React, {useState} from 'react';
 import parse from 'html-react-parser';
 import {divideString} from '@/utils/QuillTextProcessor';
 import {questionDetailsType} from '@/types/questionDetailsTypes';
@@ -8,22 +8,15 @@ import {getPostedOnInDays} from '@/utils/GetPostedOnInDays';
 import Link from 'next/link';
 import {deleteInlineStyles} from '@/utils/CleanInlineStyles';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import {quillFormats, quillModules} from '@/types/quillTypes';
+import {AllAnswersQuery} from '@/types/AnswersQuery';
+import AnswerCard from '@/components/AnswerCard';
 
-// Example question ID's untill routing to page works
-// ! EXAMPLE WITH 1 CODE Snippet
-const temp = '657c407a633bee5efbd90293';
-// ! EXAMPLE WITH 2 CODE SNIPPETS
-const temp2 = '657c409c633bee5efbd90297';
-// ! EXAMPLE WITH 3 CODE SNIPPETS
-const temp3 = '657c3e99633bee5efbd90281';
-// ! EXAMPLE WITH 4 CODE SNIPPETS
-const temp4 = '657c4144633bee5efbd902a2';
-// ! EXAMPLE WITH 5 CODE SNIPPETS
-const temp5 = '657c3fbb633bee5efbd90289';
-// ! EXAMPLE for styling
-const temp6 = '657d930af9586ac6bfd57403';
+const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
 
-// ------------QUERY--------------------
+// ------------QUERIES--------------------
 const GET_QUESTION_BY_ID = gql`
   query GetQuestionById($getQuestionByIdId: ID!) {
     getQuestionById(id: $getQuestionByIdId) {
@@ -46,14 +39,51 @@ const GET_QUESTION_BY_ID = gql`
   }
 `;
 
+const GET_ALL_ANSWERS = gql`
+  query GetAllAnswers {
+    getAllAnswers {
+      author {
+        id
+        first_name
+        user_photo
+      }
+      id
+      posted_on
+      message
+      votes {
+        id
+      }
+    }
+  }
+`;
+
+// -----------MUTATIONS------------------------
+const POST_NEW_ANSWER = gql`
+  mutation Mutation($newAnswer: newAnswerInput) {
+    addAnswer(newAnswer: $newAnswer) {
+      id
+    }
+  }
+`;
+
 function QuestionDetails() {
   const router = useRouter();
   const postID = router.query.id;
+
+  // UseStates
+  const [answer, setAnswer] = useState('');
+
+  // -------QUERIES---------------
   const {data} = useQuery<questionDetailsType>(GET_QUESTION_BY_ID, {
     variables: {
       getQuestionByIdId: postID,
     },
   });
+
+  const {data: answersData} = useQuery<AllAnswersQuery>(GET_ALL_ANSWERS);
+
+  // -------MUTATATIONS-----------
+  const [addAnswer, {data: addAnswerData}] = useMutation(POST_NEW_ANSWER);
 
   // Get posted on date in days difference as string
   const diff = getPostedOnInDays(data ? data.getQuestionById.posted_on : '');
@@ -68,24 +98,41 @@ function QuestionDetails() {
   const solution_triedDiv = divideString(
     data ? data.getQuestionById.solution_tried : ''
   );
-  // Cleain inline styling
+  // Clean inline styling
   const solution_tried = deleteInlineStyles(solution_triedDiv);
 
   const codeSnippetClass =
     'bg-black text-white mt-4 p-6 rounded-xl shadow-custom';
   const normalText = 'text-[#6741D9] mt-4';
 
-  // Delete a question
+  // ! Delete a question (no mutation added yet)
   const handleDeleteQuestion = () => {
     console.log('Delete a question');
   };
-  console.log(data);
-  // Quill spans contain inline styles that are hard to override
 
+  // ! TEMP USER ID
+  const tempUser = '656b4777d89e223b1e928c33';
+
+  // Adding a new answer
+  const handlePostNewAnswer = () => {
+    addAnswer({
+      variables: {
+        newAnswer: {
+          author: tempUser,
+          message: answer,
+          posted_on: Date.now(),
+          question: postID,
+          votes: [],
+        },
+      },
+    });
+    setAnswer('');
+  };
+  console.log(answersData);
   return (
     <>
       {/* Displaying problem description depending on text type */}
-      <div className=" mx-auto mb-10 mt-10 w-7/12 rounded-lg p-4 shadow-[0_4px_4px_0px_rgba(0,0,0,0.30)]">
+      <div className=" mx-auto mb-10 mt-10 w-9/12 rounded-lg p-4 shadow-[0_4px_4px_0px_rgba(0,0,0,0.30)]">
         <div className="flex justify-between">
           <h1 className="text-3xl text-[#6741D9]">
             {data ? data.getQuestionById.title : ''}
@@ -179,7 +226,7 @@ function QuestionDetails() {
         </div>
         {data?.getQuestionById.github_repo ? (
           <>
-            <div className="mt-6">
+            <div className="mb-4 mt-6">
               <h1 className="text-lg">
                 <Link
                   href={data ? data.getQuestionById.github_repo : ''}
@@ -207,15 +254,18 @@ function QuestionDetails() {
         ) : (
           ''
         )}
-        {/* TAGS */}
+      </div>
+      {/* TAGS */}
+      <div className="mx-auto mb-10 mt-10 w-9/12">
         <div className="mt-8 flex justify-between">
-          <div>
+          <div className="ml-6">
             {data &&
               data.getQuestionById.tags.map((tag) => {
                 return (
                   <Link
                     href={`/search/questions/tagged/${tag.id}`}
                     className="mx-1 bg-black p-2 text-white"
+                    key={tag.id}
                   >
                     {tag.name}
                   </Link>
@@ -236,8 +286,51 @@ function QuestionDetails() {
           </div>
         </div>
       </div>
-      <div className="mx-auto mb-10 mt-10 w-7/12">
+      <div className="mx-auto mb-10 mt-10 w-9/12">
         <hr className="border-[1px] border-gray-500" />
+      </div>
+      {/* Adding a new answer */}
+      <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
+        <QuillEditor
+          className={
+            'rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom'
+          }
+          value={answer}
+          placeholder="*Provide an answer..."
+          onChange={(newContent: string) => {
+            setAnswer(newContent);
+          }}
+          modules={quillModules}
+          formats={quillFormats}
+        />
+        <div className="absolute bottom-3 right-8">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="27"
+            height="27"
+            viewBox="0 0 58 55"
+            fill="none"
+            className="hover:cursor-pointer"
+            onClick={handlePostNewAnswer}
+          >
+            <path
+              d="M4.83398 48.125L55.584 27.5L4.83398 6.875V22.9167L41.084 27.5L4.83398 32.0833V48.125Z"
+              fill="black"
+            />
+          </svg>
+        </div>
+      </div>
+      {/* TODO Dodaj query z pobieraniem wszystkich */}
+      {/* TODO Skopiuj kartę do wyświetlania wszystkich odpowiedzi*/}
+      {/* TODO Dostosuj ją do danych*/}
+      {/* TODO W środku karty dodaj wyświetlanie kodu z metodami które już masz*/}
+      <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
+        {answersData
+          ? answersData.getAllAnswers.map((answer) => {
+              // console.log(answer.author);
+              return <AnswerCard answerData={answer} />;
+            })
+          : ''}
       </div>
     </>
   );

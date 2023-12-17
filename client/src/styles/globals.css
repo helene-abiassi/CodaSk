@@ -32,14 +32,20 @@
   }
 }
 
-/* @layer base {
-  h1 {
-    @apply text-2xl font-bold;
+@layer base {
+  blockquote {
+    @apply my-4 border-s-4 border-gray-300 bg-gray-50 p-4 dark:border-gray-500 dark:bg-gray-100;
   }
-  h2 {
-    @apply text-xl font-semibold;
+  ul {
+    @apply mx-6 list-disc;
   }
-} */
+  ol {
+    @apply mx-4 list-decimal;
+  }
+  a {
+    @apply underline hover:font-bold;
+  }
+}
 
 /* ? -----QUILL SETUP-------- */
 .ql-toolbar.ql-snow {

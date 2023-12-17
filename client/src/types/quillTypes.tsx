@@ -2,10 +2,10 @@ export const quillModules = {
   toolbar: [
     [{header: [1, 2, 3, 4, false]}],
     [],
-    [{list: 'ordered'}, {list: 'bullet'}, {align: []}],
+    [{list: 'ordered'}, {list: 'bullet'}],
     ['bold', 'italic', 'underline', 'strike'],
     ['blockquote', 'code-block', 'link'],
-    [{color: []}, 'clean'],
+    ['clean'],
   ],
 };
 
@@ -19,7 +19,5 @@ export const quillFormats = [
   'list',
   'bullet',
   'link',
-  'align',
-  'color',
   'code-block',
 ];
