@@ -13,8 +13,8 @@ export const validateInputs = (questionInput: questionInput): String[] => {
     errArr.push('You need to provide a problem description!');
   }
   if (
-    questionInput.solutions_tried === '' ||
-    questionInput.solutions_tried === '<p><br></p>'
+    questionInput.solution_tried === '' ||
+    questionInput.solution_tried === '<p><br></p>'
   ) {
     errArr.push('You need to exlain what kind of solutions you already tried!');
   }
