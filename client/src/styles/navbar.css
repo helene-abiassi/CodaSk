@@ -1,0 +1,19 @@
+.mainLogo:hover {
+  animation-name: shake;
+  animation-duration: 3s;
+}
+@keyframes shake {
+  25% {
+    transform: rotate(10deg);
+    transform-origin: bottom;
+  }
+
+  50% {
+    transform: rotate(-10deg);
+    transform-origin: bottom;
+  }
+  75% {
+    transform: rotate(10deg);
+    transform-origin: bottom;
+  }
+}

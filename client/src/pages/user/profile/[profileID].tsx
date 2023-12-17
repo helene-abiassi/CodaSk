@@ -277,7 +277,7 @@ function Profile() {
       <div className="mx-28 flex flex-row justify-between ">
         {/* YOUR QUESTIONS */}
 
-        <div className="greyProfileBox my-12 w-64 max-w-md rounded-2xl bg-[#EDE9E6]">
+        <div className="greyProfileBox my-12  max-w-lg rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your questions</h4>
           </div>
