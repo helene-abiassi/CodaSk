@@ -141,32 +141,33 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
               {/* QUESTION BOX BODY */}
 
               {/* VOTE UP BODY */}
-              <div
-                onClick={() => {
-                  handleQuestionRedirect(q.id);
-                }}
-                className="flex h-full cursor-pointer flex-row items-center "
-              >
+              <div className="flex h-full cursor-pointer flex-row items-center ">
                 {/* <div className="mx-4 my-2 text-center text-[#6741D9]">
                   <FaArrowAltCircleUp />
                   <p>{q.saved_by.length} votes</p>
                 </div> */}
                 {/* TEXT BODY */}
                 <div className="questionBoxBody mx-4 max-w-6xl  p-4 ">
-                  <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
-                    <p className="">{q.title}</p>
-                    <div>
-                      {q.answers && q.answers.length <= 1 ? (
-                        <p>{q.answers.length} answer</p>
-                      ) : (
-                        <p>{q.answers.length} answers</p>
-                      )}
+                  <div
+                    onClick={() => {
+                      handleQuestionRedirect(q.id);
+                    }}
+                  >
+                    <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
+                      <p className="">{q.title}</p>
+                      <div>
+                        {q.answers && q.answers.length <= 1 ? (
+                          <p>{q.answers.length} answer</p>
+                        ) : (
+                          <p>{q.answers.length} answers</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <p className="...  overflow-hidden truncate text-ellipsis pr-4">
-                      {q?.problem_description}{' '}
-                    </p>
+                    <div>
+                      <p className="...  overflow-hidden truncate text-ellipsis pr-4">
+                        {q?.problem_description}{' '}
+                      </p>
+                    </div>
                   </div>
                   {/* TAG BODY */}
                   <div className="m-2 flex flex-row items-center justify-between">
@@ -176,7 +177,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                           return (
                             <div
                               key={indexT}
-                              className="mx-2 my-2 w-min bg-black p-1 text-white"
+                              className="mx-2 my-2 w-min rounded-md bg-black p-1 text-white"
                             >
                               <Link
                                 href={{
@@ -246,12 +247,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
               {/* QUESTION BOX BODY */}
 
               {/* VOTE UP BODY */}
-              <div
-                onClick={() => {
-                  handleQuestionRedirect(q.id);
-                }}
-                className="flex h-full cursor-pointer flex-row items-center "
-              >
+              <div className="flex h-full cursor-pointer flex-row items-center ">
                 {/* <div className="mx-4 my-2 text-center text-[#6741D9]">
                   <FaArrowAltCircleUp />
                   <p>{q.saved_by.length} votes</p>
@@ -259,20 +255,26 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
 
                 {/* TEXT BODY */}
                 <div className="questionBoxBody mx-4 max-w-6xl  p-4 ">
-                  <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
-                    <p className="">{q.title}</p>
-                    <div>
-                      {q.answers && q.answers.length <= 1 ? (
-                        <p>{q.answers.length} answer</p>
-                      ) : (
-                        <p>{q.answers.length} answers</p>
-                      )}
+                  <div
+                    onClick={() => {
+                      handleQuestionRedirect(q.id);
+                    }}
+                  >
+                    <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
+                      <p className="">{q.title}</p>
+                      <div>
+                        {q.answers && q.answers.length <= 1 ? (
+                          <p>{q.answers.length} answer</p>
+                        ) : (
+                          <p>{q.answers.length} answers</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <p className="...  overflow-hidden truncate text-ellipsis pr-4">
-                      {q?.problem_description}{' '}
-                    </p>
+                    <div>
+                      <p className="...  overflow-hidden truncate text-ellipsis pr-4">
+                        {q?.problem_description}{' '}
+                      </p>
+                    </div>
                   </div>
                   {/* TAG BODY */}
                   <div className="m-2 flex flex-row items-center justify-between">
@@ -282,7 +284,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                           return (
                             <div
                               key={indexT}
-                              className="mx-2 my-2 w-min bg-black p-1 text-white"
+                              className="mx-2 my-2 w-min rounded-md bg-black p-1 text-white"
                             >
                               <Link
                                 href={{

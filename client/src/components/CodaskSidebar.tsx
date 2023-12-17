@@ -6,7 +6,7 @@ type Props = {};
 function CodaskSidebar({}: Props) {
   return (
     <>
-      <section className="fixed top-20 h-full w-48 ">
+      <section className="fixed top-20 mt-6 h-full w-48 ">
         <div className="mx-4 my-10">
           <h3 className="mb-2 text-lg font-extralight">SEARCH BY: </h3>
           <ul>
@@ -32,7 +32,7 @@ function CodaskSidebar({}: Props) {
           <h3 className="mb-2 text-lg font-extralight">DISCOVER: </h3>
           <ul>
             <li>
-              <Link className="font-light" href={'/discover/studentProjects'}>
+              <Link className="font-light" href={'/discover/studentprojects'}>
                 Student Projects
               </Link>
             </li>

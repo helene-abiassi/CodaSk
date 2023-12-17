@@ -61,11 +61,19 @@ const getUserById = async (req, res) => {
         },
         {
           path: "answers",
-          select: ["author", "message", "votes", "posted_on"],
-          populate: {
-            path: "author",
-            select: ["first_name", "last_name"],
-          },
+          select: ["author", "message", "votes", "posted_on", "question"],
+          populate: [
+            {
+              path: "author",
+              select: ["first_name", "last_name"],
+            },
+            [
+              {
+                path: "question",
+                select: ["_id"],
+              },
+            ],
+          ],
         },
         {
           path: "saved_tags",
