@@ -11,20 +11,20 @@
 }
 
 .modal-content {
-  background-color: pink;
+  background-color: #b197fc;
   color: black;
-  padding: 20px;
+  padding: 10px;
   border-radius: 8px;
 }
 
 .message {
-  /* Your additional styles for the message */
 }
 
 .modal-content button {
-  background-color: #ffffff;
+  background-color: transparent;
   color: black;
   border: none;
+  font-weight: bold;
   padding: 8px 16px;
   margin-top: 10px;
   cursor: pointer;

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React, {useState} from 'react';
 import Modal from './Modal';
+import Image from 'next/image';
 
 function QuestionButtons() {
   const [showModal, setShowModal] = useState(false);
@@ -29,6 +30,15 @@ function QuestionButtons() {
       </button>
       {showModal && (
         <Modal
+          image={
+            <Image
+              src="/RaulAvatarModal.png"
+              width={150}
+              height={150}
+              alt="angryRaulAvatar"
+            />
+          }
+          title="Señor Raúl says"
           message="You should never ask ChatGPT!!!"
           onClose={handleCloseModal}
         />

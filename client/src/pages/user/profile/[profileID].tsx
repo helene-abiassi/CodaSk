@@ -15,20 +15,41 @@ type Props = {};
 
 function Profile() {
   const [user, setUser] = useState<User | null>();
-  const [showModal, setShowModal] = useState(false);
+  const [showTagModal, setShowTagModal] = useState(false);
+  const [showContributionsModal, setShowContributionsModal] = useState(false);
+  const [showQuestionsModal, setShowQuestionsModal] = useState(false);
 
   const session = useSession();
 
   const router = useRouter();
   const id = session?.data?.user?.name as string;
 
-  const handleShowModal = () => {
-    setShowModal(true);
+  // Modals
+
+  const handleShowTagModal = () => {
+    setShowTagModal(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleCloseTagModal = () => {
+    setShowTagModal(false);
   };
+
+  const handleShowContributionsModal = () => {
+    setShowContributionsModal(true);
+  };
+
+  const handleCloseContributionsModal = () => {
+    setShowContributionsModal(false);
+  };
+
+  const handleShowQuestionsModal = () => {
+    setShowQuestionsModal(true);
+  };
+
+  const handleCloseQuestionsModal = () => {
+    setShowQuestionsModal(false);
+  };
+  //
 
   const getProfile = async () => {
     const requestOptions = {
@@ -81,6 +102,55 @@ function Profile() {
     await router.push('../login');
     location.reload();
   };
+
+  const handleQuestionRedirect = (questionID: string) => {
+    router.push(`http://localhost:3000/search/questions/id/${questionID}`);
+  };
+
+  const tagsInModal = user?.saved_tags.map((tag: Tags, tagIndex: number) => (
+    <div key={tagIndex} className="flex flex-wrap">
+      <div className="flex flex-row">
+        <div className="m-2  rounded-md bg-black p-2 text-white">
+          <Link
+            href={{
+              pathname: `http://localhost:3000/search/questions/tagged/${tag?._id}`,
+              query: {
+                name: tag?.name,
+              },
+            }}
+          >
+            {tag?.name}
+          </Link>
+        </div>
+      </div>
+    </div>
+  ));
+
+  const questionsInModal = user?.questions.map(
+    (question: Questions, qIndex: number) => (
+      <div
+        onClick={() => {
+          handleQuestionRedirect(question._id);
+        }}
+        key={qIndex}
+        className="mb-2 w-60 cursor-pointer rounded-md p-1 shadow-md"
+      >
+        <p className="... mb-3 overflow-hidden truncate p-1 ">
+          {question?.title}
+        </p>
+      </div>
+    )
+  );
+
+  const contributionsInModal = user?.answers.map(
+    (answer: Answers, ansIndex: number) => (
+      <div key={ansIndex} className="mb-2 w-60 rounded-md p-1 shadow-md">
+        <p className="... mb-3 overflow-hidden truncate p-1 ">
+          {answer?.message}
+        </p>
+      </div>
+    )
+  );
 
   useEffect(() => {
     getProfile();
@@ -203,61 +273,107 @@ function Profile() {
       </div>
 
       {/* BOTTOM SECTION */}
+
       <div className="mx-28 flex flex-row justify-between ">
+        {/* YOUR QUESTIONS */}
+
         <div className="greyProfileBox my-12 w-64 max-w-md rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your questions</h4>
           </div>
-          <div className="p-4">
-            {user?.questions && user?.questions?.length <= 0 ? (
-              <p>Nothing saved yet</p>
-            ) : (
-              user?.questions.map((question: Questions, quIndex: number) => {
-                return (
-                  <div key={quIndex} className="w-60">
-                    <p className="... mb-3 overflow-hidden truncate">
-                      {question?.title}
-                    </p>
-                    <p className="text-[#6741D9]">view all</p>
-                  </div>
-                );
-              })
-            )}
+          <div className="p-1">
+            <div className="flex flex-col p-4">
+              {user?.questions && user?.questions?.length <= 0 ? (
+                <p>Nothing saved yet</p>
+              ) : (
+                user?.questions.map((question: Questions, quIndex: number) => {
+                  return (
+                    <div
+                      onClick={() => {
+                        handleQuestionRedirect(question._id);
+                      }}
+                      key={quIndex}
+                      className="mb-2 w-60 cursor-pointer rounded-md p-1 shadow-md"
+                    >
+                      <p className="... mb-3 overflow-hidden truncate p-1">
+                        {question?.title}
+                      </p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            {showQuestionsModal && (
+              <Modal
+                title="your questions"
+                message={questionsInModal}
+                onClose={handleCloseQuestionsModal}
+              />
+            )}{' '}
           </div>
+          <button
+            className="m-4 text-[#6741D9] hover:text-black"
+            onClick={handleShowQuestionsModal}
+          >
+            view all questions
+          </button>
         </div>
-        <div className="greyProfileBox my-12 w-64 max-w-md rounded-2xl bg-[#EDE9E6]">
+
+        {/* YOUR CONTRIBUTIONS */}
+
+        <div className="greyProfileBox my-12 max-w-lg rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
-            <h4 className="text-lg font-bold">your answers</h4>
+            <h4 className="text-lg font-bold">your contributions</h4>
           </div>
-          <div className="p-4">
-            {user?.answers && user?.answers?.length <= 0 ? (
-              <p>Nothing saved yet</p>
-            ) : (
-              user?.answers.map((answer: Answers, ansIndex: number) => {
-                return (
-                  <div key={ansIndex} className="w-60">
-                    <p className="... mb-3 overflow-hidden truncate">
-                      {answer?.message}
-                    </p>
-                    <p className="text-[#6741D9]">view all</p>
-                  </div>
-                );
-              })
-            )}
+          <div className="p-1">
+            <div className="flex flex-col p-4">
+              {user?.answers && user?.answers?.length <= 0 ? (
+                <p>Nothing saved yet</p>
+              ) : (
+                user?.answers.map((answer: Answers, ansIndex: number) => {
+                  return (
+                    <div
+                      key={ansIndex}
+                      className="mb-2 w-60 rounded-md p-1 shadow-md"
+                    >
+                      <p className="... mb-3 overflow-hidden truncate p-1 ">
+                        {answer?.message}
+                      </p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            {showContributionsModal && (
+              <Modal
+                title="your contributions"
+                message={contributionsInModal}
+                onClose={handleCloseContributionsModal}
+              />
+            )}{' '}
           </div>
+          <button
+            className="m-4 text-[#6741D9] hover:text-black"
+            onClick={handleShowContributionsModal}
+          >
+            view all
+          </button>
         </div>
-        <div className="greyProfileBox my-12 w-64 max-w-md rounded-2xl bg-[#EDE9E6]">
+
+        {/* YOUR TAGS */}
+
+        <div className="greyProfileBox my-12  w-64 max-w-md  rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your tags</h4>
           </div>
-          <div className="p-4">
+          <div className=" flex flex-row p-4">
             {user?.saved_tags && user?.saved_tags?.length <= 0 ? (
               <p>Nothing saved yet</p>
             ) : (
               user?.saved_tags.map((tag: Tags, tagIndex: number) => {
                 return (
                   <div key={tagIndex} className="w-60">
-                    <div className="mx-2 my-2 w-min bg-black p-1 text-white">
+                    <div className="tagList mx-2 my-1 w-min rounded-md bg-black p-2 text-white">
                       <Link
                         href={{
                           pathname: `http://localhost:3000/search/questions/tagged/${tag?._id}`,
@@ -269,42 +385,30 @@ function Profile() {
                         {tag?.name}
                       </Link>
                     </div>
-                    {/* <p className="text-[#6741D9]">view all</p> */}
-                    <button
-                      className="text-[#6741D9] hover:text-black"
-                      onClick={handleShowModal}
-                    >
-                      view all
-                    </button>
-                    {showModal && (
-                      <Modal
-                        title="your tags"
-                        message={
-                          <div className="mx-2 my-2 w-min bg-black p-1 text-white">
-                            <Link
-                              href={{
-                                pathname: `http://localhost:3000/search/questions/tagged/${tag?._id}`,
-                                query: {
-                                  name: tag?.name,
-                                },
-                              }}
-                            >
-                              {tag?.name}
-                            </Link>
-                          </div>
-                        }
-                        onClose={handleCloseModal}
-                      />
-                    )}
                   </div>
                 );
               })
             )}
+            {showTagModal && (
+              <Modal
+                title="your tags"
+                message={tagsInModal}
+                onClose={handleCloseTagModal}
+              />
+            )}{' '}
           </div>
+          <button
+            className="m-4 text-[#6741D9] hover:text-black"
+            onClick={handleShowTagModal}
+          >
+            view all
+          </button>
         </div>
       </div>
       <br />
       <br />
+
+      {/* DELETE ACCOUNT BUTTON */}
 
       <div className="mr-16 flex flex-col items-end justify-end">
         <button

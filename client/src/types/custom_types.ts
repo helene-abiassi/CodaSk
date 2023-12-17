@@ -26,6 +26,7 @@ export interface User extends UserPhoto {
   }
 
   export interface Questions {
+    _id:string;
     author:{
         first_name:string;
         last_name:string;
