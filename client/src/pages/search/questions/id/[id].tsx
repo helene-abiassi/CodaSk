@@ -11,10 +11,12 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
+import {AllAnswersQuery} from '@/types/AnswersQuery';
+import AnswerCard from '@/components/AnswerCard';
 
 const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
 
-// ------------QUERY--------------------
+// ------------QUERIES--------------------
 const GET_QUESTION_BY_ID = gql`
   query GetQuestionById($getQuestionByIdId: ID!) {
     getQuestionById(id: $getQuestionByIdId) {
@@ -37,6 +39,25 @@ const GET_QUESTION_BY_ID = gql`
   }
 `;
 
+const GET_ALL_ANSWERS = gql`
+  query GetAllAnswers {
+    getAllAnswers {
+      author {
+        id
+        first_name
+        user_photo
+      }
+      id
+      posted_on
+      message
+      votes {
+        id
+      }
+    }
+  }
+`;
+
+// -----------MUTATIONS------------------------
 const POST_NEW_ANSWER = gql`
   mutation Mutation($newAnswer: newAnswerInput) {
     addAnswer(newAnswer: $newAnswer) {
@@ -48,14 +69,18 @@ const POST_NEW_ANSWER = gql`
 function QuestionDetails() {
   const router = useRouter();
   const postID = router.query.id;
+
+  // UseStates
+  const [answer, setAnswer] = useState('');
+
+  // -------QUERIES---------------
   const {data} = useQuery<questionDetailsType>(GET_QUESTION_BY_ID, {
     variables: {
       getQuestionByIdId: postID,
     },
   });
 
-  // UseStates
-  const [answer, setAnswer] = useState('');
+  const {data: answersData} = useQuery<AllAnswersQuery>(GET_ALL_ANSWERS);
 
   // -------MUTATATIONS-----------
   const [addAnswer, {data: addAnswerData}] = useMutation(POST_NEW_ANSWER);
@@ -85,6 +110,7 @@ function QuestionDetails() {
     console.log('Delete a question');
   };
 
+  // ! TEMP USER ID
   const tempUser = '656b4777d89e223b1e928c33';
 
   // Adding a new answer
@@ -102,7 +128,7 @@ function QuestionDetails() {
     });
     setAnswer('');
   };
-
+  console.log(answersData);
   return (
     <>
       {/* Displaying problem description depending on text type */}
@@ -239,6 +265,7 @@ function QuestionDetails() {
                   <Link
                     href={`/search/questions/tagged/${tag.id}`}
                     className="mx-1 bg-black p-2 text-white"
+                    key={tag.id}
                   >
                     {tag.name}
                   </Link>
@@ -259,16 +286,10 @@ function QuestionDetails() {
           </div>
         </div>
       </div>
-
       <div className="mx-auto mb-10 mt-10 w-9/12">
         <hr className="border-[1px] border-gray-500" />
       </div>
-
-      {/* TODO Dodaj mutację z dodawaniem nowej odpowiedzi */}
-      {/* TODO Typ dla odpowiedzi*/}
-
-      {/* TODO Dodaj query z pobieraniem wszystkich */}
-      {/* TODO Styl do odpowiedzi będzie kopią tego z pytań */}
+      {/* Adding a new answer */}
       <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
         <QuillEditor
           className={
@@ -298,6 +319,18 @@ function QuestionDetails() {
             />
           </svg>
         </div>
+      </div>
+      {/* TODO Dodaj query z pobieraniem wszystkich */}
+      {/* TODO Skopiuj kartę do wyświetlania wszystkich odpowiedzi*/}
+      {/* TODO Dostosuj ją do danych*/}
+      {/* TODO W środku karty dodaj wyświetlanie kodu z metodami które już masz*/}
+      <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
+        {answersData
+          ? answersData.getAllAnswers.map((answer) => {
+              // console.log(answer.author);
+              return <AnswerCard answerData={answer} />;
+            })
+          : ''}
       </div>
     </>
   );
