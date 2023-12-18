@@ -1,9 +1,10 @@
 import QuestionButtons from '@/components/QuestionButtons';
 import TagsGrid from '@/components/TagsGrid';
-import {ApolloClient, InMemoryCache, gql} from '@apollo/client';
+import {ApolloClient, InMemoryCache, gql, useMutation} from '@apollo/client';
 import {GetServerSideProps} from 'next';
 import React from 'react';
 
+/// QUERIES ///
 export type tagQuery = {
   getAllTags: [
     {
@@ -38,7 +39,22 @@ const GET_TAGS = gql`
   }
 `;
 
-const BOOKMARK_TAG = {};
+/// MUTATIONS ///
+export const BOOKMARK_TAG = gql`
+  mutation BookmarkTag($userId: ID, $tagId: ID) {
+    bookmarkTag(userId: $userId, tagId: $tagId) {
+      id
+    }
+  }
+`;
+
+export const UNBOOKMARK_TAG = gql`
+  mutation UnbookmarkTag($userId: ID!, $tagId: ID!) {
+    unbookmarkTag(userId: $userId, tagId: $tagId) {
+      id
+    }
+  }
+`;
 
 export const getServerSideProps: GetServerSideProps<
   ComponentProps
@@ -60,7 +76,10 @@ export const getServerSideProps: GetServerSideProps<
 };
 
 function Tags({data}: ComponentProps) {
+  const [bookmarkTag] = useMutation(BOOKMARK_TAG);
+
   console.log('data in tag Page :>> ', data);
+
   return (
     <div className="h-full w-full">
       {/* TOP SECTION */}
@@ -73,7 +92,7 @@ function Tags({data}: ComponentProps) {
         </div>
       </div>
       <div className="mx-8">
-        <TagsGrid data={data} />
+        <TagsGrid data={data} bookmarkTag={bookmarkTag} />
       </div>
     </div>
   );

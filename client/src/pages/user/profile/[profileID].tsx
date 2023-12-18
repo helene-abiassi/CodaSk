@@ -284,7 +284,7 @@ function Profile() {
       <div className="mx-28 flex flex-row justify-between ">
         {/* YOUR QUESTIONS */}
 
-        <div className="greyProfileBox my-12  max-w-lg rounded-2xl bg-[#EDE9E6]">
+        <div className="greyProfileBox my-12 w-72  max-w-lg rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your questions</h4>
           </div>
@@ -328,7 +328,7 @@ function Profile() {
 
         {/* YOUR CONTRIBUTIONS */}
 
-        <div className="greyProfileBox my-12 max-w-lg rounded-2xl bg-[#EDE9E6]">
+        <div className="greyProfileBox my-12 w-72 max-w-lg rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your contributions</h4>
           </div>
@@ -372,11 +372,11 @@ function Profile() {
 
         {/* YOUR TAGS */}
 
-        <div className="greyProfileBox my-12  w-64 max-w-md  rounded-2xl bg-[#EDE9E6]">
+        <div className="greyProfileBox my-12  w-72 max-w-md  rounded-2xl bg-[#EDE9E6]">
           <div className="profileBoxHeader rounded-xl bg-[#6741D9] p-4 text-white">
             <h4 className="text-lg font-bold">your tags</h4>
           </div>
-          <div className=" flex flex-row p-4">
+          <div className=" flex flex-row flex-wrap p-3">
             {user?.saved_tags && user?.saved_tags?.length <= 0 ? (
               <p>Nothing saved yet</p>
             ) : (

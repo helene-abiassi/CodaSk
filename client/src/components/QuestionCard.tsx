@@ -96,6 +96,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
   };
 
   console.log('tagdata :>> ', tagdata);
+  //!Reset button?
 
   const handeleDeleteQuestion = async (questionID: string) => {
     const deleteConfirm = window.confirm(

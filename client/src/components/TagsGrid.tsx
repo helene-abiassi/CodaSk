@@ -7,15 +7,14 @@ import TagCard from './TagCard';
 
 type Props = {
   data: tagQuery;
-
-  //   deleteQuestion: ({
-  //     variables: {deleteQuestionId},
-  //   }: {
-  //     variables: {deleteQuestionId: string};
-  //   }) => void;
+  bookmarkTag: ({
+    variables: {userId, tagId},
+  }: {
+    variables: {userId: string; tagId: string};
+  }) => void;
 };
 
-function TagsGrid({data}: Props) {
+function TagsGrid({data, bookmarkTag}: Props) {
   useEffect(() => {}, [data]);
 
   return (
@@ -54,7 +53,7 @@ function TagsGrid({data}: Props) {
           </select>
         </div>
       </div>
-      <TagCard data={data} />
+      <TagCard data={data} bookmarkTag={bookmarkTag} />
     </div>
   );
 }

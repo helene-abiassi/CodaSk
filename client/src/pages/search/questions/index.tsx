@@ -13,6 +13,7 @@ import QuestionsGrid from '@/components/QuestionsGrid';
 import {GetServerSideProps} from 'next';
 import QuestionButtons from '@/components/QuestionButtons';
 
+/// QUERIES ///
 export type questionQuery = {
   getAllQuestions: [
     {
@@ -81,6 +82,7 @@ const GET_QUESTIONS = gql`
   }
 `;
 
+/// MUTATIONS ///
 export const DELETE_QUESTION = gql`
   mutation DeleteQuestion($deleteQuestionId: ID) {
     deleteQuestion(id: $deleteQuestionId) {

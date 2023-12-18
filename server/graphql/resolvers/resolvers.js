@@ -227,6 +227,32 @@ const resolvers = {
       });
       return updatedTags;
     },
+    async bookmarkTag(_, args) {
+      try {
+        const updatedUser = await userModel.findByIdAndUpdate(
+          args.userId,
+          { $push: { saved_tags: args.tagId } },
+          { new: true }
+        );
+
+        return updatedUser;
+      } catch (error) {
+        console.error("Error bookmarking tag:", error);
+      }
+    },
+    async unbookmarkTag(_, args) {
+      try {
+        const updatedUser = await userModel.findByIdAndUpdate(
+          args.userId,
+          { $pull: { saved_tags: args.tagId } },
+          { new: true }
+        );
+
+        return updatedUser;
+      } catch (error) {
+        console.error("Error unbookmarking tag:", error);
+      }
+    },
   },
 };
 
