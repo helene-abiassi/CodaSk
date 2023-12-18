@@ -116,7 +116,7 @@ function AssignTags({
               </h3>
               <div className="mb-8 ml-48 mt-8">
                 <Link
-                  href={'/search/question'}
+                  href={'/search/questions'}
                   className="rounded-xl bg-black p-2 text-white hover:font-semibold focus:font-semibold"
                 >
                   Go to questions

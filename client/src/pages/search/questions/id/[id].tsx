@@ -1,6 +1,6 @@
 import {gql, useMutation, useQuery} from '@apollo/client';
 import {useRouter} from 'next/router';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import parse from 'html-react-parser';
 import {divideString} from '@/utils/QuillTextProcessor';
 import {questionDetailsType} from '@/types/questionDetailsTypes';
@@ -13,7 +13,9 @@ import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
 import {AllAnswersQuery} from '@/types/AnswersQuery';
 import AnswerCard from '@/components/AnswerCard';
-
+import DeleteModal from '@/components/DeleteModal';
+import {redirect} from 'next/navigation';
+import {NextResponse} from 'next/server';
 const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
 
 // ------------QUERIES--------------------
@@ -27,6 +29,7 @@ const GET_QUESTION_BY_ID = gql`
       problem_description
       solution_tried
       github_repo
+      status
       tags {
         id
         name
@@ -66,12 +69,25 @@ const POST_NEW_ANSWER = gql`
   }
 `;
 
+const DELETE_QUESTION = gql`
+  mutation Mutation($deleteQuestionId: ID) {
+    deleteQuestion(id: $deleteQuestionId) {
+      id
+    }
+  }
+`;
+
+// TODO Dodaj możliwość usunięcia odpowiedzi z modalem
+// TODO Mark as solved jako przycisk z kolorami w zależności od statusu (Pod warunkiem, że refetch zadziała);
+// TODO Dodaj możliwość upvote
 function QuestionDetails() {
   const router = useRouter();
   const postID = router.query.id;
 
   // UseStates
   const [answer, setAnswer] = useState('');
+  const [showDeleteQuestionModal, setShowDeleteQuestionModal] = useState(false);
+  const [showDeleteAnswerModal, setShowDeleteAnswerModal] = useState(false);
 
   // -------QUERIES---------------
   const {data} = useQuery<questionDetailsType>(GET_QUESTION_BY_ID, {
@@ -83,7 +99,11 @@ function QuestionDetails() {
   const {data: answersData} = useQuery<AllAnswersQuery>(GET_ALL_ANSWERS);
 
   // -------MUTATATIONS-----------
-  const [addAnswer, {data: addAnswerData}] = useMutation(POST_NEW_ANSWER);
+  const [addAnswer, {data: addAnswerData}] = useMutation(POST_NEW_ANSWER, {
+    refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
+  });
+  const [deleteQuestion] = useMutation(DELETE_QUESTION);
+  // -------------------------------
 
   // Get posted on date in days difference as string
   const diff = getPostedOnInDays(data ? data.getQuestionById.posted_on : '');
@@ -105,11 +125,6 @@ function QuestionDetails() {
     'bg-black text-white mt-4 p-6 rounded-xl shadow-custom';
   const normalText = 'text-[#6741D9] mt-4';
 
-  // ! Delete a question (no mutation added yet)
-  const handleDeleteQuestion = () => {
-    console.log('Delete a question');
-  };
-
   // ! TEMP USER ID
   const tempUser = '656b4777d89e223b1e928c33';
 
@@ -128,7 +143,42 @@ function QuestionDetails() {
     });
     setAnswer('');
   };
-  console.log(answersData);
+
+  // ! Delete a question (no mutation added yet)
+  const handleCloseDeleteQModal = () => {
+    setShowDeleteQuestionModal(false);
+  };
+
+  const handleCloseDeleteAModal = () => {
+    setShowDeleteAnswerModal(false);
+  };
+
+  const handleOpenDeleteQModal = () => {
+    setShowDeleteQuestionModal(true);
+  };
+
+  const handleOpenDeleteAModal = () => {
+    setShowDeleteAnswerModal(true);
+  };
+
+  const handleDeleteQuestion = () => {
+    deleteQuestion({
+      variables: {
+        deleteQuestionId: data ? data.getQuestionById.id : '',
+      },
+    });
+    setShowDeleteQuestionModal(false);
+    router.push('/search/questions');
+  };
+
+  const handleDeleteAnswer = () => {
+    console.log('Deleteing answer');
+  };
+
+  const handleStatusChange = () => {
+    console.log('HEllo');
+  };
+
   return (
     <>
       {/* Displaying problem description depending on text type */}
@@ -156,7 +206,15 @@ function QuestionDetails() {
                 />
               </svg>
             </Link>
-            <button onClick={handleDeleteQuestion} className="mx-1 flex">
+            {showDeleteQuestionModal && (
+              <DeleteModal
+                title={data ? data.getQuestionById.title : ''}
+                itemToDelete="question"
+                onClose={handleCloseDeleteQModal}
+                confirmDel={handleDeleteQuestion}
+              />
+            )}
+            <button onClick={handleOpenDeleteQModal} className="mx-1 flex">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="23"
@@ -188,10 +246,22 @@ function QuestionDetails() {
               )}
             </h3>
           </div>
-          <p className="text-base text-gray-600">Mark as Solved</p>
+          <div>
+            <span className="text-gray-500">Question status: </span>
+            <button
+              className={
+                data?.getQuestionById.status === 'unanswered'
+                  ? 'rounded-full bg-red-500 px-6 py-2 hover:font-bold hover:text-white '
+                  : 'rounded-full bg-green-500 px-6 py-2 hover:font-bold hover:text-white '
+              }
+              onClick={handleStatusChange}
+            >
+              {data ? data.getQuestionById.status : ''}
+            </button>
+          </div>
         </div>
         {/* Problem description */}
-        <div className="mt-10">
+        <div className="mt-10 overflow-hidden">
           <h1 className="text-2xl text-[#E91E63CC]">HELP!</h1>
           {problemDesc &&
             problemDesc.map((problem, idx) => {
@@ -208,7 +278,7 @@ function QuestionDetails() {
             })}
         </div>
         {/* What I tried */}
-        <div className="mt-8">
+        <div className="mt-8 overflow-hidden">
           <h1 className="text-2xl text-[#E91E63CC]">WHAT I TRIED</h1>
           {solution_tried &&
             solution_tried.map((solution, idx) => {
@@ -293,7 +363,7 @@ function QuestionDetails() {
       <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
         <QuillEditor
           className={
-            'rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom'
+            'rounded-3xl border-2 bg-[#EDE9E6] p-5 text-[#6741D9] shadow-custom'
           }
           value={answer}
           placeholder="*Provide an answer..."
@@ -303,7 +373,7 @@ function QuestionDetails() {
           modules={quillModules}
           formats={quillFormats}
         />
-        <div className="absolute bottom-3 right-8">
+        <div className="absolute bottom-2 right-8">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="27"
@@ -320,15 +390,21 @@ function QuestionDetails() {
           </svg>
         </div>
       </div>
-      {/* TODO Dodaj query z pobieraniem wszystkich */}
-      {/* TODO Skopiuj kartę do wyświetlania wszystkich odpowiedzi*/}
-      {/* TODO Dostosuj ją do danych*/}
-      {/* TODO W środku karty dodaj wyświetlanie kodu z metodami które już masz*/}
+      {/* ANSWERS */}
       <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
         {answersData
           ? answersData.getAllAnswers.map((answer) => {
               // console.log(answer.author);
-              return <AnswerCard answerData={answer} />;
+              return (
+                <AnswerCard
+                  answerData={answer}
+                  key={answer.id}
+                  showDeleteAnswerModal={showDeleteAnswerModal}
+                  handleOpenDeleteAModal={handleOpenDeleteAModal}
+                  handleCloseDeleteAModal={handleCloseDeleteAModal}
+                  handleDeleteAnswer={handleDeleteAnswer}
+                />
+              );
             })
           : ''}
       </div>
