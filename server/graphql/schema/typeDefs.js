@@ -91,6 +91,8 @@ type Mutation {
     # ----- UPDATING ELEMENTS ------------
     updateQuestion(id: ID, editInput: editQuestionInput): Question
     updateTags(id:[ID], editInput: editTagInput): [Tag]
+    bookmarkTag(userId: ID!, tagId: ID!): User
+    unbookmarkTag(userId: ID!, tagId: ID!): User
 }
 
 

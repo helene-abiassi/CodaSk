@@ -13,6 +13,7 @@ import QuestionsGrid from '@/components/QuestionsGrid';
 import {GetServerSideProps} from 'next';
 import QuestionButtons from '@/components/QuestionButtons';
 
+/// QUERIES ///
 export type questionQuery = {
   getAllQuestions: [
     {
@@ -81,14 +82,6 @@ const GET_QUESTIONS = gql`
   }
 `;
 
-export const DELETE_QUESTION = gql`
-  mutation DeleteQuestion($deleteQuestionId: ID) {
-    deleteQuestion(id: $deleteQuestionId) {
-      id
-    }
-  }
-`;
-
 export const getServerSideProps: GetServerSideProps<
   ComponentProps
 > = async () => {
@@ -108,8 +101,19 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
+/// MUTATIONS ///
+export const DELETE_QUESTION = gql`
+  mutation DeleteQuestion($deleteQuestionId: ID) {
+    deleteQuestion(id: $deleteQuestionId) {
+      id
+    }
+  }
+`;
+
 function Question({data}: ComponentProps) {
-  const [deleteQuestion] = useMutation(DELETE_QUESTION);
+  const [deleteQuestion] = useMutation(DELETE_QUESTION, {
+    refetchQueries: [GET_QUESTIONS, 'getAllQuestions'],
+  });
 
   return (
     <div className="h-full w-full">

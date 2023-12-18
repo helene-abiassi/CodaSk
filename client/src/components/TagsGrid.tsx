@@ -7,15 +7,14 @@ import TagCard from './TagCard';
 
 type Props = {
   data: tagQuery;
-
-  //   deleteQuestion: ({
-  //     variables: {deleteQuestionId},
-  //   }: {
-  //     variables: {deleteQuestionId: string};
-  //   }) => void;
+  bookmarkTag: ({
+    variables: {userId, tagId},
+  }: {
+    variables: {userId: string; tagId: string};
+  }) => void;
 };
 
-function TagsGrid({data}: Props) {
+function TagsGrid({data, bookmarkTag}: Props) {
   useEffect(() => {}, [data]);
 
   return (
@@ -33,7 +32,7 @@ function TagsGrid({data}: Props) {
         <div className="flex flex-row items-center justify-center">
           <span className="flex flex-row  text-lg font-normal text-[#6741D9]">
             Sort by:
-            <ul className="flex flex-row">
+            <ul className="flex list-none flex-row">
               <li className=" px-1" value={'Newest'}>
                 Name<span className="font-semibold text-black"> | </span>
               </li>
@@ -54,7 +53,7 @@ function TagsGrid({data}: Props) {
           </select>
         </div>
       </div>
-      <TagCard data={data} />
+      <TagCard data={data} bookmarkTag={bookmarkTag} />
     </div>
   );
 }

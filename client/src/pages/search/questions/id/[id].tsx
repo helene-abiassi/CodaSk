@@ -13,6 +13,7 @@ import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
 import {AllAnswersQuery} from '@/types/AnswersQuery';
 import AnswerCard from '@/components/AnswerCard';
+import BackButton from '@/components/BackButton';
 import DeleteModal from '@/components/DeleteModal';
 import {redirect} from 'next/navigation';
 import {NextResponse} from 'next/server';
@@ -181,6 +182,9 @@ function QuestionDetails() {
 
   return (
     <>
+      <div className="mx-10 my-4">
+        <BackButton />
+      </div>
       {/* Displaying problem description depending on text type */}
       <div className=" mx-auto mb-10 mt-10 w-9/12 rounded-lg p-4 shadow-[0_4px_4px_0px_rgba(0,0,0,0.30)]">
         <div className="flex justify-between">
@@ -299,6 +303,7 @@ function QuestionDetails() {
             <div className="mb-4 mt-6">
               <h1 className="text-lg">
                 <Link
+                  target="_blank"
                   href={data ? data.getQuestionById.github_repo : ''}
                   className="flex"
                 >

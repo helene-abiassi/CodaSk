@@ -20,8 +20,24 @@ const resolvers = {
       return await questionModel.findById(args.id);
     },
 
-    async getAllQuestions() {
-      return await questionModel.find();
+    // async getAllQuestions() {
+    //   return await questionModel.find();
+    // },
+
+    async getAllQuestions(_, { sortBy }) {
+      let query = {};
+
+      if (sortBy === "Newest") {
+        query = { $query: {}, $orderby: { posted_on: -1 } };
+      } else if (sortBy === "Popular") {
+        query = { $query: {}, $orderby: { "answers.length": -1 } };
+      } else if (sortBy === "Unanswered") {
+        query = { answers: { $exists: false } };
+      } else if (sortBy === "Solved") {
+        query = { status: "Solved" };
+      }
+
+      return await questionModel.find(query);
     },
 
     async getQuestionsByTagName(_, args) {
@@ -174,13 +190,19 @@ const resolvers = {
 
     async deleteQuestion(_, args) {
       const deletedQuestion = await questionModel.findByIdAndDelete(args.id);
-
+      // deleting Q with QID from User
       await userModel.updateMany(
         { questions: args.id },
         { $pull: { questions: args.id } }
       );
-
       await answerModel.deleteMany({ question: args.id });
+
+      const deletedAnswers = await answerModel.find({ question: args.id });
+      const answerIDs = deletedAnswers.map((answer) => answer._id);
+      await userModel.updateMany(
+        { answers: { $in: answerIDs } },
+        { $pull: { answers: { $in: answerIDs } } }
+      );
 
       await tagModel.updateMany(
         { related_questions: args.id },
@@ -226,6 +248,32 @@ const resolvers = {
         updatedTags.push(updateTag);
       });
       return updatedTags;
+    },
+    async bookmarkTag(_, args) {
+      try {
+        const updatedUser = await userModel.findByIdAndUpdate(
+          args.userId,
+          { $push: { saved_tags: args.tagId } },
+          { new: true }
+        );
+
+        return updatedUser;
+      } catch (error) {
+        console.error("Error bookmarking tag:", error);
+      }
+    },
+    async unbookmarkTag(_, args) {
+      try {
+        const updatedUser = await userModel.findByIdAndUpdate(
+          args.userId,
+          { $pull: { saved_tags: args.tagId } },
+          { new: true }
+        );
+
+        return updatedUser;
+      } catch (error) {
+        console.error("Error unbookmarking tag:", error);
+      }
     },
   },
 };

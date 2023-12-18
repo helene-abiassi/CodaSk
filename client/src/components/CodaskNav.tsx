@@ -46,7 +46,7 @@ function CodaskNav() {
         </div>
 
         {/* RIGHT SECTION */}
-        <ul className="flex">
+        <ul className="flex list-none ">
           {!isLoggedIn ? (
             <>
               <li>
@@ -71,7 +71,7 @@ function CodaskNav() {
               <li>
                 <Link
                   href={`/user/profile/${id}`}
-                  className="mx-1 text-2xl text-white hover:font-semibold focus:font-semibold"
+                  className="mx-1 text-2xl text-white	 no-underline hover:font-semibold focus:font-semibold"
                 >
                   👀 |{' '}
                 </Link>
