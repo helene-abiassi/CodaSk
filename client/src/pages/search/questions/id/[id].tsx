@@ -1,6 +1,6 @@
 import {gql, useMutation, useQuery} from '@apollo/client';
 import {useRouter} from 'next/router';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import parse from 'html-react-parser';
 import {divideString} from '@/utils/QuillTextProcessor';
 import {questionDetailsType} from '@/types/questionDetailsTypes';
@@ -13,7 +13,7 @@ import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import {quillFormats, quillModules} from '@/types/quillTypes';
 import {AllAnswersQuery} from '@/types/AnswersQuery';
 import AnswerCard from '@/components/AnswerCard';
-
+import DeleteModal from '@/components/DeleteModal';
 const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
 
 // ------------QUERIES--------------------
@@ -66,12 +66,18 @@ const POST_NEW_ANSWER = gql`
   }
 `;
 
+// TODO Mark as solved jako przycisk z kolorami w zależności od statusu (Pod warunkiem, że refetch zadziała);
+// TODO Zastosuj modal do czegokolwiek
+// TODO Dodaj możliwość usunięcia pytania z modalem
+// TODO Dodaj możliwość usunięcia odpowiedzi z modalem
+// TODO Dodaj możliwość upvote
 function QuestionDetails() {
   const router = useRouter();
   const postID = router.query.id;
 
   // UseStates
   const [answer, setAnswer] = useState('');
+  const [showDeleteQuestionModal, setShowDeleteQuestionModal] = useState(false);
 
   // -------QUERIES---------------
   const {data} = useQuery<questionDetailsType>(GET_QUESTION_BY_ID, {
@@ -83,7 +89,9 @@ function QuestionDetails() {
   const {data: answersData} = useQuery<AllAnswersQuery>(GET_ALL_ANSWERS);
 
   // -------MUTATATIONS-----------
-  const [addAnswer, {data: addAnswerData}] = useMutation(POST_NEW_ANSWER);
+  const [addAnswer, {data: addAnswerData}] = useMutation(POST_NEW_ANSWER, {
+    refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
+  });
 
   // Get posted on date in days difference as string
   const diff = getPostedOnInDays(data ? data.getQuestionById.posted_on : '');
@@ -105,11 +113,6 @@ function QuestionDetails() {
     'bg-black text-white mt-4 p-6 rounded-xl shadow-custom';
   const normalText = 'text-[#6741D9] mt-4';
 
-  // ! Delete a question (no mutation added yet)
-  const handleDeleteQuestion = () => {
-    console.log('Delete a question');
-  };
-
   // ! TEMP USER ID
   const tempUser = '656b4777d89e223b1e928c33';
 
@@ -128,7 +131,21 @@ function QuestionDetails() {
     });
     setAnswer('');
   };
-  console.log(answersData);
+
+  const handleCloseDeleteQModal = () => {
+    setShowDeleteQuestionModal(false);
+  };
+
+  // ! Delete a question (no mutation added yet)
+  const handleOpenDeleteQModal = () => {
+    setShowDeleteQuestionModal(true);
+  };
+
+  const handleDeleteQuestion = () => {
+    console.log('DELETEING');
+    setShowDeleteQuestionModal(false);
+  };
+
   return (
     <>
       {/* Displaying problem description depending on text type */}
@@ -156,7 +173,15 @@ function QuestionDetails() {
                 />
               </svg>
             </Link>
-            <button onClick={handleDeleteQuestion} className="mx-1 flex">
+            {showDeleteQuestionModal && (
+              <DeleteModal
+                title={data ? data.getQuestionById.title : ''}
+                itemToDelete="question"
+                onClose={handleCloseDeleteQModal}
+                confirmDel={handleDeleteQuestion}
+              />
+            )}
+            <button onClick={handleOpenDeleteQModal} className="mx-1 flex">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="23"
@@ -191,7 +216,7 @@ function QuestionDetails() {
           <p className="text-base text-gray-600">Mark as Solved</p>
         </div>
         {/* Problem description */}
-        <div className="mt-10">
+        <div className="mt-10 overflow-hidden">
           <h1 className="text-2xl text-[#E91E63CC]">HELP!</h1>
           {problemDesc &&
             problemDesc.map((problem, idx) => {
@@ -208,7 +233,7 @@ function QuestionDetails() {
             })}
         </div>
         {/* What I tried */}
-        <div className="mt-8">
+        <div className="mt-8 overflow-hidden">
           <h1 className="text-2xl text-[#E91E63CC]">WHAT I TRIED</h1>
           {solution_tried &&
             solution_tried.map((solution, idx) => {
@@ -293,7 +318,7 @@ function QuestionDetails() {
       <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
         <QuillEditor
           className={
-            'rounded-3xl border-2 bg-[#EDE9E6] p-2 text-[#6741D9] shadow-custom'
+            'rounded-3xl border-2 bg-[#EDE9E6] p-5 text-[#6741D9] shadow-custom'
           }
           value={answer}
           placeholder="*Provide an answer..."
@@ -303,7 +328,7 @@ function QuestionDetails() {
           modules={quillModules}
           formats={quillFormats}
         />
-        <div className="absolute bottom-3 right-8">
+        <div className="absolute bottom-2 right-8">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="27"

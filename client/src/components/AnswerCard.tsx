@@ -87,7 +87,7 @@ function AnswerCard({answerData}: Props) {
           </svg>
           <span className="text-[#6741D9]">Vote</span>
         </div>
-        <div className="col-span-10">
+        <div className="col-span-10 overflow-hidden">
           {' '}
           {message &&
             message.map((message, idx) => {
