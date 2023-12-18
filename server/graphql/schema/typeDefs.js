@@ -87,6 +87,7 @@ type Mutation {
     
     # ----- DELETING ELEMENTS ------------
     deleteQuestion(id: ID): Question
+    deleteAnswer(id: ID): Answer
     
     # ----- UPDATING ELEMENTS ------------
     updateQuestion(id: ID, editInput: editQuestionInput): Question
@@ -104,7 +105,7 @@ input newQuestionInput {
     solution_tried: String!
     posted_on: Date!
     module: String
-    github_repo: String!
+    github_repo: String
     tags: [String!]!
     answers: [ID!]
     saved_by: [ID!]
@@ -126,6 +127,7 @@ input editQuestionInput {
     module: String,
     github_repo: String,
     tags: [String!],
+    status: String
 }
 
 input editTagInput {

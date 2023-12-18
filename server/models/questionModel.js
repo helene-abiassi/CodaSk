@@ -27,7 +27,7 @@ const questionSchema = new mongoose.Schema({
   },
   github_repo: {
     type: String,
-    required: true,
+    // required: true,
   },
   tags: [
     {

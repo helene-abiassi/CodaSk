@@ -157,6 +157,16 @@ const resolvers = {
       const newQuestion = await questionModel({
         ...args.newQuestion,
       });
+
+      const updateUser = await userModel.findByIdAndUpdate(
+        newQuestion.author,
+        {
+          $addToSet: {
+            questions: newQuestion._id,
+          },
+        },
+        { new: true }
+      );
       return await newQuestion.save();
     },
     async addAnswer(_, args) {
@@ -190,9 +200,22 @@ const resolvers = {
 
     async deleteQuestion(_, args) {
       const deletedQuestion = await questionModel.findByIdAndDelete(args.id);
+      // console.log("ANSWERS ALL", deletedQuestion.answers);
+      deletedQuestion.answers.forEach(async (answer) => {
+        const answerObject = await answerModel.findById(answer);
+        const userToUpdate = await userModel.findByIdAndUpdate(
+          answerObject.author,
+          {
+            $pull: {
+              answers: answer,
+            },
+          },
+          { new: true }
+        );
+      });
       // deleting Q with QID from User
       await userModel.updateMany(
-        { questions: args.id },
+        { questions: args.ids },
         { $pull: { questions: args.id } }
       );
       await answerModel.deleteMany({ question: args.id });
@@ -212,6 +235,28 @@ const resolvers = {
       return deletedQuestion;
     },
 
+    async deleteAnswer(_, args) {
+      console.log(args);
+      const asnwerToDelete = await answerModel.findByIdAndDelete(args.id);
+      const questionToUpdate = await questionModel.findByIdAndUpdate(
+        asnwerToDelete.question,
+        {
+          $pull: {
+            answers: asnwerToDelete._id,
+          },
+        }
+      );
+      const userToUpdate = await userModel.findByIdAndUpdate(
+        asnwerToDelete.author._id,
+        {
+          $pull: {
+            answers: asnwerToDelete._id,
+          },
+        }
+      );
+      return asnwerToDelete;
+    },
+
     // *----- UPDATING MUTATIONS ---------
     async updateQuestion(_, args) {
       const updatedQuestion = await questionModel.findByIdAndUpdate(
@@ -224,6 +269,7 @@ const resolvers = {
             module: args.editInput.module,
             github_repo: args.editInput.github_repo,
             tags: args.editInput.tags,
+            status: args.editInput.status,
           },
         },
         { new: true }
