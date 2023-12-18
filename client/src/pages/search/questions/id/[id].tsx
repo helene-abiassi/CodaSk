@@ -233,6 +233,7 @@ function QuestionDetails() {
             <div className="mb-4 mt-6">
               <h1 className="text-lg">
                 <Link
+                  target="_blank"
                   href={data ? data.getQuestionById.github_repo : ''}
                   className="flex"
                 >

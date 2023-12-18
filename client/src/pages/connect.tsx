@@ -89,7 +89,11 @@ function Connect({data}: ComponentProps) {
                     <p>{user?.course_type}</p>
                     <div className="m-1 my-2 flex flex-row text-[#B197FC]">
                       <FaGithub style={{fontSize: '1.5em'}} />
-                      <Link className="ml-1 no-underline" href={user?.github}>
+                      <Link
+                        className="ml-1 no-underline"
+                        href={user?.github}
+                        target="_blank"
+                      >
                         Github profile
                       </Link>
                     </div>

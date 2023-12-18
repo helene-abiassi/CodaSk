@@ -54,8 +54,8 @@ type ComponentProps = {
 };
 
 const GET_QUESTIONS = gql`
-  query getAllQuestions {
-    getAllQuestions {
+  query getAllQuestions($sortBy: String) {
+    getAllQuestions(sortBy: $sortBy) {
       id
       author {
         id
@@ -82,18 +82,10 @@ const GET_QUESTIONS = gql`
   }
 `;
 
-/// MUTATIONS ///
-export const DELETE_QUESTION = gql`
-  mutation DeleteQuestion($deleteQuestionId: ID) {
-    deleteQuestion(id: $deleteQuestionId) {
-      id
-    }
-  }
-`;
-
-export const getServerSideProps: GetServerSideProps<
-  ComponentProps
-> = async () => {
+export const getServerSideProps: GetServerSideProps<ComponentProps> = async ({
+  query,
+}) => {
+  const {sortBy} = query;
   const client = new ApolloClient({
     uri: 'http://localhost:5008/graphql',
     cache: new InMemoryCache(),
@@ -101,6 +93,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const {data} = await client.query({
     query: GET_QUESTIONS,
+    variables: {sortBy},
   });
 
   return {
@@ -110,8 +103,19 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
+/// MUTATIONS ///
+export const DELETE_QUESTION = gql`
+  mutation DeleteQuestion($deleteQuestionId: ID) {
+    deleteQuestion(id: $deleteQuestionId) {
+      id
+    }
+  }
+`;
+
 function Question({data}: ComponentProps) {
-  const [deleteQuestion] = useMutation(DELETE_QUESTION);
+  const [deleteQuestion] = useMutation(DELETE_QUESTION, {
+    refetchQueries: [GET_QUESTIONS, 'getAllQuestions'],
+  });
 
   return (
     <div className="h-full w-full">

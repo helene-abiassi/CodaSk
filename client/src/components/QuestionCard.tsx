@@ -1,5 +1,6 @@
-import React, {useEffect} from 'react';
-import {FaArrowAltCircleUp, FaTrashAlt, FaPen} from 'react-icons/fa';
+import React from 'react';
+import {FaTrashAlt, FaPen} from 'react-icons/fa';
+import parse from 'html-react-parser';
 import {formatDate} from './Functions';
 import Image from 'next/image';
 import 'react-quill/dist/quill.snow.css';
@@ -95,7 +96,6 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
     router.push(`http://localhost:3000/search/questions/id/${questionID}`);
   };
 
-  console.log('tagdata :>> ', tagdata);
   //!Reset button?
 
   const handeleDeleteQuestion = async (questionID: string) => {
@@ -137,7 +137,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
           return (
             <div
               key={index + 1}
-              className=" my-4 max-w-full rounded-2xl bg-[#EDE9E6]"
+              className=" my-4 max-w-full rounded-2xl bg-[#EDE9E6] hover:bg-gray-300"
             >
               {/* QUESTION BOX HEADER */}
               <div className="flex flex-row items-center justify-between rounded-xl bg-black p-2 text-base font-light text-white">
@@ -159,14 +159,9 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
 
               {/* QUESTION BOX BODY */}
 
-              {/* VOTE UP BODY */}
               <div className="flex h-full cursor-pointer flex-row items-center ">
-                {/* <div className="mx-4 my-2 text-center text-[#6741D9]">
-                  <FaArrowAltCircleUp />
-                  <p>{q.saved_by.length} votes</p>
-                </div> */}
                 {/* TEXT BODY */}
-                <div className="questionBoxBody mx-4 max-w-6xl  p-4 ">
+                <div className="questionBoxBody mx-4 max-w-7xl  p-4 ">
                   <div
                     onClick={() => {
                       handleQuestionRedirect(q.id);
@@ -183,8 +178,9 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                       </div>
                     </div>
                     <div>
-                      <p className="...  overflow-hidden truncate text-ellipsis pr-4">
-                        {q?.problem_description}{' '}
+                      <p className="...  max-h-5 overflow-hidden truncate text-ellipsis pr-4">
+                        {/* {q?.problem_description}{' '} */}
+                        {parse(q?.problem_description) as string}
                       </p>
                     </div>
                   </div>
@@ -244,7 +240,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
           return (
             <div
               key={index + 1}
-              className=" my-4 max-w-full  rounded-2xl bg-[#EDE9E6]"
+              className=" my-4 max-w-full  rounded-2xl bg-[#EDE9E6] hover:bg-gray-300"
             >
               {/* QUESTION BOX HEADER */}
               <div className="questionBoxHeader flex flex-row items-center justify-between rounded-xl bg-black p-2 text-base font-light text-white">
@@ -266,15 +262,8 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
 
               {/* QUESTION BOX BODY */}
 
-              {/* VOTE UP BODY */}
               <div className="flex h-full cursor-pointer flex-row items-center ">
-                {/* <div className="mx-4 my-2 text-center text-[#6741D9]">
-                  <FaArrowAltCircleUp />
-                  <p>{q.saved_by.length} votes</p>
-                </div> */}
-
-                {/* TEXT BODY */}
-                <div className="questionBoxBody mx-4 max-w-6xl  p-4 ">
+                <div className="questionBoxBody mx-4 max-w-7xl  p-4 ">
                   <div
                     onClick={() => {
                       handleQuestionRedirect(q.id);
@@ -291,8 +280,9 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                       </div>
                     </div>
                     <div>
-                      <p className="...  overflow-hidden truncate text-ellipsis pr-4">
-                        {q?.problem_description}{' '}
+                      <p className="...  max-h-5 overflow-hidden truncate text-ellipsis pr-4">
+                        {/* {q?.problem_description}{' '} */}
+                        {parse(q?.problem_description) as string}
                       </p>
                     </div>
                   </div>

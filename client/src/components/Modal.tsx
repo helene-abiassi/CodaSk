@@ -1,9 +1,9 @@
 import Image from 'next/image';
-import React, {useState} from 'react';
+import React, {ReactElement, useState} from 'react';
 
 type ModalProps = {
   title: string;
-  message: string;
+  message: ReactElement[] | string;
   onClose: () => void;
   image?: JSX.Element;
 };

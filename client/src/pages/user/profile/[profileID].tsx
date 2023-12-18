@@ -313,7 +313,7 @@ function Profile() {
             {showQuestionsModal && (
               <Modal
                 title="your questions"
-                message={questionsInModal}
+                message={questionsInModal!}
                 onClose={handleCloseQuestionsModal}
               />
             )}{' '}

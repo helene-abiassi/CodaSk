@@ -42,11 +42,11 @@ function TagCard({data, bookmarkTag}: Props) {
 
   console.log('userID :>> ', sessionUserID);
 
-  //! Add toast
   const handleTagRedirect = (tagID: string) => {
     router.push(`http://localhost:3000/search/questions/tagged/${tagID}`);
   };
 
+  //! Add toast
   const handleBookmarkTag = async (userID: string, tagID: string) => {
     try {
       const result = await bookmarkTag({
@@ -104,7 +104,6 @@ function TagCard({data, bookmarkTag}: Props) {
                       handleTagRedirect(tag?.id);
                     }}
                   >
-                    {/* Truncate text after 4 lines */}
                     <p className="line-clamp-4 ">{tag?.description}</p>
                     <br />
                   </div>

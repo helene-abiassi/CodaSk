@@ -76,7 +76,9 @@ export const getServerSideProps: GetServerSideProps<
 };
 
 function Tags({data}: ComponentProps) {
-  const [bookmarkTag] = useMutation(BOOKMARK_TAG);
+  const [bookmarkTag] = useMutation(BOOKMARK_TAG, {
+    refetchQueries: [BOOKMARK_TAG, 'BookmarkTag'],
+  });
 
   console.log('data in tag Page :>> ', data);
 
