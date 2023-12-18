@@ -10,6 +10,7 @@ import {getPostedOnInDays} from '@/utils/GetPostedOnInDays';
 import {divideString} from '@/utils/QuillTextProcessor';
 import {deleteInlineStyles} from '@/utils/CleanInlineStyles';
 import parse from 'html-react-parser';
+import DeleteModal from './DeleteModal';
 type Props = {
   answerData: {
     author: {
@@ -22,30 +23,25 @@ type Props = {
     message: string;
     votes: string[];
   };
+  showDeleteAnswerModal: boolean;
+  handleOpenDeleteAModal: () => void;
+  handleCloseDeleteAModal: () => void;
+  handleDeleteAnswer: () => void;
 };
 
-function AnswerCard({answerData}: Props) {
+function AnswerCard({
+  answerData,
+  showDeleteAnswerModal,
+  handleOpenDeleteAModal,
+  handleCloseDeleteAModal,
+  handleDeleteAnswer,
+}: Props) {
   // const session = useSession();
   // const userID = session?.data?.user?.name as string;
   const userID = '656b4777d89e223b1e928c33';
 
   const answersDiv = divideString(answerData.message);
   const message = deleteInlineStyles(answersDiv);
-
-  // ! DELETE ANSWER
-  // const handeleDeleteQuestion = async (questionID: string) => {
-  //   const deleteConfirm = window.confirm(
-  //     'Are you SURE you want to delete your question?'
-  //   );
-  //   if (deleteConfirm) {
-  //     await deleteQuestion({
-  //       variables: {
-  //         deleteQuestionId: questionID,
-  //       },
-  //     });
-  //     location.reload();
-  //   }
-  // };
   const codeSnippetClass = 'bg-black text-white mt-4 p-6 rounded-xl mb-4';
   const normalText = 'text-black mt-4 mb-4';
 
@@ -106,19 +102,29 @@ function AnswerCard({answerData}: Props) {
         <div className="col-span-1 flex justify-end">
           {answerData.author.id === userID ? (
             <>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="25"
-                height="25"
-                viewBox="0 0 30 30"
-                fill="none"
-                className="m-4"
-              >
-                <path
-                  d="M11.25 3.75V5H5V7.5H6.25V23.75C6.25 24.413 6.51339 25.0489 6.98223 25.5178C7.45107 25.9866 8.08696 26.25 8.75 26.25H21.25C21.913 26.25 22.5489 25.9866 23.0178 25.5178C23.4866 25.0489 23.75 24.413 23.75 23.75V7.5H25V5H18.75V3.75H11.25ZM8.75 7.5H21.25V23.75H8.75V7.5ZM11.25 10V21.25H13.75V10H11.25ZM16.25 10V21.25H18.75V10H16.25Z"
-                  fill="black"
+              <button onClick={handleOpenDeleteAModal}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="25"
+                  height="25"
+                  viewBox="0 0 30 30"
+                  fill="none"
+                  className="m-4"
+                >
+                  <path
+                    d="M11.25 3.75V5H5V7.5H6.25V23.75C6.25 24.413 6.51339 25.0489 6.98223 25.5178C7.45107 25.9866 8.08696 26.25 8.75 26.25H21.25C21.913 26.25 22.5489 25.9866 23.0178 25.5178C23.4866 25.0489 23.75 24.413 23.75 23.75V7.5H25V5H18.75V3.75H11.25ZM8.75 7.5H21.25V23.75H8.75V7.5ZM11.25 10V21.25H13.75V10H11.25ZM16.25 10V21.25H18.75V10H16.25Z"
+                    fill="black"
+                  />
+                </svg>
+              </button>
+              {showDeleteAnswerModal && (
+                <DeleteModal
+                  title={''}
+                  itemToDelete="question"
+                  onClose={handleCloseDeleteAModal}
+                  confirmDel={handleDeleteAnswer}
                 />
-              </svg>
+              )}
             </>
           ) : (
             ''

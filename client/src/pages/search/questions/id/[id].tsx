@@ -14,6 +14,8 @@ import {quillFormats, quillModules} from '@/types/quillTypes';
 import {AllAnswersQuery} from '@/types/AnswersQuery';
 import AnswerCard from '@/components/AnswerCard';
 import DeleteModal from '@/components/DeleteModal';
+import {redirect} from 'next/navigation';
+import {NextResponse} from 'next/server';
 const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
 
 // ------------QUERIES--------------------
@@ -27,6 +29,7 @@ const GET_QUESTION_BY_ID = gql`
       problem_description
       solution_tried
       github_repo
+      status
       tags {
         id
         name
@@ -66,10 +69,16 @@ const POST_NEW_ANSWER = gql`
   }
 `;
 
-// TODO Mark as solved jako przycisk z kolorami w zależności od statusu (Pod warunkiem, że refetch zadziała);
-// TODO Zastosuj modal do czegokolwiek
-// TODO Dodaj możliwość usunięcia pytania z modalem
+const DELETE_QUESTION = gql`
+  mutation Mutation($deleteQuestionId: ID) {
+    deleteQuestion(id: $deleteQuestionId) {
+      id
+    }
+  }
+`;
+
 // TODO Dodaj możliwość usunięcia odpowiedzi z modalem
+// TODO Mark as solved jako przycisk z kolorami w zależności od statusu (Pod warunkiem, że refetch zadziała);
 // TODO Dodaj możliwość upvote
 function QuestionDetails() {
   const router = useRouter();
@@ -78,6 +87,7 @@ function QuestionDetails() {
   // UseStates
   const [answer, setAnswer] = useState('');
   const [showDeleteQuestionModal, setShowDeleteQuestionModal] = useState(false);
+  const [showDeleteAnswerModal, setShowDeleteAnswerModal] = useState(false);
 
   // -------QUERIES---------------
   const {data} = useQuery<questionDetailsType>(GET_QUESTION_BY_ID, {
@@ -92,6 +102,8 @@ function QuestionDetails() {
   const [addAnswer, {data: addAnswerData}] = useMutation(POST_NEW_ANSWER, {
     refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
   });
+  const [deleteQuestion] = useMutation(DELETE_QUESTION);
+  // -------------------------------
 
   // Get posted on date in days difference as string
   const diff = getPostedOnInDays(data ? data.getQuestionById.posted_on : '');
@@ -132,18 +144,39 @@ function QuestionDetails() {
     setAnswer('');
   };
 
+  // ! Delete a question (no mutation added yet)
   const handleCloseDeleteQModal = () => {
     setShowDeleteQuestionModal(false);
   };
 
-  // ! Delete a question (no mutation added yet)
+  const handleCloseDeleteAModal = () => {
+    setShowDeleteAnswerModal(false);
+  };
+
   const handleOpenDeleteQModal = () => {
     setShowDeleteQuestionModal(true);
   };
 
+  const handleOpenDeleteAModal = () => {
+    setShowDeleteAnswerModal(true);
+  };
+
   const handleDeleteQuestion = () => {
-    console.log('DELETEING');
+    deleteQuestion({
+      variables: {
+        deleteQuestionId: data ? data.getQuestionById.id : '',
+      },
+    });
     setShowDeleteQuestionModal(false);
+    router.push('/search/questions');
+  };
+
+  const handleDeleteAnswer = () => {
+    console.log('Deleteing answer');
+  };
+
+  const handleStatusChange = () => {
+    console.log('HEllo');
   };
 
   return (
@@ -213,7 +246,19 @@ function QuestionDetails() {
               )}
             </h3>
           </div>
-          <p className="text-base text-gray-600">Mark as Solved</p>
+          <div>
+            <span className="text-gray-500">Question status: </span>
+            <button
+              className={
+                data?.getQuestionById.status === 'unanswered'
+                  ? 'rounded-full bg-red-500 px-6 py-2 hover:font-bold hover:text-white '
+                  : 'rounded-full bg-green-500 px-6 py-2 hover:font-bold hover:text-white '
+              }
+              onClick={handleStatusChange}
+            >
+              {data ? data.getQuestionById.status : ''}
+            </button>
+          </div>
         </div>
         {/* Problem description */}
         <div className="mt-10 overflow-hidden">
@@ -345,15 +390,21 @@ function QuestionDetails() {
           </svg>
         </div>
       </div>
-      {/* TODO Dodaj query z pobieraniem wszystkich */}
-      {/* TODO Skopiuj kartę do wyświetlania wszystkich odpowiedzi*/}
-      {/* TODO Dostosuj ją do danych*/}
-      {/* TODO W środku karty dodaj wyświetlanie kodu z metodami które już masz*/}
+      {/* ANSWERS */}
       <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
         {answersData
           ? answersData.getAllAnswers.map((answer) => {
               // console.log(answer.author);
-              return <AnswerCard answerData={answer} />;
+              return (
+                <AnswerCard
+                  answerData={answer}
+                  key={answer.id}
+                  showDeleteAnswerModal={showDeleteAnswerModal}
+                  handleOpenDeleteAModal={handleOpenDeleteAModal}
+                  handleCloseDeleteAModal={handleCloseDeleteAModal}
+                  handleDeleteAnswer={handleDeleteAnswer}
+                />
+              );
             })
           : ''}
       </div>

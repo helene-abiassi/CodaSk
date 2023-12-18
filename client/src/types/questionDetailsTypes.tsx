@@ -14,6 +14,7 @@ export type QuestionType = {
   github_repo: string;
   module: string;
   posted_on: string;
+  status: string;
   problem_description: string;
   solution_tried: string;
   title: string;
