@@ -179,8 +179,8 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                     </div>
                     <div>
                       <p className="...  max-h-5 overflow-hidden truncate text-ellipsis pr-4">
-                        {/* {q?.problem_description}{' '} */}
-                        {parse(q?.problem_description) as string}
+                        {q?.problem_description}{' '}
+                        {/* {parse(q ? q.problem_description : '')} */}
                       </p>
                     </div>
                   </div>
@@ -281,8 +281,8 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                     </div>
                     <div>
                       <p className="...  max-h-5 overflow-hidden truncate text-ellipsis pr-4">
-                        {/* {q?.problem_description}{' '} */}
-                        {parse(q?.problem_description) as string}
+                        {q?.problem_description}{' '}
+                        {/* {parse(q ? q.problem_description : '')} */}
                       </p>
                     </div>
                   </div>

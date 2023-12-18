@@ -54,8 +54,8 @@ type ComponentProps = {
 };
 
 const GET_QUESTIONS = gql`
-  query getAllQuestions($sortBy: String) {
-    getAllQuestions(sortBy: $sortBy) {
+  query getAllQuestions {
+    getAllQuestions {
       id
       author {
         id
@@ -82,10 +82,9 @@ const GET_QUESTIONS = gql`
   }
 `;
 
-export const getServerSideProps: GetServerSideProps<ComponentProps> = async ({
-  query,
-}) => {
-  const {sortBy} = query;
+export const getServerSideProps: GetServerSideProps<
+  ComponentProps
+> = async () => {
   const client = new ApolloClient({
     uri: 'http://localhost:5008/graphql',
     cache: new InMemoryCache(),
@@ -93,7 +92,6 @@ export const getServerSideProps: GetServerSideProps<ComponentProps> = async ({
 
   const {data} = await client.query({
     query: GET_QUESTIONS,
-    variables: {sortBy},
   });
 
   return {
