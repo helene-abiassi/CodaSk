@@ -44,23 +44,6 @@ const resolvers = {
       return await questionModel.find(query);
     },
 
-    // async getQuestionsByTagName(_, args) {
-    //   try {
-    //     const tag = await tagModel.findById(args.tag);
-
-    //     if (!tag) {
-    //       throw new Error("Tag not found");
-    //     }
-
-    //     const questionsWithTag = await questionModel.find({
-    //       tags: { $in: [tag.id] },
-    //     });
-    //     return questionsWithTag;
-    //   } catch (error) {
-    //     console.log("error in QbyTag :>> ", error);
-    //   }
-    // },
-
     async getQuestionsByTagName(_, { tag, sortBy }) {
       try {
         const foundTag = await tagModel.findById(tag);
@@ -104,8 +87,27 @@ const resolvers = {
     },
 
     //   *------TAGS-------*
-    async getTagById(_, args) {
-      return tagModel.findById(args.id);
+    async getTagById(_, { sortBy }) {
+      // return tagModel.findById(args.id);
+      let query = {};
+
+      if (sortBy === "All") {
+        return await tagModel.find(query).sort({ posted_on: -1 });
+      } else if (sortBy === "Name") {
+        return await tagModel.find(query).sort({ name: -1 });
+      } else if (sortBy === "Popular") {
+        return await tagModel.find(query).sort({ related_questions: -1 });
+      } else if (sortBy === "Web Development") {
+        return await tagModel
+          .find({ course_type: "Web Development" })
+          .sort({ posted_on: -1 });
+      } else if (sortBy === "Data Analytics") {
+        return await tagModel
+          .find({ course_type: "Data Analytics" })
+          .sort({ posted_on: -1 });
+      }
+
+      return await tagModel.find(query);
     },
 
     async getAllTags(_, args) {

@@ -100,7 +100,7 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      filteredData: data,
+      data: data,
     },
   };
 };

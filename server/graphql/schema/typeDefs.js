@@ -78,7 +78,7 @@ type Query {
 
     # -----Tags queries-----
     getTagById(id: ID!): Tag
-    getAllTags: [Tag]
+    getAllTags(sortBy: String): [Tag]
 }
     
 type Mutation {

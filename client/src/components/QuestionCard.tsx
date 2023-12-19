@@ -113,26 +113,27 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
     }
   };
 
-  // const noQuestionsMessage =
-  //   (!tagdata?.getQuestionsByTagName ||
-  //     tagdata?.getQuestionsByTagName?.length === 0) &&
-  //   (!data?.getAllQuestions || data?.getAllQuestions?.length === 0) ? (
-  //     <div className="text-center">
-  //       <p className=" my-14  font-medium text-[#6741D9] md:text-3xl">
-  //         No questions match that search.
-  //       </p>
-  //       <Link
-  //         className="rounded-full font-normal no-underline hover:bg-[#B197FC] hover:p-2 hover:text-white "
-  //         href={'http://localhost:3000/search/questions/askQuestion'}
-  //       >
-  //         Be the first to ask one!
-  //       </Link>
-  //     </div>
-  //   ) : null;
+  const noQuestionsMessage =
+    (!filteredTagData?.getQuestionsByTagName ||
+      filteredTagData?.getQuestionsByTagName?.length === 0) &&
+    (!filteredData?.getAllQuestions ||
+      filteredData?.getAllQuestions?.length === 0) ? (
+      <div className="text-center">
+        <p className=" my-14  font-medium text-[#6741D9] md:text-3xl">
+          No questions match that search.
+        </p>
+        <Link
+          className="rounded-full font-normal no-underline hover:bg-[#B197FC] hover:p-2 hover:text-white "
+          href={'http://localhost:3000/search/questions/askQuestion'}
+        >
+          Be the first to ask one!
+        </Link>
+      </div>
+    ) : null;
 
   return (
     <div className="flex flex-col">
-      {/* {noQuestionsMessage} */}
+      {noQuestionsMessage}
       {filteredTagData &&
         filteredTagData.getQuestionsByTagName?.map((q, index) => {
           return (
