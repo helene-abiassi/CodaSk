@@ -68,8 +68,9 @@ type Query {
     
     # -----Question queries-----
     getQuestionById(id: ID!): Question
-    getAllQuestions: [Question]
-    getQuestionsByTagName(tag:ID!): [Question]
+    # getAllQuestions: [Question]
+    getAllQuestions(sortBy: String): [Question]
+    getQuestionsByTagName(tag:ID!, sortBy: String): [Question]
     
     # -----Answers queries-----
     getAnswerById(id: ID!): Answer
@@ -77,7 +78,7 @@ type Query {
 
     # -----Tags queries-----
     getTagById(id: ID!): Tag
-    getAllTags: [Tag]
+    getAllTags(sortBy: String): [Tag]
 }
     
 type Mutation {

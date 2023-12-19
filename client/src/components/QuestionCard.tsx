@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {FaTrashAlt, FaPen} from 'react-icons/fa';
 import parse from 'html-react-parser';
 import {formatDate} from './Functions';
@@ -7,6 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 import {useSession} from 'next-auth/react';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
+import {getPostedOnInDays} from '@/utils/GetPostedOnInDays';
 
 type questionCardProp = {
   getAllQuestions: [
@@ -77,8 +78,8 @@ type questionbyTagCardProp = {
 };
 
 type Props = {
-  data: questionCardProp;
-  tagdata: questionbyTagCardProp;
+  filteredData: questionCardProp;
+  filteredTagData: questionbyTagCardProp;
   deleteQuestion: ({
     variables: {deleteQuestionId},
   }: {
@@ -86,7 +87,7 @@ type Props = {
   }) => void;
 };
 
-function QuestionCard({data, tagdata, deleteQuestion}: Props) {
+function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
   const session = useSession();
   const userID = session?.data?.user?.name as string;
 
@@ -113,9 +114,10 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
   };
 
   const noQuestionsMessage =
-    (!tagdata?.getQuestionsByTagName ||
-      tagdata?.getQuestionsByTagName?.length === 0) &&
-    (!data?.getAllQuestions || data?.getAllQuestions?.length === 0) ? (
+    (!filteredTagData?.getQuestionsByTagName ||
+      filteredTagData?.getQuestionsByTagName?.length === 0) &&
+    (!filteredData?.getAllQuestions ||
+      filteredData?.getAllQuestions?.length === 0) ? (
       <div className="text-center">
         <p className=" my-14  font-medium text-[#6741D9] md:text-3xl">
           No questions match that search.
@@ -132,12 +134,12 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
   return (
     <div className="flex flex-col">
       {noQuestionsMessage}
-      {tagdata &&
-        tagdata.getQuestionsByTagName?.map((q, index) => {
+      {filteredTagData &&
+        filteredTagData.getQuestionsByTagName?.map((q, index) => {
           return (
             <div
-              key={index + 1}
-              className=" my-4 max-w-full rounded-2xl bg-[#EDE9E6] hover:bg-gray-300"
+              key={index + 1} ///
+              className="my-4 max-w-full rounded-2xl bg-[#EDE9E6] hover:bg-gray-300"
             >
               {/* QUESTION BOX HEADER */}
               <div className="flex flex-row items-center justify-between rounded-xl bg-black p-2 text-base font-light text-white">
@@ -150,7 +152,8 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                     className="mr-2"
                   />
                   <p>
-                    {q.author?.first_name} posted on {formatDate(q.posted_on)}
+                    {q.author?.first_name} posted{' '}
+                    {getPostedOnInDays(q.posted_on)}
                   </p>
                 </div>
 
@@ -158,27 +161,23 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
               </div>
 
               {/* QUESTION BOX BODY */}
-
               <div className="flex h-full cursor-pointer flex-row items-center ">
-                {/* TEXT BODY */}
-                <div className="questionBoxBody mx-4 max-w-7xl  p-4 ">
+                <div className="questionBoxBody mx-4 w-full max-w-7xl p-4 ">
                   <div
                     onClick={() => {
                       handleQuestionRedirect(q.id);
                     }}
                   >
                     <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
-                      <p className="">{q.title}</p>
-                      <div>
-                        {q.answers && q.answers.length <= 1 ? (
-                          <p>{q.answers.length} answer</p>
-                        ) : (
-                          <p>{q.answers.length} answers</p>
-                        )}
-                      </div>
+                      <p className="flex-1">{q.title}</p>
+                      {q.answers && q.answers.length <= 1 ? (
+                        <p>{q.answers.length} answer</p>
+                      ) : (
+                        <p>{q.answers.length} answers</p>
+                      )}
                     </div>
                     <div>
-                      <p className="...  max-h-5 overflow-hidden truncate text-ellipsis pr-4">
+                      <p className="max-h-5 overflow-hidden truncate text-ellipsis pr-4">
                         {q?.problem_description}{' '}
                         {/* {parse(q ? q.problem_description : '')} */}
                       </p>
@@ -186,7 +185,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                   </div>
                   {/* TAG BODY */}
                   <div className="m-2 flex flex-row items-center justify-between">
-                    <div className="flex flex-row flex-wrap">
+                    <div className="flex flex-1 flex-wrap">
                       {q.tags &&
                         q.tags.map((tag, indexT) => {
                           return (
@@ -233,10 +232,10 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
             </div>
           );
         })}
-      {/*   ----------------------------------- */}
+      {/*   -------------------------------------------------------------------------------------------------------------- */}
 
-      {data &&
-        data.getAllQuestions.map((q, index) => {
+      {filteredData &&
+        filteredData.getAllQuestions.map((q, index) => {
           return (
             <div
               key={index + 1}
@@ -253,7 +252,8 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
                     className="mr-2"
                   />
                   <p>
-                    {q.author?.first_name} posted on {formatDate(q.posted_on)}
+                    {q.author?.first_name} posted{' '}
+                    {getPostedOnInDays(q.posted_on)}
                   </p>
                 </div>
 
@@ -263,7 +263,7 @@ function QuestionCard({data, tagdata, deleteQuestion}: Props) {
               {/* QUESTION BOX BODY */}
 
               <div className="flex h-full cursor-pointer flex-row items-center ">
-                <div className="questionBoxBody mx-4 max-w-7xl  p-4 ">
+                <div className="questionBoxBody mx-4 w-full  max-w-7xl p-4">
                   <div
                     onClick={() => {
                       handleQuestionRedirect(q.id);

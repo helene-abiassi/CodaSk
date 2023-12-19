@@ -42,7 +42,7 @@ function AssignTags({
 
   return (
     <>
-      <div className="container mx-auto mt-10 w-8/12">
+      <div className="container mx-auto mt-10 h-full min-h-screen w-8/12">
         {!updateQuestionCalled && !updateTagCalled ? (
           <>
             {/* Header text */}

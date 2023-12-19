@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   useQuery,
   gql,
@@ -12,6 +12,7 @@ import Image from 'next/image';
 import QuestionsGrid from '@/components/QuestionsGrid';
 import {GetServerSideProps} from 'next';
 import {useRouter} from 'next/router';
+import QuestionButtons from '@/components/QuestionButtons';
 
 export type questionByTagQuery = {
   getQuestionsByTagName: [
@@ -53,8 +54,8 @@ type ComponentProps = {
 };
 
 const GET_QUESTIONS_BY_TAG = gql`
-  query getQuestionsByTagName($tag: ID!) {
-    getQuestionsByTagName(tag: $tag) {
+  query getQuestionsByTagName($tag: ID!, $sortBy: String) {
+    getQuestionsByTagName(tag: $tag, sortBy: $sortBy) {
       id
       author {
         id
@@ -93,7 +94,7 @@ export const getServerSideProps: GetServerSideProps<ComponentProps> = async (
 
   const {data} = await client.query({
     query: GET_QUESTIONS_BY_TAG,
-    variables: {tag: tag},
+    variables: {tag: tag, sortBy: 'All'},
   });
 
   return {
@@ -110,11 +111,18 @@ function Question({tagdata, tag}: ComponentProps) {
 
   const router = useRouter();
 
-  console.log('router.query.name :>> ', router.query.name);
+  const [sortBy, setSortBy] = useState('All');
 
-  const handleChatButton = () => {
-    //!Replace alert with modal
-    alert('🙄 You should never ask ChatGPT!!!');
+  const {data: filteredTagData} = useQuery(GET_QUESTIONS_BY_TAG, {
+    variables: {
+      tag,
+      sortBy,
+    },
+  });
+  console.log('filteredData :>> ', filteredTagData);
+
+  const handleSortChange = (sortOption: string) => {
+    setSortBy(sortOption);
   };
 
   return (
@@ -126,24 +134,59 @@ function Question({tagdata, tag}: ComponentProps) {
           {router.query.name}
         </h1>
         <div className="flex flex-col">
-          <Link
-            className="my-2 rounded-full bg-black px-4 py-2 font-bold text-white no-underline hover:bg-[#B197FC]"
-            href={'/search/questions/askQuestion'}
-          >
-            Ask a question
-          </Link>
-          <button
-            className="my-2 mb-3 rounded-full bg-[#B197FC] px-4 py-2 font-medium text-white hover:bg-black"
-            onClick={handleChatButton}
-          >
-            Ask ChatGPT
-          </button>
+          <QuestionButtons />
         </div>
+      </div>
+
+      <div className="sortByBox mb-4 flex flex-row border-b-2 border-b-[#D9D9D9] p-2">
+        <span className="flex flex-row  text-lg font-normal text-[#6741D9]">
+          Sort by:
+          <ul className="flex cursor-pointer list-none flex-row">
+            <li
+              onClick={() => handleSortChange('All')}
+              className=" px-1"
+              value={'All'}
+            >
+              All<span className="font-semibold text-black"> | </span>
+            </li>
+            <li
+              onClick={() => handleSortChange('Popular')}
+              className=" px-1"
+              value={'Popular'}
+            >
+              Popular<span className="font-semibold text-black"> |</span>
+            </li>
+            <li
+              onClick={() => handleSortChange('Oldest')}
+              className=" px-1"
+              value={'Oldest'}
+            >
+              Oldest<span className="font-semibold text-black"> | </span>
+            </li>
+            <li
+              onClick={() => handleSortChange('Unanswered')}
+              className=" px-1"
+              value={'Unanswered'}
+            >
+              Unanswered<span className="font-semibold text-black"> |</span>
+            </li>
+            <li
+              onClick={() => handleSortChange('Solved')}
+              className=" px-1"
+              value={'Solved'}
+            >
+              Solved
+            </li>
+          </ul>
+        </span>
       </div>
 
       {/* GRID SECTION */}
       <div className="mx-8">
-        <QuestionsGrid tagdata={tagdata} deleteQuestion={deleteQuestion} />
+        <QuestionsGrid
+          filteredTagData={filteredTagData}
+          deleteQuestion={deleteQuestion}
+        />
       </div>
     </div>
   );

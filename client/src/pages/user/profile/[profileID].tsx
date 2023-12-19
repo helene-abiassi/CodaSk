@@ -322,7 +322,7 @@ function Profile() {
             className="m-4 text-[#6741D9] hover:text-black"
             onClick={handleShowQuestionsModal}
           >
-            view all questions
+            view all
           </button>
         </div>
 

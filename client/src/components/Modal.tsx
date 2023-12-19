@@ -19,11 +19,11 @@ const Modal = ({message, onClose, title, image}: ModalProps) => {
           </button>
         </div>
 
-        <div className="m-4 items-center justify-center">
+        <div className="m-4 flex flex-col items-center justify-center">
           {image && <div className="image-container">{image}</div>}
 
           <br />
-          <p className="message text-xl">{message}</p>
+          <p className="message text-center text-xl">{message}</p>
         </div>
       </div>
     </div>
