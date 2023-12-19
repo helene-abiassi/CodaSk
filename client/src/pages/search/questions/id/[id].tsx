@@ -35,30 +35,44 @@ const GET_QUESTION_BY_ID = gql`
         name
       }
       author {
+        id
         first_name
         user_photo
+      }
+      answers {
+        id
+        posted_on
+        message
+        votes {
+          id
+        }
+        author {
+          id
+          first_name
+          user_photo
+        }
       }
     }
   }
 `;
 
-const GET_ALL_ANSWERS = gql`
-  query GetAllAnswers {
-    getAllAnswers {
-      author {
-        id
-        first_name
-        user_photo
-      }
-      id
-      posted_on
-      message
-      votes {
-        id
-      }
-    }
-  }
-`;
+// const GET_ALL_ANSWERS = gql`
+//   query GetAllAnswers {
+//     getAllAnswers {
+//       author {
+//         id
+//         first_name
+//         user_photo
+//       }
+//       id
+//       posted_on
+//       message
+//       votes {
+//         id
+//       }
+//     }
+//   }
+// `;
 
 // -----------MUTATIONS------------------------
 const POST_NEW_ANSWER = gql`
@@ -119,21 +133,21 @@ function QuestionDetails() {
     },
   });
 
-  const {data: answersData} = useQuery<AllAnswersQuery>(GET_ALL_ANSWERS);
+  // const {data: answersData} = useQuery<AllAnswersQuery>(GET_ALL_ANSWERS);
 
   // -------MUTATATIONS-----------
   const [addAnswer, {data: addAnswerData}] = useMutation(POST_NEW_ANSWER, {
-    refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
+    refetchQueries: [GET_QUESTION_BY_ID, 'getQuestionById'],
   });
   const [deleteQuestion] = useMutation(DELETE_QUESTION);
   const [updateQuestion] = useMutation(UPDATE_QUESTION, {
     refetchQueries: [GET_QUESTION_BY_ID, 'getQuestionById'],
   });
   const [deleteAnswer] = useMutation(DELETE_ANSWER, {
-    refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
+    refetchQueries: [GET_QUESTION_BY_ID, 'getQuestionById'],
   });
   const [updateAnswer] = useMutation(UPDATE_ANSWER, {
-    refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
+    refetchQueries: [GET_QUESTION_BY_ID, 'getQuestionById'],
   });
   // -------------------------------
 
@@ -254,46 +268,52 @@ function QuestionDetails() {
             {data ? data.getQuestionById.title : ''}
           </h1>
           <div className="flex">
-            <Link
-              href={`/search/questions/updatequestion/${
-                data ? data.getQuestionById.id : ''
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="23"
-                height="23"
-                viewBox="0 0 33 33"
-                fill="none"
-              >
-                <path
-                  d="M28.4762 9.68002C29.0125 9.14377 29.0125 8.25002 28.4762 7.74127L25.2588 4.52377C24.75 3.98752 23.8562 3.98752 23.32 4.52377L20.79 7.04002L25.9463 12.1963L28.4762 9.68002ZM4.125 23.7188V28.875H9.28125L24.4887 13.6538L19.3325 8.49752L4.125 23.7188Z"
-                  fill="black"
-                />
-              </svg>
-            </Link>
-            {showDeleteQuestionModal && (
-              <DeleteModal
-                title={data ? data.getQuestionById.title : ''}
-                itemToDelete="question"
-                onClose={handleCloseDeleteQModal}
-                confirmDel={handleDeleteQuestion}
-              />
+            {data?.getQuestionById.author.id === userID ? (
+              <>
+                <Link
+                  href={`/search/questions/updatequestion/${
+                    data ? data.getQuestionById.id : ''
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="23"
+                    height="23"
+                    viewBox="0 0 33 33"
+                    fill="none"
+                  >
+                    <path
+                      d="M28.4762 9.68002C29.0125 9.14377 29.0125 8.25002 28.4762 7.74127L25.2588 4.52377C24.75 3.98752 23.8562 3.98752 23.32 4.52377L20.79 7.04002L25.9463 12.1963L28.4762 9.68002ZM4.125 23.7188V28.875H9.28125L24.4887 13.6538L19.3325 8.49752L4.125 23.7188Z"
+                      fill="black"
+                    />
+                  </svg>
+                </Link>
+                {showDeleteQuestionModal && (
+                  <DeleteModal
+                    title={data ? data.getQuestionById.title : ''}
+                    itemToDelete="question"
+                    onClose={handleCloseDeleteQModal}
+                    confirmDel={handleDeleteQuestion}
+                  />
+                )}
+                <button onClick={handleOpenDeleteQModal} className="mx-1 flex">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="23"
+                    height="23"
+                    viewBox="0 0 33 33"
+                    fill="none"
+                  >
+                    <path
+                      d="M12.375 4.125V5.5H5.5V8.25H6.875V26.125C6.875 26.8543 7.16473 27.5538 7.68046 28.0695C8.19618 28.5853 8.89565 28.875 9.625 28.875H23.375C24.1043 28.875 24.8038 28.5853 25.3195 28.0695C25.8353 27.5538 26.125 26.8543 26.125 26.125V8.25H27.5V5.5H20.625V4.125H12.375ZM9.625 8.25H23.375V26.125H9.625V8.25ZM12.375 11V23.375H15.125V11H12.375ZM17.875 11V23.375H20.625V11H17.875Z"
+                      fill="black"
+                    />
+                  </svg>
+                </button>
+              </>
+            ) : (
+              ''
             )}
-            <button onClick={handleOpenDeleteQModal} className="mx-1 flex">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="23"
-                height="23"
-                viewBox="0 0 33 33"
-                fill="none"
-              >
-                <path
-                  d="M12.375 4.125V5.5H5.5V8.25H6.875V26.125C6.875 26.8543 7.16473 27.5538 7.68046 28.0695C8.19618 28.5853 8.89565 28.875 9.625 28.875H23.375C24.1043 28.875 24.8038 28.5853 25.3195 28.0695C25.8353 27.5538 26.125 26.8543 26.125 26.125V8.25H27.5V5.5H20.625V4.125H12.375ZM9.625 8.25H23.375V26.125H9.625V8.25ZM12.375 11V23.375H15.125V11H12.375ZM17.875 11V23.375H20.625V11H17.875Z"
-                  fill="black"
-                />
-              </svg>
-            </button>
           </div>
         </div>
         {/* Posted on, module, and mark as solved */}
@@ -313,17 +333,23 @@ function QuestionDetails() {
             </h3>
           </div>
           <div>
-            <span className="text-gray-500">Question status: </span>
-            <button
-              className={
-                data?.getQuestionById.status === 'Unanswered'
-                  ? 'rounded-full bg-red-500 px-6 py-2 hover:font-bold hover:text-white '
-                  : 'rounded-full bg-green-500 px-6 py-2 hover:font-bold hover:text-white '
-              }
-              onClick={handleStatusChange}
-            >
-              {data ? data.getQuestionById.status : ''}
-            </button>
+            {data?.getQuestionById.author.id === userID ? (
+              <>
+                <span className="text-gray-500">Question status: </span>
+                <button
+                  className={
+                    data?.getQuestionById.status === 'Unanswered'
+                      ? 'rounded-full bg-red-500 px-6 py-2 hover:font-bold hover:text-white '
+                      : 'rounded-full bg-green-500 px-6 py-2 hover:font-bold hover:text-white '
+                  }
+                  onClick={handleStatusChange}
+                >
+                  {data ? data.getQuestionById.status : ''}
+                </button>
+              </>
+            ) : (
+              ''
+            )}
           </div>
         </div>
         {/* Problem description */}
@@ -459,8 +485,8 @@ function QuestionDetails() {
       </div>
       {/* ANSWERS */}
       <div className="relative mx-auto mb-10 mt-10 h-fit w-9/12">
-        {answersData
-          ? answersData.getAllAnswers.map((answer) => {
+        {data
+          ? data.getQuestionById.answers.map((answer) => {
               // console.log(answer.author);
               return (
                 <AnswerCard

@@ -6,18 +6,9 @@ import {divideString} from '@/utils/QuillTextProcessor';
 import {deleteInlineStyles} from '@/utils/CleanInlineStyles';
 import parse from 'html-react-parser';
 import DeleteModal from './DeleteModal';
+import {Answer} from '@/types/questionDetailsTypes';
 type Props = {
-  answerData: {
-    author: {
-      id: string;
-      first_name: string;
-      user_photo: string;
-    };
-    id: string;
-    posted_on: string;
-    message: string;
-    votes: string[];
-  };
+  answerData: Answer;
   showDeleteAnswerModal: boolean;
   handleOpenDeleteAModal: () => void;
   handleCloseDeleteAModal: () => void;
