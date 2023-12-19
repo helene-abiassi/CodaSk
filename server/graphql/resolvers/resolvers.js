@@ -236,7 +236,6 @@ const resolvers = {
     },
 
     async deleteAnswer(_, args) {
-      console.log(args);
       const asnwerToDelete = await answerModel.findByIdAndDelete(args.id);
       const questionToUpdate = await questionModel.findByIdAndUpdate(
         asnwerToDelete.question,
@@ -276,6 +275,32 @@ const resolvers = {
       );
 
       return updatedQuestion;
+    },
+    async updateAnswer(_, args) {
+      const answerToUpdate = await answerModel.findById(args.id);
+      if (answerToUpdate.votes.includes(args.userID)) {
+        const answerToUpdate = await answerModel.findByIdAndUpdate(
+          args.id,
+          {
+            $pull: {
+              votes: args.userID,
+            },
+          },
+          { new: true }
+        );
+        return answerToUpdate;
+      } else {
+        const answerToUpdate = await answerModel.findByIdAndUpdate(
+          args.id,
+          {
+            $addToSet: {
+              votes: args.userID,
+            },
+          },
+          { new: true }
+        );
+        return answerToUpdate;
+      }
     },
     async updateTags(_, args) {
       const updatedTags = [];
