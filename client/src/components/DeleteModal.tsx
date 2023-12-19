@@ -4,7 +4,8 @@ type ModalProps = {
   title: string;
   itemToDelete: string;
   onClose: () => void;
-  confirmDel: () => void;
+  confirmDel: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  ID?: string;
 };
 
 const DeleteModal = ({
@@ -12,6 +13,7 @@ const DeleteModal = ({
   onClose,
   title,
   confirmDel,
+  ID,
 }: ModalProps) => {
   return (
     <div className="modal-background w-max">
@@ -31,7 +33,7 @@ const DeleteModal = ({
           <button className="mx-2 !bg-green-500" onClick={onClose}>
             No! Keep it!
           </button>
-          <button className="mx-2 !bg-red-500" onClick={confirmDel}>
+          <button className="mx-2 !bg-red-500" onClick={confirmDel} value={ID}>
             Yes I'm sure!
           </button>
         </div>

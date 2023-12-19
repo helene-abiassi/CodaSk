@@ -9,6 +9,7 @@ import {
   questionInput,
 } from '@/types/askQuestionTypes';
 import {validateInputs} from '@/utils/QuestionValidator';
+import {useSession} from 'next-auth/react';
 
 // --------QUERIES--------------
 const GET_ALLTAGS = gql`
@@ -47,6 +48,8 @@ const UPDATE_QUESTION = gql`
 `;
 
 function AskQuestion() {
+  const session = useSession();
+  const userID = session.data?.user?.name;
   // Initialize user question object
   const [questionInput, setQuestionInput] = useState<questionInput>({
     title: '',
@@ -88,8 +91,8 @@ function AskQuestion() {
     {called: updateQuestionCalled, error: UpdateQuestionErr},
   ] = useMutation(UPDATE_QUESTION);
 
-  // ! TEMPORARY ID
-  const userID = '656b4777d89e223b1e928c33';
+  // // ! TEMPORARY ID
+  // const userID = '656b4777d89e223b1e928c33';
 
   // Post a new question if no errors in form
   const postQuestion = (e: React.FormEvent<HTMLFormElement>) => {

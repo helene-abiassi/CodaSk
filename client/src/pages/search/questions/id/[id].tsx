@@ -1,6 +1,6 @@
 import {gql, useMutation, useQuery} from '@apollo/client';
 import {useRouter} from 'next/router';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import parse from 'html-react-parser';
 import {divideString} from '@/utils/QuillTextProcessor';
 import {questionDetailsType} from '@/types/questionDetailsTypes';
@@ -15,8 +15,7 @@ import {AllAnswersQuery} from '@/types/AnswersQuery';
 import AnswerCard from '@/components/AnswerCard';
 import BackButton from '@/components/BackButton';
 import DeleteModal from '@/components/DeleteModal';
-import {redirect} from 'next/navigation';
-import {NextResponse} from 'next/server';
+import {useSession} from 'next-auth/react';
 const QuillEditor = dynamic(() => import('react-quill'), {ssr: false});
 
 // ------------QUERIES--------------------
@@ -78,12 +77,35 @@ const DELETE_QUESTION = gql`
   }
 `;
 
-// TODO Dodaj możliwość usunięcia odpowiedzi z modalem
-// TODO Mark as solved jako przycisk z kolorami w zależności od statusu (Pod warunkiem, że refetch zadziała);
-// TODO Dodaj możliwość upvote
+const UPDATE_QUESTION = gql`
+  mutation Mutation($updateQuestionId: ID, $editInput: editQuestionInput) {
+    updateQuestion(id: $updateQuestionId, editInput: $editInput) {
+      status
+    }
+  }
+`;
+
+const DELETE_ANSWER = gql`
+  mutation Mutation($deleteAnswerId: ID) {
+    deleteAnswer(id: $deleteAnswerId) {
+      message
+    }
+  }
+`;
+
+const UPDATE_ANSWER = gql`
+  mutation UpdateAnswer($updateAnswerId: ID, $userId: ID!) {
+    updateAnswer(id: $updateAnswerId, userID: $userId) {
+      message
+    }
+  }
+`;
+
 function QuestionDetails() {
   const router = useRouter();
   const postID = router.query.id;
+  const session = useSession();
+  const userID = session.data?.user?.name;
 
   // UseStates
   const [answer, setAnswer] = useState('');
@@ -104,6 +126,15 @@ function QuestionDetails() {
     refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
   });
   const [deleteQuestion] = useMutation(DELETE_QUESTION);
+  const [updateQuestion] = useMutation(UPDATE_QUESTION, {
+    refetchQueries: [GET_QUESTION_BY_ID, 'getQuestionById'],
+  });
+  const [deleteAnswer] = useMutation(DELETE_ANSWER, {
+    refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
+  });
+  const [updateAnswer] = useMutation(UPDATE_ANSWER, {
+    refetchQueries: [GET_ALL_ANSWERS, 'getAllAnswers'],
+  });
   // -------------------------------
 
   // Get posted on date in days difference as string
@@ -126,15 +157,15 @@ function QuestionDetails() {
     'bg-black text-white mt-4 p-6 rounded-xl shadow-custom';
   const normalText = 'text-[#6741D9] mt-4';
 
-  // ! TEMP USER ID
-  const tempUser = '656b4777d89e223b1e928c33';
+  // // ! TEMP USER ID
+  // const tempUser = '656b4777d89e223b1e928c33';
 
   // Adding a new answer
   const handlePostNewAnswer = () => {
     addAnswer({
       variables: {
         newAnswer: {
-          author: tempUser,
+          author: userID,
           message: answer,
           posted_on: Date.now(),
           question: postID,
@@ -172,12 +203,43 @@ function QuestionDetails() {
     router.push('/search/questions');
   };
 
-  const handleDeleteAnswer = () => {
-    console.log('Deleteing answer');
+  const handleDeleteAnswer = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    const target = e.target as HTMLButtonElement;
+    deleteAnswer({
+      variables: {
+        deleteAnswerId: target.value,
+      },
+    });
+    setShowDeleteAnswerModal(false);
   };
 
   const handleStatusChange = () => {
-    console.log('HEllo');
+    updateQuestion({
+      variables: {
+        updateQuestionId: postID,
+        editInput: {
+          status:
+            data!.getQuestionById.status === 'Unanswered'
+              ? 'Solved'
+              : 'Unanswered',
+        },
+      },
+    });
+  };
+
+  const handleUpvote = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const target = e.target as HTMLButtonElement;
+    const closest = target.closest('#upvote') as HTMLButtonElement;
+    const targetID = closest.value;
+
+    updateAnswer({
+      variables: {
+        updateAnswerId: targetID,
+        userId: userID,
+      },
+    });
   };
 
   return (
@@ -254,7 +316,7 @@ function QuestionDetails() {
             <span className="text-gray-500">Question status: </span>
             <button
               className={
-                data?.getQuestionById.status === 'unanswered'
+                data?.getQuestionById.status === 'Unanswered'
                   ? 'rounded-full bg-red-500 px-6 py-2 hover:font-bold hover:text-white '
                   : 'rounded-full bg-green-500 px-6 py-2 hover:font-bold hover:text-white '
               }
@@ -408,6 +470,8 @@ function QuestionDetails() {
                   handleOpenDeleteAModal={handleOpenDeleteAModal}
                   handleCloseDeleteAModal={handleCloseDeleteAModal}
                   handleDeleteAnswer={handleDeleteAnswer}
+                  handleUpvote={handleUpvote}
+                  userID={userID}
                 />
               );
             })
