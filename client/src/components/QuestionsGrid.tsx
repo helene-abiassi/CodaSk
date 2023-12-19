@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import {GetServerSideProps} from 'next';
 import QuestionCard from './QuestionCard';
 import {questionByTagQuery} from '@/pages/search/questions/tagged/[tag]';
+import {GET_QUESTIONS} from '@/pages/search/questions';
 
 type questionQuery = {
   getAllQuestions: [
@@ -40,7 +41,8 @@ type questionQuery = {
 };
 
 type Props = {
-  data: questionQuery;
+  // data: questionQuery;
+  filteredData: questionQuery;
   tagdata: questionByTagQuery;
   deleteQuestion: ({
     variables: {deleteQuestionId},
@@ -49,44 +51,12 @@ type Props = {
   }) => void;
 };
 
-function QuestionsGrid({data, tagdata, deleteQuestion}: Props) {
-  useEffect(() => {}, [data]);
-
+function QuestionsGrid({filteredData, filteredTagData, deleteQuestion}: Props) {
   return (
     <div className="flex flex-col">
-      {/* FILTER BOX */}
-      <div className="sortByBox flex flex-row border-b-2 border-b-[#D9D9D9] p-2">
-        <span className="flex flex-row  text-lg font-normal text-[#6741D9]">
-          Sort by:
-          <ul className="flex list-none flex-row">
-            <li className=" px-1" value={'Newest'}>
-              Newest<span className="font-semibold text-black"> | </span>
-            </li>
-            <li className=" px-1" value={'Popular'}>
-              Popular<span className="font-semibold text-black"> |</span>
-            </li>
-            <li className=" px-1" value={'Unanswered'}>
-              Unanswered<span className="font-semibold text-black"> |</span>
-            </li>
-            <li className=" px-1" value={'Solved'}>
-              Solved
-            </li>
-          </ul>
-        </span>
-      </div>
-      {data &&
-        data.getAllQuestions.length > 0 &&
-        tagdata &&
-        tagdata.getQuestionsByTagName.length > 0 && (
-          <QuestionCard
-            tagdata={tagdata}
-            data={data}
-            deleteQuestion={deleteQuestion}
-          />
-        )}
       <QuestionCard
-        tagdata={tagdata}
-        data={data}
+        filteredTagData={filteredTagData}
+        filteredData={filteredData}
         deleteQuestion={deleteQuestion}
       />
     </div>

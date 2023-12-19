@@ -27,33 +27,70 @@ const resolvers = {
     async getAllQuestions(_, { sortBy }) {
       let query = {};
 
-      if (sortBy === "Newest") {
-        query = { $query: {}, $orderby: { posted_on: -1 } };
+      if (sortBy === "All") {
+        return await questionModel.find(query).sort({ posted_on: -1 });
+      } else if (sortBy === "Oldest") {
+        return await questionModel.find(query).sort({ posted_on: 1 });
       } else if (sortBy === "Popular") {
-        query = { $query: {}, $orderby: { "answers.length": -1 } };
+        return await questionModel.find(query).sort({ "saved_by.length": -1 });
       } else if (sortBy === "Unanswered") {
-        query = { answers: { $exists: false } };
+        return await questionModel.find({ answers: [] });
       } else if (sortBy === "Solved") {
-        query = { status: "Solved" };
+        return await questionModel
+          .find({ status: "Solved" })
+          .sort({ posted_on: -1 });
       }
 
       return await questionModel.find(query);
     },
 
-    async getQuestionsByTagName(_, args) {
-      try {
-        const tag = await tagModel.findById(args.tag);
+    // async getQuestionsByTagName(_, args) {
+    //   try {
+    //     const tag = await tagModel.findById(args.tag);
 
-        if (!tag) {
+    //     if (!tag) {
+    //       throw new Error("Tag not found");
+    //     }
+
+    //     const questionsWithTag = await questionModel.find({
+    //       tags: { $in: [tag.id] },
+    //     });
+    //     return questionsWithTag;
+    //   } catch (error) {
+    //     console.log("error in QbyTag :>> ", error);
+    //   }
+    // },
+
+    async getQuestionsByTagName(_, { tag, sortBy }) {
+      try {
+        const foundTag = await tagModel.findById(tag);
+
+        if (!foundTag) {
           throw new Error("Tag not found");
         }
 
-        const questionsWithTag = await questionModel.find({
-          tags: { $in: [tag.id] },
-        });
-        return questionsWithTag;
+        let query = { tags: { $in: [foundTag.id] } };
+
+        if (sortBy === "All") {
+          return await questionModel.find(query).sort({ posted_on: -1 });
+        } else if (sortBy === "Oldest") {
+          return await questionModel.find(query).sort({ posted_on: 1 });
+        } else if (sortBy === "Popular") {
+          return await questionModel
+            .find(query)
+            .sort({ "saved_by.length": -1 });
+        } else if (sortBy === "Unanswered") {
+          return await questionModel.find({ ...query, answers: [] });
+        } else if (sortBy === "Solved") {
+          return await questionModel
+            .find({ ...query, status: "Solved" })
+            .sort({ posted_on: -1 });
+        }
+
+        return await questionModel.find(query);
       } catch (error) {
-        console.log("error in QbyTag :>> ", error);
+        console.log("Error in getQuestionsByTagName:", error);
+        throw error;
       }
     },
 

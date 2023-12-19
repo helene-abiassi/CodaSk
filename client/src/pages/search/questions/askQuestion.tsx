@@ -148,7 +148,7 @@ function AskQuestion() {
   };
   console.log(questionInput);
   return (
-    <>
+    <div className="h-full min-h-screen">
       {!addQuestionCalled ? (
         <NewQuestionForm
           tagData={tagData ? tagData : undefined}
@@ -177,7 +177,7 @@ function AskQuestion() {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
 
