@@ -164,7 +164,9 @@ function Tags() {
             <option
               onChange={() => handleSortChange('Data Analytics')}
               value={'Data Analytics'}
-            ></option>
+            >
+              Data Analytics
+            </option>
           </select>
         </div>
       </div>
