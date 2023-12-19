@@ -1,4 +1,5 @@
 export type UserType = {
+  id: string;
   first_name: string;
   user_photo: string;
 };
@@ -6,6 +7,18 @@ export type UserType = {
 export type Tag = {
   id: string;
   name: string;
+};
+
+export type Answer = {
+  id: string;
+  posted_on: string;
+  message: string;
+  votes: [{id: string}];
+  author: {
+    id: string;
+    first_name: string;
+    user_photo: string;
+  };
 };
 
 export type QuestionType = {
@@ -19,6 +32,7 @@ export type QuestionType = {
   solution_tried: string;
   title: string;
   tags: Tag[];
+  answers: Answer[];
 };
 
 export type questionDetailsType = {

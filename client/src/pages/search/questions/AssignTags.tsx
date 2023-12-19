@@ -107,7 +107,7 @@ function AssignTags({
           </>
         ) : !UpdateQuestionErr && !updateTagError ? (
           <>
-            <div>
+            <div className="mx-auto mt-32 w-2/3">
               <h1 className="text-3xl text-[#6741D9]">
                 Congratulations, everything went well!
               </h1>
