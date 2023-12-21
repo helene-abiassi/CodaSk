@@ -14,7 +14,7 @@ type questionQuery = {
         first_name: string;
         user_photo: string;
       };
-      posted_on: Date;
+      posted_on: Date | string;
       title: string;
       problem_description: string;
       solution_tried: string;
@@ -43,7 +43,8 @@ type questionQuery = {
 type Props = {
   // data: questionQuery;
   filteredData: questionQuery;
-  tagdata: questionByTagQuery;
+  filteredTagData: questionByTagQuery;
+  // tagdata: questionByTagQuery;
   deleteQuestion: ({
     variables: {deleteQuestionId},
   }: {

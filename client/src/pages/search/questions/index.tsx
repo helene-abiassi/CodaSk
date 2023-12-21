@@ -23,7 +23,7 @@ export type questionQuery = {
         first_name: string;
         user_photo: string;
       };
-      posted_on: Date;
+      posted_on: Date | string;
       title: string;
       problem_description: string;
       solution_tried: string;
@@ -83,27 +83,27 @@ export const GET_QUESTIONS = gql`
   }
 `;
 
-export const getServerSideProps: GetServerSideProps<
-  ComponentProps
-> = async () => {
-  const client = new ApolloClient({
-    uri: 'http://localhost:5008/graphql',
-    cache: new InMemoryCache(),
-  });
+// export const getServerSideProps: GetServerSideProps<
+//   ComponentProps
+// > = async () => {
+//   const client = new ApolloClient({
+//     uri: 'http://localhost:5008/graphql',
+//     cache: new InMemoryCache(),
+//   });
 
-  const {data} = await client.query({
-    query: GET_QUESTIONS,
-    variables: {
-      sortBy: 'All',
-    },
-  });
+//   const {data} = await client.query({
+//     query: GET_QUESTIONS,
+//     variables: {
+//       sortBy: 'All',
+//     },
+//   });
 
-  return {
-    props: {
-      data: data,
-    },
-  };
-};
+//   return {
+//     props: {
+//       data: data,
+//     },
+//   };
+// };
 
 /// MUTATIONS ///
 export const DELETE_QUESTION = gql`
@@ -114,7 +114,9 @@ export const DELETE_QUESTION = gql`
   }
 `;
 
-function Question({data}: ComponentProps) {
+// {data}: ComponentProps
+
+function Question() {
   const [deleteQuestion] = useMutation(DELETE_QUESTION, {
     refetchQueries: [GET_QUESTIONS, 'getAllQuestions'],
   });
@@ -137,7 +139,7 @@ function Question({data}: ComponentProps) {
       {/* TOP SECTION */}
       <div className="flex flex-row items-start justify-between px-6 py-6">
         <h1 className=" mx-8 mt-4 text-left font-medium text-[#6741D9] md:text-3xl">
-          Search among {data?.getAllQuestions.length} questions
+          Search among {filteredData?.getAllQuestions.length} questions
         </h1>
         <div>
           <QuestionButtons />

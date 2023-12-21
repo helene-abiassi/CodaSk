@@ -52,7 +52,7 @@ function CodaskNav() {
               <li>
                 <Link
                   href={'/user/register'}
-                  className="mx-1 hover:font-semibold focus:font-semibold"
+                  className="mx-1 no-underline hover:font-semibold focus:font-semibold"
                 >
                   Sign up
                 </Link>
@@ -60,7 +60,7 @@ function CodaskNav() {
               <li>
                 <Link
                   href={'/user/login'}
-                  className="mx-1 hover:font-semibold focus:font-semibold"
+                  className="mx-1 no-underline hover:font-semibold focus:font-semibold"
                 >
                   | Log in
                 </Link>

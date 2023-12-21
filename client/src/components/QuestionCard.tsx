@@ -18,7 +18,7 @@ type questionCardProp = {
         first_name: string;
         user_photo: string;
       };
-      posted_on: Date;
+      posted_on: Date | string;
       title: string;
       problem_description: string;
       module: string;
@@ -52,7 +52,7 @@ type questionbyTagCardProp = {
         first_name: string;
         user_photo: string;
       };
-      posted_on: Date;
+      posted_on: Date | string;
       title: string;
       problem_description: string;
       module: string;
@@ -149,7 +149,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     src={q.author?.user_photo}
                     width={40}
                     height={40}
-                    className="mr-2"
+                    className="mr-2 rounded-3xl"
                   />
                   <p>
                     {q.author?.first_name} posted{' '}
@@ -165,7 +165,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                 <div className="questionBoxBody mx-4 w-full max-w-7xl p-4 ">
                   <div
                     onClick={() => {
-                      handleQuestionRedirect(q.id);
+                      handleQuestionRedirect(q?.id);
                     }}
                   >
                     <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
@@ -178,8 +178,8 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     </div>
                     <div>
                       <p className="max-h-5 overflow-hidden truncate text-ellipsis pr-4">
-                        {q?.problem_description}{' '}
-                        {/* {parse(q ? q.problem_description : '')} */}
+                        {/* {q?.problem_description}{' '} */}
+                        {parse(q?.problem_description)}
                       </p>
                     </div>
                   </div>
@@ -191,7 +191,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                           return (
                             <div
                               key={indexT}
-                              className="mx-2 my-2 w-min rounded-md bg-black p-1 text-white"
+                              className="mx-2 my-2 w-max rounded-md bg-black p-2 text-white"
                             >
                               <Link
                                 className="no-underline"
@@ -210,11 +210,11 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     </div>
                     {/* EDIT/DELETE BUTTONS */}
                     <div>
-                      {userID === q.author.id && (
+                      {userID === q?.author.id && (
                         <>
                           <button
                             onClick={() => {
-                              handeleDeleteQuestion(q.id);
+                              handeleDeleteQuestion(q?.id);
                             }}
                             className="mx-2"
                           >
@@ -266,7 +266,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                 <div className="questionBoxBody mx-4 w-full  max-w-7xl p-4">
                   <div
                     onClick={() => {
-                      handleQuestionRedirect(q.id);
+                      handleQuestionRedirect(q?.id);
                     }}
                   >
                     <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
@@ -280,9 +280,9 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                       </div>
                     </div>
                     <div>
-                      <p className="...  max-h-5 overflow-hidden truncate text-ellipsis pr-4">
-                        {q?.problem_description}{' '}
-                        {/* {parse(q ? q.problem_description : '')} */}
+                      <p className="...  max-h-6 overflow-hidden truncate text-ellipsis pr-4">
+                        {/* {q?.problem_description}{' '} */}
+                        {parse(q ? q.problem_description : '')}
                       </p>
                     </div>
                   </div>
@@ -294,7 +294,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                           return (
                             <div
                               key={indexT}
-                              className="mx-2 my-2 w-min rounded-md bg-black p-1 text-white"
+                              className="mx-2 my-2 w-max rounded-md bg-black p-2 text-white"
                             >
                               <Link
                                 className="no-underline"
@@ -313,11 +313,11 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     </div>
                     {/* EDIT/DELETE BUTTONS */}
                     <div>
-                      {userID === q.author.id && (
+                      {userID === q?.author.id && (
                         <>
                           <button
                             onClick={() => {
-                              handeleDeleteQuestion(q.id);
+                              handeleDeleteQuestion(q?.id);
                             }}
                             className="mx-2"
                           >

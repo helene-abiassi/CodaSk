@@ -35,7 +35,7 @@ export interface User extends UserPhoto {
         user_photo:string;
         course_type:string;
     };
-    posted_on: Date;
+    posted_on: Date | string;
     title:string;
     problem_description:string;
     solution_tried:string;

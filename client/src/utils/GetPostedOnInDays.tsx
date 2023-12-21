@@ -1,4 +1,4 @@
-export const getPostedOnInDays = (posted_on: string) => {
+export const getPostedOnInDays = (posted_on: Date | string) => {
   // Convert posted_on to time in ms, and get current time in ms
   const published = new Date(posted_on).getTime();
   const now = new Date().getTime();
