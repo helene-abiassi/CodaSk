@@ -55,7 +55,7 @@ export const BOOKMARK_TAG = gql`
 `;
 
 export const UNBOOKMARK_TAG = gql`
-  mutation UnbookmarkTag($userId: ID!, $tagId: ID!) {
+  mutation UnbookmarkTag($userId: ID, $tagId: ID) {
     unbookmarkTag(userId: $userId, tagId: $tagId) {
       id
     }
@@ -63,9 +63,7 @@ export const UNBOOKMARK_TAG = gql`
 `;
 
 function Tags() {
-  const [bookmarkTag] = useMutation(BOOKMARK_TAG, {
-    refetchQueries: [GET_TAGS, 'getAllTags'],
-  });
+  const [bookmarkTag] = useMutation(BOOKMARK_TAG);
 
   const [sortBy, setSortBy] = useState('All');
 

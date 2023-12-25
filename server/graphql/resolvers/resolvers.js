@@ -20,10 +20,6 @@ const resolvers = {
       return await questionModel.findById(args.id);
     },
 
-    // async getAllQuestions() {
-    //   return await questionModel.find();
-    // },
-
     async getAllQuestions(_, { sortBy }) {
       let query = {};
 
@@ -92,7 +88,6 @@ const resolvers = {
     },
 
     async getAllTags(_, { sortBy }) {
-      // return tagModel.find();
       let query = {};
 
       if (sortBy === "All") {
@@ -233,9 +228,6 @@ const resolvers = {
     },
 
     // *----- DELETING MUTATIONS ---------
-    // async deleteQuestion(_, args) {
-    //   return await questionModel.findByIdAndDelete(args.id);
-    // },
 
     async deleteQuestion(_, args) {
       const deletedQuestion = await questionModel.findByIdAndDelete(args.id);

@@ -34,7 +34,7 @@ type Props = {
 
 function TagCard({data, bookmarkTag}: Props) {
   // const [bookmarkTag] = useMutation(BOOKMARK_TAG);
-  const [unbookmarkTag] = useMutation(UNBOOKMARK_TAG);
+  // const [unbookmarkTag] = useMutation(UNBOOKMARK_TAG);
 
   const session = useSession();
   const sessionUserID = session?.data?.user?.name as string;
