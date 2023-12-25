@@ -177,7 +177,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                       )}
                     </div>
                     <div>
-                      <p className="max-h-5 overflow-hidden truncate text-ellipsis pr-4">
+                      <p className=" max-h-7 overflow-hidden truncate text-ellipsis pr-4">
                         {/* {q?.problem_description}{' '} */}
                         {parse(q?.problem_description)}
                       </p>
@@ -249,7 +249,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     src={q.author?.user_photo}
                     width={40}
                     height={40}
-                    className="mr-2"
+                    className="mr-2 rounded-3xl"
                   />
                   <p>
                     {q.author?.first_name} posted{' '}
@@ -279,11 +279,8 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                         )}
                       </div>
                     </div>
-                    <div>
-                      <p className="...  max-h-6 overflow-hidden truncate text-ellipsis pr-4">
-                        {/* {q?.problem_description}{' '} */}
-                        {parse(q ? q.problem_description : '')}
-                      </p>
+                    <div className="... max-h-6 overflow-hidden truncate text-ellipsis pr-4">
+                      <p>{parse(q?.problem_description)}</p>
                     </div>
                   </div>
                   {/* TAG BODY */}

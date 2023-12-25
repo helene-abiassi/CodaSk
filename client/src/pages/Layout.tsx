@@ -14,7 +14,9 @@ function Layout({children}: Props) {
       <SessionProvider>
         <CodaskNav />
         <CodaskSidebar />
-        <main className="ml-48 border-l-2 border-r-gray-200">{children}</main>
+        <main className="relative ml-48 border-l-2 border-r-gray-200">
+          {children}
+        </main>
         <Footer />
       </SessionProvider>
     </>

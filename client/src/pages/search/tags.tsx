@@ -62,28 +62,6 @@ export const UNBOOKMARK_TAG = gql`
   }
 `;
 
-export const getServerSideProps: GetServerSideProps<
-  ComponentProps
-> = async () => {
-  const client = new ApolloClient({
-    uri: 'http://localhost:5008/graphql',
-    cache: new InMemoryCache(),
-  });
-
-  const {data} = await client.query({
-    query: GET_TAGS,
-    variables: {
-      sortBy: 'All',
-    },
-  });
-
-  return {
-    props: {
-      data: data,
-    },
-  };
-};
-
 function Tags() {
   const [bookmarkTag] = useMutation(BOOKMARK_TAG, {
     refetchQueries: [GET_TAGS, 'getAllTags'],
@@ -102,7 +80,7 @@ function Tags() {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full min-h-screen w-full">
       {/* TOP SECTION */}
       <div className=" flex flex-row items-start justify-between px-6 py-6">
         <h1 className=" mx-8 mt-4 text-left font-medium text-[#6741D9] md:text-3xl">
@@ -151,18 +129,19 @@ function Tags() {
           <select
             className="mx-2 rounded-full bg-black p-2 font-medium text-white"
             //   onChange={handleDropdownInput}
+            onChange={(e) => handleSortChange(e.target.value)}
             name="course_type"
             placeholder="course type"
           >
-            <option value={'user_permission'}>course type</option>
+            <option value={'All'}>course type</option>
             <option
-              onChange={() => handleSortChange('Web Development')}
+              // onClick={() => handleSortChange('Web Development')}
               value={'Web Development'}
             >
               web development
             </option>
             <option
-              onChange={() => handleSortChange('Data Analytics')}
+              // onClick={() => handleSortChange('Data Analytics')}
               value={'Data Analytics'}
             >
               Data Analytics
