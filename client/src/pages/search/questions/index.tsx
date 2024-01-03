@@ -83,28 +83,6 @@ export const GET_QUESTIONS = gql`
   }
 `;
 
-// export const getServerSideProps: GetServerSideProps<
-//   ComponentProps
-// > = async () => {
-//   const client = new ApolloClient({
-//     uri: 'http://localhost:5008/graphql',
-//     cache: new InMemoryCache(),
-//   });
-
-//   const {data} = await client.query({
-//     query: GET_QUESTIONS,
-//     variables: {
-//       sortBy: 'All',
-//     },
-//   });
-
-//   return {
-//     props: {
-//       data: data,
-//     },
-//   };
-// };
-
 /// MUTATIONS ///
 export const DELETE_QUESTION = gql`
   mutation DeleteQuestion($deleteQuestionId: ID) {
@@ -114,8 +92,6 @@ export const DELETE_QUESTION = gql`
   }
 `;
 
-// {data}: ComponentProps
-
 function Question() {
   const [deleteQuestion] = useMutation(DELETE_QUESTION, {
     refetchQueries: [GET_QUESTIONS, 'getAllQuestions'],
@@ -123,7 +99,7 @@ function Question() {
 
   const [sortBy, setSortBy] = useState('All');
 
-  const {data: filteredData} = useQuery(GET_QUESTIONS, {
+  const {data: filteredData, loading} = useQuery(GET_QUESTIONS, {
     variables: {
       sortBy,
     },
@@ -192,6 +168,7 @@ function Question() {
         <QuestionsGrid
           filteredData={filteredData}
           deleteQuestion={deleteQuestion}
+          loading={loading}
         />
       </div>
     </div>

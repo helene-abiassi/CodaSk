@@ -2,10 +2,16 @@ import {useSession} from 'next-auth/react';
 import {} from 'react-icons/fa';
 import {BsFillPinFill} from 'react-icons/bs';
 import {useRouter} from 'next/router';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
-import {useMutation} from '@apollo/client';
-import {BOOKMARK_TAG, UNBOOKMARK_TAG} from '@/pages/search/tags';
+import {useMutation, useQuery} from '@apollo/client';
+import {
+  BOOKMARK_TAG,
+  GET_USER_BY_ID,
+  UNBOOKMARK_TAG,
+  userQuery,
+} from '@/pages/search/tags';
+import Loader from './Loader';
 
 type tagProps = {
   getAllTags: [
@@ -25,29 +31,46 @@ type tagProps = {
 
 type Props = {
   data: tagProps;
+  userData: userQuery;
   bookmarkTag: ({
     variables: {userId, tagId},
   }: {
     variables: {userId: string; tagId: string};
   }) => void;
+  unbookmarkTag: ({
+    variables: {userId, tagId},
+  }: {
+    variables: {userId: string; tagId: string};
+  }) => void;
+  loading: boolean;
 };
 
-function TagCard({data, bookmarkTag}: Props) {
-  // const [bookmarkTag] = useMutation(BOOKMARK_TAG);
-  // const [unbookmarkTag] = useMutation(UNBOOKMARK_TAG);
-
+function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
   const session = useSession();
   const sessionUserID = session?.data?.user?.name as string;
   const router = useRouter();
 
-  console.log('userID :>> ', sessionUserID);
+  const tagIds = data?.getAllTags.map((tag) => tag.id);
+  const savedTags = userData?.getUserById.saved_tags || [];
+
+  // console.log('tagIds :>> ', tagIds);
+  // console.log('savedTags :>> ', savedTags);
+
+  const isAlreadyBookmarked = savedTags.some((tag) => tagIds?.includes(tag));
+
+  const [isBookmarked, setIsBookmarked] = useState(isAlreadyBookmarked);
+
+  console.log('isBookmarked :>> ', isBookmarked);
 
   const handleTagRedirect = (tagID: string) => {
     router.push(`http://localhost:3000/search/questions/tagged/${tagID}`);
   };
 
+  console.log('userData :>> ', userData);
+  console.log('data :>> ', data);
+
   //! Add toast
-  const handleBookmarkTag = async (userID: string, tagID: string) => {
+  const bookmarkTagClick = async (userID: string, tagID: string) => {
     try {
       const result = await bookmarkTag({
         variables: {
@@ -61,8 +84,42 @@ function TagCard({data, bookmarkTag}: Props) {
     }
   };
 
+  const unbookmarkTagClick = async (userID: string, tagID: string) => {
+    try {
+      const result = await unbookmarkTag({
+        variables: {
+          userId: userID,
+          tagId: tagID,
+        },
+      });
+      console.log('Unbookmark result:', result);
+    } catch (error) {
+      console.error('Unbookmark error:', error);
+    }
+  };
+
+  const handleBookMarkClick = (userID: string, tagID: string) => {
+    if (!sessionUserID) {
+      alert('You need to log in first!');
+      return;
+    }
+    if (isBookmarked) {
+      unbookmarkTagClick(userID, tagID);
+      alert('Removed from bookmarks!');
+    }
+    if (!isBookmarked) {
+      bookmarkTagClick(userID, tagID);
+      alert('Added to bookmarks!');
+    }
+    setIsBookmarked(!isBookmarked);
+  };
+
+  useEffect(() => {}, [isAlreadyBookmarked]);
+
   return (
-    <div className="flex flex-wrap">
+    <div className="flex flex-wrap justify-center">
+      {loading && <Loader />}
+
       {data &&
         data.getAllTags?.map((tag, index) => {
           return (
@@ -86,11 +143,16 @@ function TagCard({data, bookmarkTag}: Props) {
                   </Link>
                   <button
                     onClick={() => {
-                      handleBookmarkTag(sessionUserID!, tag.id);
+                      handleBookMarkClick(sessionUserID!, tag.id);
                     }}
                     className="mx-2"
                   >
-                    <BsFillPinFill />
+                    {/* <BsFillPinFill /> */}
+                    {isBookmarked ? (
+                      <BsFillPinFill color="red" />
+                    ) : (
+                      <BsFillPinFill color="white" />
+                    )}
                   </button>
                 </div>
               </div>

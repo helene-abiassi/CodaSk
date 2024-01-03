@@ -50,15 +50,22 @@ type Props = {
   }: {
     variables: {deleteQuestionId: string};
   }) => void;
+  loading: boolean;
 };
 
-function QuestionsGrid({filteredData, filteredTagData, deleteQuestion}: Props) {
+function QuestionsGrid({
+  filteredData,
+  filteredTagData,
+  deleteQuestion,
+  loading,
+}: Props) {
   return (
     <div className="flex flex-col">
       <QuestionCard
         filteredTagData={filteredTagData}
         filteredData={filteredData}
         deleteQuestion={deleteQuestion}
+        loading={loading}
       />
     </div>
   );

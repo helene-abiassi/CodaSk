@@ -113,7 +113,7 @@ function Question({tagdata, tag}: ComponentProps) {
 
   const [sortBy, setSortBy] = useState('All');
 
-  const {data: filteredTagData} = useQuery(GET_QUESTIONS_BY_TAG, {
+  const {data: filteredTagData, loading} = useQuery(GET_QUESTIONS_BY_TAG, {
     variables: {
       tag,
       sortBy,
@@ -186,6 +186,7 @@ function Question({tagdata, tag}: ComponentProps) {
         <QuestionsGrid
           filteredTagData={filteredTagData}
           deleteQuestion={deleteQuestion}
+          loading={loading}
         />
       </div>
     </div>

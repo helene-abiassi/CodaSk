@@ -352,6 +352,18 @@ const resolvers = {
       return updatedTags;
     },
     async bookmarkTag(_, args) {
+      const userToUpdate = await userModel.findById(args.userId);
+
+      if (!userToUpdate) {
+        console.log("User not found or not authenticated!");
+        return;
+      }
+
+      if (userToUpdate.saved_tags.includes(args.tagId)) {
+        console.log("tag already bookmarked!");
+        return userToUpdate;
+      }
+
       try {
         const updatedUser = await userModel.findByIdAndUpdate(
           args.userId,

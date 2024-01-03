@@ -25,7 +25,7 @@ type User {
     last_seen: Date!
     questions: [Question]
     answers: [Answer]
-    saved_tags: [String!]
+    saved_tags: [ID!]
 
 }
 
@@ -95,7 +95,7 @@ type Mutation {
     updateAnswer(id: ID, userID: ID!): Answer
     updateTags(id:[ID], editInput: editTagInput): [Tag]
     bookmarkTag(userId: ID, tagId: ID): User
-    unbookmarkTag(userId: ID!, tagId: ID!): User
+    unbookmarkTag(userId: ID, tagId: ID): User
 }
 
 

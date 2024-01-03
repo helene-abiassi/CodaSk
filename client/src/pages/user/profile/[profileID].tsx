@@ -1,4 +1,5 @@
 import {formatDate} from '@/components/Functions';
+import parse from 'html-react-parser';
 import {FaGithub} from 'react-icons/fa';
 import {MdLocationOn} from 'react-icons/md';
 import {TbWorld} from 'react-icons/tb';
@@ -348,6 +349,7 @@ function Profile() {
                     >
                       <p className="... mb-3 overflow-hidden truncate p-1 ">
                         {answer?.message}
+                        {/* {parse(answer?.message)} */}
                       </p>
                     </div>
                   );

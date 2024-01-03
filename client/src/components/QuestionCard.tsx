@@ -8,6 +8,7 @@ import {useSession} from 'next-auth/react';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {getPostedOnInDays} from '@/utils/GetPostedOnInDays';
+import Loader from './Loader';
 
 type questionCardProp = {
   getAllQuestions: [
@@ -85,9 +86,15 @@ type Props = {
   }: {
     variables: {deleteQuestionId: string};
   }) => void;
+  loading: boolean;
 };
 
-function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
+function QuestionCard({
+  filteredData,
+  filteredTagData,
+  deleteQuestion,
+  loading,
+}: Props) {
   const session = useSession();
   const userID = session?.data?.user?.name as string;
 
@@ -96,8 +103,6 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
   const handleQuestionRedirect = (questionID: string) => {
     router.push(`http://localhost:3000/search/questions/id/${questionID}`);
   };
-
-  //!Reset button?
 
   const handeleDeleteQuestion = async (questionID: string) => {
     const deleteConfirm = window.confirm(
@@ -133,7 +138,9 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
 
   return (
     <div className="flex flex-col">
-      {noQuestionsMessage}
+      {loading && <Loader />}
+
+      {!loading && noQuestionsMessage}
       {filteredTagData &&
         filteredTagData.getQuestionsByTagName?.map((q, index) => {
           return (
