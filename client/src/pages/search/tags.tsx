@@ -90,7 +90,9 @@ function Tags() {
   const [bookmarkTag] = useMutation(BOOKMARK_TAG, {
     refetchQueries: [GET_USER_BY_ID, 'getUserById'],
   });
-  const [unbookmarkTag] = useMutation(UNBOOKMARK_TAG);
+  const [unbookmarkTag] = useMutation(UNBOOKMARK_TAG, {
+    refetchQueries: [GET_USER_BY_ID, 'getUserById'],
+  });
 
   const [sortBy, setSortBy] = useState('All');
 
@@ -170,7 +172,7 @@ function Tags() {
               // onClick={() => handleSortChange('Data Analytics')}
               value={'Data Analytics'}
             >
-              Data Analytics
+              data analytics
             </option>
           </select>
         </div>

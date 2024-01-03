@@ -12,6 +12,8 @@ import {
   userQuery,
 } from '@/pages/search/tags';
 import Loader from './Loader';
+import Modal from './Modal';
+import Image from 'next/image';
 
 type tagProps = {
   getAllTags: [
@@ -46,6 +48,16 @@ type Props = {
 };
 
 function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
+  const [showModal, setShowModal] = useState(false);
+
+  // const handleShowModal = () => {
+  //   setShowModal(true);
+  // };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   const session = useSession();
   const sessionUserID = session?.data?.user?.name as string;
   const router = useRouter();
@@ -53,23 +65,16 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
   const tagIds = data?.getAllTags.map((tag) => tag.id);
   const savedTags = userData?.getUserById.saved_tags || [];
 
-  // console.log('tagIds :>> ', tagIds);
-  // console.log('savedTags :>> ', savedTags);
-
-  const isAlreadyBookmarked = savedTags.some((tag) => tagIds?.includes(tag));
+  const isAlreadyBookmarked = tagIds?.map(
+    (tagId) => savedTags?.includes(tagId)
+  );
 
   const [isBookmarked, setIsBookmarked] = useState(isAlreadyBookmarked);
-
-  console.log('isBookmarked :>> ', isBookmarked);
 
   const handleTagRedirect = (tagID: string) => {
     router.push(`http://localhost:3000/search/questions/tagged/${tagID}`);
   };
 
-  console.log('userData :>> ', userData);
-  console.log('data :>> ', data);
-
-  //! Add toast
   const bookmarkTagClick = async (userID: string, tagID: string) => {
     try {
       const result = await bookmarkTag({
@@ -79,6 +84,8 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
         },
       });
       console.log('Bookmark result:', result);
+
+      // showToast('Added to favorites!');
     } catch (error) {
       console.error('Bookmark error:', error);
     }
@@ -93,35 +100,47 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
         },
       });
       console.log('Unbookmark result:', result);
+      // showToast('Removed from favorites!');
     } catch (error) {
       console.error('Unbookmark error:', error);
     }
   };
 
-  const handleBookMarkClick = (userID: string, tagID: string) => {
+  const handleBookMarkClick = async (userID: string, tagID: string) => {
     if (!sessionUserID) {
       alert('You need to log in first!');
       return;
     }
     if (isBookmarked) {
-      unbookmarkTagClick(userID, tagID);
-      alert('Removed from bookmarks!');
+      await unbookmarkTagClick(userID, tagID);
+      // alert('Removed from bookmarks!');
+      setShowModal(true);
+
+      setIsBookmarked(!isBookmarked);
     }
     if (!isBookmarked) {
-      bookmarkTagClick(userID, tagID);
-      alert('Added to bookmarks!');
+      await bookmarkTagClick(userID, tagID);
+      // alert('Added to bookmarks!');
+      setShowModal(true);
+
+      setIsBookmarked(true);
     }
-    setIsBookmarked(!isBookmarked);
   };
 
-  useEffect(() => {}, [isAlreadyBookmarked]);
+  useEffect(() => {
+    console.log('isBookmarked :>> ', isBookmarked);
+  }, [isBookmarked, isAlreadyBookmarked]);
 
   return (
     <div className="flex flex-wrap justify-center">
+      <div id="toast"></div>
+
       {loading && <Loader />}
 
       {data &&
         data.getAllTags?.map((tag, index) => {
+          const isTagBookmarked =
+            isAlreadyBookmarked && isAlreadyBookmarked[index];
           return (
             <div
               key={index + 1}
@@ -141,19 +160,26 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
                   >
                     {tag?.name}
                   </Link>
+
                   <button
                     onClick={() => {
                       handleBookMarkClick(sessionUserID!, tag.id);
                     }}
                     className="mx-2"
                   >
-                    {/* <BsFillPinFill /> */}
-                    {isBookmarked ? (
-                      <BsFillPinFill color="red" />
+                    {isTagBookmarked ? (
+                      <BsFillPinFill color="#B197FC" />
                     ) : (
                       <BsFillPinFill color="white" />
                     )}
                   </button>
+                  {showModal && (
+                    <Modal
+                      title="Added!"
+                      message="The tag was saved to your favorites"
+                      onClose={handleCloseModal}
+                    />
+                  )}
                 </div>
               </div>
 
