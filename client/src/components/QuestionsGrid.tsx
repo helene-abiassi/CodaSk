@@ -14,7 +14,7 @@ type questionQuery = {
         first_name: string;
         user_photo: string;
       };
-      posted_on: Date;
+      posted_on: Date | string;
       title: string;
       problem_description: string;
       solution_tried: string;
@@ -43,21 +43,29 @@ type questionQuery = {
 type Props = {
   // data: questionQuery;
   filteredData: questionQuery;
-  tagdata: questionByTagQuery;
+  filteredTagData: questionByTagQuery;
+  // tagdata: questionByTagQuery;
   deleteQuestion: ({
     variables: {deleteQuestionId},
   }: {
     variables: {deleteQuestionId: string};
   }) => void;
+  loading: boolean;
 };
 
-function QuestionsGrid({filteredData, filteredTagData, deleteQuestion}: Props) {
+function QuestionsGrid({
+  filteredData,
+  filteredTagData,
+  deleteQuestion,
+  loading,
+}: Props) {
   return (
     <div className="flex flex-col">
       <QuestionCard
         filteredTagData={filteredTagData}
         filteredData={filteredData}
         deleteQuestion={deleteQuestion}
+        loading={loading}
       />
     </div>
   );

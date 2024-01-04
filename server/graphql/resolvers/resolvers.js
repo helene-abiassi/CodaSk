@@ -20,10 +20,6 @@ const resolvers = {
       return await questionModel.findById(args.id);
     },
 
-    // async getAllQuestions() {
-    //   return await questionModel.find();
-    // },
-
     async getAllQuestions(_, { sortBy }) {
       let query = {};
 
@@ -87,14 +83,17 @@ const resolvers = {
     },
 
     //   *------TAGS-------*
-    async getTagById(_, { sortBy }) {
-      // return tagModel.findById(args.id);
+    async getTagById() {
+      return tagModel.findById(args.id);
+    },
+
+    async getAllTags(_, { sortBy }) {
       let query = {};
 
       if (sortBy === "All") {
         return await tagModel.find(query).sort({ posted_on: -1 });
       } else if (sortBy === "Name") {
-        return await tagModel.find(query).sort({ name: -1 });
+        return await tagModel.find(query).sort({ name: 1 });
       } else if (sortBy === "Popular") {
         return await tagModel.find(query).sort({ related_questions: -1 });
       } else if (sortBy === "Web Development") {
@@ -108,10 +107,6 @@ const resolvers = {
       }
 
       return await tagModel.find(query);
-    },
-
-    async getAllTags(_, args) {
-      return tagModel.find();
     },
   },
 
@@ -233,9 +228,6 @@ const resolvers = {
     },
 
     // *----- DELETING MUTATIONS ---------
-    // async deleteQuestion(_, args) {
-    //   return await questionModel.findByIdAndDelete(args.id);
-    // },
 
     async deleteQuestion(_, args) {
       const deletedQuestion = await questionModel.findByIdAndDelete(args.id);
@@ -360,6 +352,18 @@ const resolvers = {
       return updatedTags;
     },
     async bookmarkTag(_, args) {
+      const userToUpdate = await userModel.findById(args.userId);
+
+      if (!userToUpdate) {
+        console.log("User not found or not authenticated!");
+        return;
+      }
+
+      if (userToUpdate.saved_tags.includes(args.tagId)) {
+        console.log("tag already bookmarked!");
+        return userToUpdate;
+      }
+
       try {
         const updatedUser = await userModel.findByIdAndUpdate(
           args.userId,

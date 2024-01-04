@@ -1,13 +1,7 @@
 import QuestionButtons from '@/components/QuestionButtons';
 import TagsGrid from '@/components/TagsGrid';
-import {
-  ApolloClient,
-  InMemoryCache,
-  gql,
-  useMutation,
-  useQuery,
-} from '@apollo/client';
-import {GetServerSideProps} from 'next';
+import {gql, useMutation, useQuery} from '@apollo/client';
+import {useSession} from 'next-auth/react';
 import React, {useState} from 'react';
 
 /// QUERIES ///
@@ -27,8 +21,11 @@ export type tagQuery = {
   ];
 };
 
-type ComponentProps = {
-  data: tagQuery;
+export type userQuery = {
+  getUserById: {
+    id: string;
+    saved_tags: string[];
+  };
 };
 
 const GET_TAGS = gql`
@@ -45,6 +42,15 @@ const GET_TAGS = gql`
   }
 `;
 
+export const GET_USER_BY_ID = gql`
+  query getUserById($getUserByIdId: ID!) {
+    getUserById(id: $getUserByIdId) {
+      id
+      saved_tags
+    }
+  }
+`;
+
 /// MUTATIONS ///
 export const BOOKMARK_TAG = gql`
   mutation BookmarkTag($userId: ID, $tagId: ID) {
@@ -55,38 +61,28 @@ export const BOOKMARK_TAG = gql`
 `;
 
 export const UNBOOKMARK_TAG = gql`
-  mutation UnbookmarkTag($userId: ID!, $tagId: ID!) {
+  mutation UnbookmarkTag($userId: ID, $tagId: ID) {
     unbookmarkTag(userId: $userId, tagId: $tagId) {
       id
     }
   }
 `;
 
-export const getServerSideProps: GetServerSideProps<
-  ComponentProps
-> = async () => {
-  const client = new ApolloClient({
-    uri: 'http://localhost:5008/graphql',
-    cache: new InMemoryCache(),
-  });
-
-  const {data} = await client.query({
-    query: GET_TAGS,
-    variables: {
-      sortBy: 'All',
-    },
-  });
-
-  return {
-    props: {
-      data: data,
-    },
-  };
-};
-
 function Tags() {
+  const session = useSession();
+  const sessionUserID = session?.data?.user?.name as string;
+
+  const {data: userData, loading} = useQuery(GET_USER_BY_ID, {
+    variables: {
+      getUserByIdId: sessionUserID,
+    },
+  });
+
   const [bookmarkTag] = useMutation(BOOKMARK_TAG, {
-    refetchQueries: [GET_TAGS, 'getAllTags'],
+    refetchQueries: [GET_USER_BY_ID, 'getUserById'],
+  });
+  const [unbookmarkTag] = useMutation(UNBOOKMARK_TAG, {
+    refetchQueries: [GET_USER_BY_ID, 'getUserById'],
   });
 
   const [sortBy, setSortBy] = useState('All');
@@ -102,7 +98,7 @@ function Tags() {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full min-h-screen w-full">
       {/* TOP SECTION */}
       <div className=" flex flex-row items-start justify-between px-6 py-6">
         <h1 className=" mx-8 mt-4 text-left font-medium text-[#6741D9] md:text-3xl">
@@ -112,6 +108,7 @@ function Tags() {
           <QuestionButtons />
         </div>
       </div>
+      {/* SEARCH BAR */}
       <div className="sortByBox mb-4 flex flex-row justify-between border-b-2 border-b-[#D9D9D9] p-4">
         <input
           type="search"
@@ -120,7 +117,7 @@ function Tags() {
           placeholder="search for keywords, tags, questions..."
           required
         />
-
+        {/* SORT BY FILTERS */}
         <div className="flex flex-row items-center justify-center">
           <span className="flex cursor-pointer  flex-row text-lg font-normal text-[#6741D9]">
             Sort by:
@@ -150,28 +147,25 @@ function Tags() {
           </span>
           <select
             className="mx-2 rounded-full bg-black p-2 font-medium text-white"
-            //   onChange={handleDropdownInput}
+            onChange={(e) => handleSortChange(e.target.value)}
             name="course_type"
             placeholder="course type"
           >
-            <option value={'user_permission'}>course type</option>
-            <option
-              onChange={() => handleSortChange('Web Development')}
-              value={'Web Development'}
-            >
-              web development
-            </option>
-            <option
-              onChange={() => handleSortChange('Data Analytics')}
-              value={'Data Analytics'}
-            >
-              Data Analytics
-            </option>
+            <option value={'All'}>course type</option>
+            <option value={'Web Development'}>web development</option>
+            <option value={'Data Analytics'}>data analytics</option>
           </select>
         </div>
       </div>
+      {/* TAGS GRID */}
       <div className="mx-8">
-        <TagsGrid data={filteredTags} bookmarkTag={bookmarkTag} />
+        <TagsGrid
+          data={filteredTags}
+          bookmarkTag={bookmarkTag}
+          unbookmarkTag={unbookmarkTag}
+          userData={userData}
+          loading={loading}
+        />
       </div>
     </div>
   );

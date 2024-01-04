@@ -106,20 +106,19 @@ export const getServerSideProps: GetServerSideProps<ComponentProps> = async (
 };
 
 function Question({tagdata, tag}: ComponentProps) {
-  console.log('tagdata :>> ', tagdata);
   const [deleteQuestion] = useMutation(DELETE_QUESTION);
 
   const router = useRouter();
 
   const [sortBy, setSortBy] = useState('All');
 
-  const {data: filteredTagData} = useQuery(GET_QUESTIONS_BY_TAG, {
+  const {data: filteredTagData, loading} = useQuery(GET_QUESTIONS_BY_TAG, {
     variables: {
       tag,
       sortBy,
     },
   });
-  console.log('filteredData :>> ', filteredTagData);
+  // console.log('filteredData :>> ', filteredTagData);
 
   const handleSortChange = (sortOption: string) => {
     setSortBy(sortOption);
@@ -186,6 +185,7 @@ function Question({tagdata, tag}: ComponentProps) {
         <QuestionsGrid
           filteredTagData={filteredTagData}
           deleteQuestion={deleteQuestion}
+          loading={loading}
         />
       </div>
     </div>

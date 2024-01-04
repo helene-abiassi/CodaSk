@@ -25,7 +25,7 @@ function CodaskNav() {
 
   return (
     <>
-      <nav className=" static flex max-h-32 items-center justify-between border-b-2 border-b-[#EDE9E6] bg-[#6741D9] p-6">
+      <nav className=" sticky top-0 z-50 flex max-h-28 items-center justify-between border-b-2 border-b-[#EDE9E6] bg-[#6741D9] p-6">
         {/* LEFT SECTION */}
         <Link
           href={'/'}
@@ -52,7 +52,7 @@ function CodaskNav() {
               <li>
                 <Link
                   href={'/user/register'}
-                  className="mx-1 hover:font-semibold focus:font-semibold"
+                  className="mx-1 no-underline hover:font-semibold focus:font-semibold"
                 >
                   Sign up
                 </Link>
@@ -60,7 +60,7 @@ function CodaskNav() {
               <li>
                 <Link
                   href={'/user/login'}
-                  className="mx-1 hover:font-semibold focus:font-semibold"
+                  className="mx-1 no-underline hover:font-semibold focus:font-semibold"
                 >
                   | Log in
                 </Link>

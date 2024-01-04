@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {FaTrashAlt, FaPen} from 'react-icons/fa';
+import {FaTrashAlt, FaPen, FaCheckCircle} from 'react-icons/fa';
 import parse from 'html-react-parser';
 import {formatDate} from './Functions';
 import Image from 'next/image';
@@ -8,6 +8,7 @@ import {useSession} from 'next-auth/react';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {getPostedOnInDays} from '@/utils/GetPostedOnInDays';
+import Loader from './Loader';
 
 type questionCardProp = {
   getAllQuestions: [
@@ -18,7 +19,7 @@ type questionCardProp = {
         first_name: string;
         user_photo: string;
       };
-      posted_on: Date;
+      posted_on: Date | string;
       title: string;
       problem_description: string;
       module: string;
@@ -52,7 +53,7 @@ type questionbyTagCardProp = {
         first_name: string;
         user_photo: string;
       };
-      posted_on: Date;
+      posted_on: Date | string;
       title: string;
       problem_description: string;
       module: string;
@@ -85,9 +86,15 @@ type Props = {
   }: {
     variables: {deleteQuestionId: string};
   }) => void;
+  loading: boolean;
 };
 
-function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
+function QuestionCard({
+  filteredData,
+  filteredTagData,
+  deleteQuestion,
+  loading,
+}: Props) {
   const session = useSession();
   const userID = session?.data?.user?.name as string;
 
@@ -96,8 +103,6 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
   const handleQuestionRedirect = (questionID: string) => {
     router.push(`http://localhost:3000/search/questions/id/${questionID}`);
   };
-
-  //!Reset button?
 
   const handeleDeleteQuestion = async (questionID: string) => {
     const deleteConfirm = window.confirm(
@@ -133,7 +138,9 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
 
   return (
     <div className="flex flex-col">
-      {noQuestionsMessage}
+      {loading && <Loader />}
+
+      {!loading && noQuestionsMessage}
       {filteredTagData &&
         filteredTagData.getQuestionsByTagName?.map((q, index) => {
           return (
@@ -149,7 +156,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     src={q.author?.user_photo}
                     width={40}
                     height={40}
-                    className="mr-2"
+                    className="mr-2 rounded-3xl"
                   />
                   <p>
                     {q.author?.first_name} posted{' '}
@@ -165,21 +172,30 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                 <div className="questionBoxBody mx-4 w-full max-w-7xl p-4 ">
                   <div
                     onClick={() => {
-                      handleQuestionRedirect(q.id);
+                      handleQuestionRedirect(q?.id);
                     }}
                   >
                     <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
-                      <p className="flex-1">{q.title}</p>
-                      {q.answers && q.answers.length <= 1 ? (
-                        <p>{q.answers.length} answer</p>
-                      ) : (
-                        <p>{q.answers.length} answers</p>
-                      )}
+                      <p className="">{q.title}</p>
+                      <div className="flex flex-row items-center justify-center">
+                        {q.status === 'Solved' ? (
+                          <div className="mx-2">
+                            <FaCheckCircle color="#088F8F" />
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                        {q.answers && q.answers.length <= 1 ? (
+                          <p>{q.answers.length} answer</p>
+                        ) : (
+                          <p>{q.answers.length} answers</p>
+                        )}
+                      </div>
                     </div>
                     <div>
-                      <p className="max-h-5 overflow-hidden truncate text-ellipsis pr-4">
-                        {q?.problem_description}{' '}
-                        {/* {parse(q ? q.problem_description : '')} */}
+                      <p className=" max-h-7 overflow-hidden truncate text-ellipsis pr-4">
+                        {/* {q?.problem_description}{' '} */}
+                        {parse(q?.problem_description)}
                       </p>
                     </div>
                   </div>
@@ -191,7 +207,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                           return (
                             <div
                               key={indexT}
-                              className="mx-2 my-2 w-min rounded-md bg-black p-1 text-white"
+                              className="mx-2 my-2 w-max rounded-md bg-black p-2 text-white"
                             >
                               <Link
                                 className="no-underline"
@@ -210,11 +226,11 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     </div>
                     {/* EDIT/DELETE BUTTONS */}
                     <div>
-                      {userID === q.author.id && (
+                      {userID === q?.author.id && (
                         <>
                           <button
                             onClick={() => {
-                              handeleDeleteQuestion(q.id);
+                              handeleDeleteQuestion(q?.id);
                             }}
                             className="mx-2"
                           >
@@ -249,7 +265,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     src={q.author?.user_photo}
                     width={40}
                     height={40}
-                    className="mr-2"
+                    className="mr-2 rounded-3xl"
                   />
                   <p>
                     {q.author?.first_name} posted{' '}
@@ -263,15 +279,22 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
               {/* QUESTION BOX BODY */}
 
               <div className="flex h-full cursor-pointer flex-row items-center ">
-                <div className="questionBoxBody mx-4 w-full  max-w-7xl p-4">
+                <div className="questionBoxBody mx-4 w-full max-w-7xl p-4">
                   <div
                     onClick={() => {
-                      handleQuestionRedirect(q.id);
+                      handleQuestionRedirect(q?.id);
                     }}
                   >
                     <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
                       <p className="">{q.title}</p>
-                      <div>
+                      <div className="flex flex-row items-center justify-center">
+                        {q.status === 'Solved' ? (
+                          <div className="mx-2">
+                            <FaCheckCircle color="#088F8F" />
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
                         {q.answers && q.answers.length <= 1 ? (
                           <p>{q.answers.length} answer</p>
                         ) : (
@@ -279,11 +302,9 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                         )}
                       </div>
                     </div>
-                    <div>
-                      <p className="...  max-h-5 overflow-hidden truncate text-ellipsis pr-4">
-                        {q?.problem_description}{' '}
-                        {/* {parse(q ? q.problem_description : '')} */}
-                      </p>
+
+                    <div className="... max-h-6 overflow-hidden truncate text-ellipsis pr-4">
+                      <p>{parse(q?.problem_description)}</p>
                     </div>
                   </div>
                   {/* TAG BODY */}
@@ -294,7 +315,7 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                           return (
                             <div
                               key={indexT}
-                              className="mx-2 my-2 w-min rounded-md bg-black p-1 text-white"
+                              className="mx-2 my-2 w-max rounded-md bg-black p-2 text-white"
                             >
                               <Link
                                 className="no-underline"
@@ -313,11 +334,11 @@ function QuestionCard({filteredData, filteredTagData, deleteQuestion}: Props) {
                     </div>
                     {/* EDIT/DELETE BUTTONS */}
                     <div>
-                      {userID === q.author.id && (
+                      {userID === q?.author.id && (
                         <>
                           <button
                             onClick={() => {
-                              handeleDeleteQuestion(q.id);
+                              handeleDeleteQuestion(q?.id);
                             }}
                             className="mx-2"
                           >

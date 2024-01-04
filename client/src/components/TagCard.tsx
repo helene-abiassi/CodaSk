@@ -2,10 +2,10 @@ import {useSession} from 'next-auth/react';
 import {} from 'react-icons/fa';
 import {BsFillPinFill} from 'react-icons/bs';
 import {useRouter} from 'next/router';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
-import {useMutation} from '@apollo/client';
-import {BOOKMARK_TAG, UNBOOKMARK_TAG} from '@/pages/search/tags';
+import {userQuery} from '@/pages/search/tags';
+import Loader from './Loader';
 
 type tagProps = {
   getAllTags: [
@@ -25,29 +25,39 @@ type tagProps = {
 
 type Props = {
   data: tagProps;
+  userData: userQuery;
   bookmarkTag: ({
     variables: {userId, tagId},
   }: {
     variables: {userId: string; tagId: string};
   }) => void;
+  unbookmarkTag: ({
+    variables: {userId, tagId},
+  }: {
+    variables: {userId: string; tagId: string};
+  }) => void;
+  loading: boolean;
 };
 
-function TagCard({data, bookmarkTag}: Props) {
-  // const [bookmarkTag] = useMutation(BOOKMARK_TAG);
-  const [unbookmarkTag] = useMutation(UNBOOKMARK_TAG);
-
+function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
   const session = useSession();
   const sessionUserID = session?.data?.user?.name as string;
   const router = useRouter();
 
-  console.log('userID :>> ', sessionUserID);
+  const tagIds = data?.getAllTags.map((tag) => tag.id);
+  const savedTags = userData?.getUserById.saved_tags || [];
+
+  const isAlreadyBookmarked = tagIds?.map(
+    (tagId) => savedTags?.includes(tagId)
+  );
+
+  const [isBookmarked, setIsBookmarked] = useState(isAlreadyBookmarked);
 
   const handleTagRedirect = (tagID: string) => {
     router.push(`http://localhost:3000/search/questions/tagged/${tagID}`);
   };
 
-  //! Add toast
-  const handleBookmarkTag = async (userID: string, tagID: string) => {
+  const bookmarkTagClick = async (userID: string, tagID: string) => {
     try {
       const result = await bookmarkTag({
         variables: {
@@ -61,10 +71,59 @@ function TagCard({data, bookmarkTag}: Props) {
     }
   };
 
+  const unbookmarkTagClick = async (userID: string, tagID: string) => {
+    try {
+      const result = await unbookmarkTag({
+        variables: {
+          userId: userID,
+          tagId: tagID,
+        },
+      });
+      console.log('Unbookmark result:', result);
+    } catch (error) {
+      console.error('Unbookmark error:', error);
+    }
+  };
+
+  const handleBookMarkClick = async (userID: string, tagID: string) => {
+    if (!sessionUserID) {
+      alert('You need to log in first!');
+      return;
+    }
+    try {
+      await bookmarkTagClick(userID, tagID);
+      alert('Added to bookmarks!');
+    } catch (error) {
+      console.log('error :>> ', error);
+    }
+    setIsBookmarked(isBookmarked);
+  };
+
+  const handleUnBookMarkClick = async (userID: string, tagID: string) => {
+    if (!sessionUserID) {
+      alert('You need to log in first!');
+      return;
+    }
+
+    try {
+      await unbookmarkTagClick(userID, tagID);
+      alert('Removed from bookmarks!');
+    } catch (error) {
+      console.log('error :>> ', error);
+    }
+    setIsBookmarked(!isBookmarked);
+  };
+
+  useEffect(() => {}, [isBookmarked, isAlreadyBookmarked]);
+
   return (
-    <div className="flex flex-wrap">
+    <div className="flex flex-wrap justify-center">
+      {loading && <Loader />}
+
       {data &&
         data.getAllTags?.map((tag, index) => {
+          const isTagBookmarked =
+            isAlreadyBookmarked && isAlreadyBookmarked[index];
           return (
             <div
               key={index + 1}
@@ -84,26 +143,33 @@ function TagCard({data, bookmarkTag}: Props) {
                   >
                     {tag?.name}
                   </Link>
-                  <button
-                    onClick={() => {
-                      handleBookmarkTag(sessionUserID!, tag.id);
-                    }}
-                    className="mx-2"
-                  >
-                    <BsFillPinFill />
-                  </button>
+
+                  {isTagBookmarked ? (
+                    <button
+                      onClick={() => {
+                        handleUnBookMarkClick(sessionUserID!, tag.id);
+                      }}
+                      className="mx-2"
+                    >
+                      <BsFillPinFill color="#B197FC" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        handleBookMarkClick(sessionUserID!, tag.id);
+                      }}
+                      className="mx-2"
+                    >
+                      <BsFillPinFill color="white" />
+                    </button>
+                  )}
                 </div>
               </div>
 
               {/* TAG BOX BODY */}
-              <div className="flex h-full cursor-pointer flex-row items-center">
+              <div className="flex h-full flex-row items-center">
                 <div className="questionBoxBody mx-2 p-2">
-                  <div
-                    className="flex flex-col"
-                    onClick={() => {
-                      handleTagRedirect(tag?.id);
-                    }}
-                  >
+                  <div className="flex flex-col">
                     <p className="line-clamp-4 ">{tag?.description}</p>
                     <br />
                   </div>

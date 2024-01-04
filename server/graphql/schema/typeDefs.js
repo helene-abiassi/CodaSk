@@ -25,7 +25,7 @@ type User {
     last_seen: Date!
     questions: [Question]
     answers: [Answer]
-    saved_tags: [String!]
+    saved_tags: [ID!]
 
 }
 
@@ -79,6 +79,7 @@ type Query {
     # -----Tags queries-----
     getTagById(id: ID!): Tag
     getAllTags(sortBy: String): [Tag]
+    searchTagsByName(searchInput: String): [Tag]
 }
     
 type Mutation {
@@ -94,8 +95,8 @@ type Mutation {
     updateQuestion(id: ID, editInput: editQuestionInput): Question
     updateAnswer(id: ID, userID: ID!): Answer
     updateTags(id:[ID], editInput: editTagInput): [Tag]
-    bookmarkTag(userId: ID!, tagId: ID!): User
-    unbookmarkTag(userId: ID!, tagId: ID!): User
+    bookmarkTag(userId: ID, tagId: ID): User
+    unbookmarkTag(userId: ID, tagId: ID): User
 }
 
 
