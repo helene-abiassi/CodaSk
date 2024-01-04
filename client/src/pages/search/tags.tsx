@@ -1,13 +1,6 @@
 import QuestionButtons from '@/components/QuestionButtons';
 import TagsGrid from '@/components/TagsGrid';
-import {
-  ApolloClient,
-  InMemoryCache,
-  gql,
-  useMutation,
-  useQuery,
-} from '@apollo/client';
-import {GetServerSideProps} from 'next';
+import {gql, useMutation, useQuery} from '@apollo/client';
 import {useSession} from 'next-auth/react';
 import React, {useState} from 'react';
 
@@ -84,8 +77,6 @@ function Tags() {
       getUserByIdId: sessionUserID,
     },
   });
-
-  // console.log('userData :>> ', userData);
 
   const [bookmarkTag] = useMutation(BOOKMARK_TAG, {
     refetchQueries: [GET_USER_BY_ID, 'getUserById'],
