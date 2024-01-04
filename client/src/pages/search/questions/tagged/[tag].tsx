@@ -106,7 +106,6 @@ export const getServerSideProps: GetServerSideProps<ComponentProps> = async (
 };
 
 function Question({tagdata, tag}: ComponentProps) {
-  console.log('tagdata :>> ', tagdata);
   const [deleteQuestion] = useMutation(DELETE_QUESTION);
 
   const router = useRouter();
@@ -119,7 +118,7 @@ function Question({tagdata, tag}: ComponentProps) {
       sortBy,
     },
   });
-  console.log('filteredData :>> ', filteredTagData);
+  // console.log('filteredData :>> ', filteredTagData);
 
   const handleSortChange = (sortOption: string) => {
     setSortBy(sortOption);

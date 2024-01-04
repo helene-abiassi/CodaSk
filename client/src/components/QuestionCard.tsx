@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {FaTrashAlt, FaPen} from 'react-icons/fa';
+import {FaTrashAlt, FaPen, FaCheckCircle} from 'react-icons/fa';
 import parse from 'html-react-parser';
 import {formatDate} from './Functions';
 import Image from 'next/image';
@@ -176,12 +176,21 @@ function QuestionCard({
                     }}
                   >
                     <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
-                      <p className="flex-1">{q.title}</p>
-                      {q.answers && q.answers.length <= 1 ? (
-                        <p>{q.answers.length} answer</p>
-                      ) : (
-                        <p>{q.answers.length} answers</p>
-                      )}
+                      <p className="">{q.title}</p>
+                      <div className="flex flex-row items-center justify-center">
+                        {q.status === 'Solved' ? (
+                          <div className="mx-2">
+                            <FaCheckCircle color="#088F8F" />
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                        {q.answers && q.answers.length <= 1 ? (
+                          <p>{q.answers.length} answer</p>
+                        ) : (
+                          <p>{q.answers.length} answers</p>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <p className=" max-h-7 overflow-hidden truncate text-ellipsis pr-4">
@@ -270,7 +279,7 @@ function QuestionCard({
               {/* QUESTION BOX BODY */}
 
               <div className="flex h-full cursor-pointer flex-row items-center ">
-                <div className="questionBoxBody mx-4 w-full  max-w-7xl p-4">
+                <div className="questionBoxBody mx-4 w-full max-w-7xl p-4">
                   <div
                     onClick={() => {
                       handleQuestionRedirect(q?.id);
@@ -278,7 +287,14 @@ function QuestionCard({
                   >
                     <div className="mb-2 flex flex-row justify-between font-semibold text-[#6741D9]">
                       <p className="">{q.title}</p>
-                      <div>
+                      <div className="flex flex-row items-center justify-center">
+                        {q.status === 'Solved' ? (
+                          <div className="mx-2">
+                            <FaCheckCircle color="#088F8F" />
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
                         {q.answers && q.answers.length <= 1 ? (
                           <p>{q.answers.length} answer</p>
                         ) : (
@@ -286,6 +302,7 @@ function QuestionCard({
                         )}
                       </div>
                     </div>
+
                     <div className="... max-h-6 overflow-hidden truncate text-ellipsis pr-4">
                       <p>{parse(q?.problem_description)}</p>
                     </div>

@@ -85,7 +85,7 @@ function Tags() {
     },
   });
 
-  console.log('userData :>> ', userData);
+  // console.log('userData :>> ', userData);
 
   const [bookmarkTag] = useMutation(BOOKMARK_TAG, {
     refetchQueries: [GET_USER_BY_ID, 'getUserById'],
@@ -156,24 +156,13 @@ function Tags() {
           </span>
           <select
             className="mx-2 rounded-full bg-black p-2 font-medium text-white"
-            //   onChange={handleDropdownInput}
             onChange={(e) => handleSortChange(e.target.value)}
             name="course_type"
             placeholder="course type"
           >
             <option value={'All'}>course type</option>
-            <option
-              // onClick={() => handleSortChange('Web Development')}
-              value={'Web Development'}
-            >
-              web development
-            </option>
-            <option
-              // onClick={() => handleSortChange('Data Analytics')}
-              value={'Data Analytics'}
-            >
-              data analytics
-            </option>
+            <option value={'Web Development'}>web development</option>
+            <option value={'Data Analytics'}>data analytics</option>
           </select>
         </div>
       </div>

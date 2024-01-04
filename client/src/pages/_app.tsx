@@ -2,7 +2,6 @@ import '@/styles/globals.css';
 import '@/styles/modal.css';
 import '@/styles/loader.css';
 import '@/styles/navbar.css';
-import '@/styles/toast.css';
 import type {AppProps} from 'next/app';
 import Layout from './Layout';
 import {SessionProvider} from 'next-auth/react';

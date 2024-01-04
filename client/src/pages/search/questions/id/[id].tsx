@@ -335,12 +335,12 @@ function QuestionDetails() {
           <div>
             {data?.getQuestionById.author.id === userID ? (
               <>
-                <span className="text-gray-500">Question status: </span>
+                {/* <span className="text-gray-500">Question status: </span> */}
                 <button
                   className={
                     data?.getQuestionById.status === 'Unanswered'
                       ? 'rounded-full bg-red-500 px-6 py-2 hover:font-bold hover:text-white '
-                      : 'rounded-full bg-green-500 px-6 py-2 hover:font-bold hover:text-white '
+                      : 'rounded-full bg-[#088F8F] px-6 py-2 text-white hover:font-bold '
                   }
                   onClick={handleStatusChange}
                 >

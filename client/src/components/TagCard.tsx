@@ -4,16 +4,8 @@ import {BsFillPinFill} from 'react-icons/bs';
 import {useRouter} from 'next/router';
 import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
-import {useMutation, useQuery} from '@apollo/client';
-import {
-  BOOKMARK_TAG,
-  GET_USER_BY_ID,
-  UNBOOKMARK_TAG,
-  userQuery,
-} from '@/pages/search/tags';
+import {userQuery} from '@/pages/search/tags';
 import Loader from './Loader';
-import Modal from './Modal';
-import Image from 'next/image';
 
 type tagProps = {
   getAllTags: [
@@ -48,16 +40,6 @@ type Props = {
 };
 
 function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
-  const [showModal, setShowModal] = useState(false);
-
-  // const handleShowModal = () => {
-  //   setShowModal(true);
-  // };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
   const session = useSession();
   const sessionUserID = session?.data?.user?.name as string;
   const router = useRouter();
@@ -84,8 +66,6 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
         },
       });
       console.log('Bookmark result:', result);
-
-      // showToast('Added to favorites!');
     } catch (error) {
       console.error('Bookmark error:', error);
     }
@@ -100,7 +80,6 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
         },
       });
       console.log('Unbookmark result:', result);
-      // showToast('Removed from favorites!');
     } catch (error) {
       console.error('Unbookmark error:', error);
     }
@@ -111,30 +90,34 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
       alert('You need to log in first!');
       return;
     }
-    if (isBookmarked) {
-      await unbookmarkTagClick(userID, tagID);
-      // alert('Removed from bookmarks!');
-      setShowModal(true);
-
-      setIsBookmarked(!isBookmarked);
-    }
-    if (!isBookmarked) {
+    try {
       await bookmarkTagClick(userID, tagID);
-      // alert('Added to bookmarks!');
-      setShowModal(true);
-
-      setIsBookmarked(true);
+      alert('Added to bookmarks!');
+    } catch (error) {
+      console.log('error :>> ', error);
     }
+    setIsBookmarked(isBookmarked);
   };
 
-  useEffect(() => {
-    console.log('isBookmarked :>> ', isBookmarked);
-  }, [isBookmarked, isAlreadyBookmarked]);
+  const handleUnBookMarkClick = async (userID: string, tagID: string) => {
+    if (!sessionUserID) {
+      alert('You need to log in first!');
+      return;
+    }
+
+    try {
+      await unbookmarkTagClick(userID, tagID);
+      alert('Removed from bookmarks!');
+    } catch (error) {
+      console.log('error :>> ', error);
+    }
+    setIsBookmarked(!isBookmarked);
+  };
+
+  useEffect(() => {}, [isBookmarked, isAlreadyBookmarked]);
 
   return (
     <div className="flex flex-wrap justify-center">
-      <div id="toast"></div>
-
       {loading && <Loader />}
 
       {data &&
@@ -161,37 +144,32 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
                     {tag?.name}
                   </Link>
 
-                  <button
-                    onClick={() => {
-                      handleBookMarkClick(sessionUserID!, tag.id);
-                    }}
-                    className="mx-2"
-                  >
-                    {isTagBookmarked ? (
+                  {isTagBookmarked ? (
+                    <button
+                      onClick={() => {
+                        handleUnBookMarkClick(sessionUserID!, tag.id);
+                      }}
+                      className="mx-2"
+                    >
                       <BsFillPinFill color="#B197FC" />
-                    ) : (
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        handleBookMarkClick(sessionUserID!, tag.id);
+                      }}
+                      className="mx-2"
+                    >
                       <BsFillPinFill color="white" />
-                    )}
-                  </button>
-                  {showModal && (
-                    <Modal
-                      title="Added!"
-                      message="The tag was saved to your favorites"
-                      onClose={handleCloseModal}
-                    />
+                    </button>
                   )}
                 </div>
               </div>
 
               {/* TAG BOX BODY */}
-              <div className="flex h-full cursor-pointer flex-row items-center">
+              <div className="flex h-full flex-row items-center">
                 <div className="questionBoxBody mx-2 p-2">
-                  <div
-                    className="flex flex-col"
-                    onClick={() => {
-                      handleTagRedirect(tag?.id);
-                    }}
-                  >
+                  <div className="flex flex-col">
                     <p className="line-clamp-4 ">{tag?.description}</p>
                     <br />
                   </div>
