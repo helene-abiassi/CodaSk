@@ -47,55 +47,83 @@ const getAllQuestions = async (req, res) => {
   });
 };
 
+const getQuestionByTitle = async (req, res) => {
+  const { title } = req.params;
+  console.log("title :>> ", title);
+
+  if (title) {
+    try {
+      // const questionByTitle = await questionModel.find({ title: title });
+
+      const agg = [
+        //Stages
+        //stage 1: search
+        {
+          $search: {
+            autocomplete: {
+              query: title,
+              path: "title",
+              fuzzy: {
+                maxEdits: 2,
+              },
+            },
+          },
+        },
+        //stage 2: results limit
+        {
+          $limit: 5,
+        },
+        //stage 3: fields to import
+        {
+          $project: {
+            _id: 0,
+            author: 1,
+            posted_on: 1,
+            title: 1,
+            problem_description: 1,
+            solution_tried: 1,
+            module: 1,
+            github_repo: 1,
+            tags: 1,
+            answers: 1,
+            saved_by: 1,
+            status: 1,
+          },
+        },
+      ];
+
+      const questionByTitle = await questionModel.aggregate(agg);
+
+      res.status(200).json({
+        data: questionByTitle,
+      });
+    } catch (error) {
+      console.log("error :>> ", error);
+      res.status(400).json({
+        response: null,
+        error: "something went wrong in your search request",
+      });
+    }
+  }
+
+  if (!title) {
+    res.status(400).json({
+      response: null,
+      error: "You need to eneter a question title",
+    });
+  }
+};
+
 const getQuestionsById = async (req, res) => {};
 
 const getQuestionsByUserId = async (req, res) => {};
 
 const getQuestionByTagName = async (req, res) => {};
 
-const askQuestions = async (req, res) => {
-  const findUser = await userModel.findOne({ email: req.body.email });
-
-  if (findUser) {
-    try {
-      // const newQuestion = new questionModel({
-      //   author: findUser._id,
-      //   posted_on: new Date(),
-      //   title: req.body.title,
-      //   problem_description: req.body.problem_description,
-      //   solution_tried: req.body.solution_tried,
-      //   module: req.body.module,
-      //   github_repo: req.body.github_repo,
-      //   tags: req.body.tags,
-      //   //! Adjust this for array OR Add it 4 times in f and limit number of tags allowed
-      //   status: req.body.status,
-      // });
-
-      // const savedQuestion = await newQuestion.save();
-
-      res.status(201).json({
-        msg: "Question posted successfully",
-        savedQuestion,
-      });
-
-      findUser.questions.push(savedQuestion._id);
-      await findUser.save();
-    } catch (error) {
-      console.log("error :>> ", error);
-
-      res.status(500).json({ error: "error when posting a new question" });
-    }
-  } else {
-    res.status(404).json({
-      message: "User with provided email not found",
-    });
-  }
-};
-
 export {
   getAllQuestions,
   getQuestionsByUserId,
   getQuestionsById,
-  askQuestions,
   getQuestionByTagName,
+  getQuestionByTitle,
 };

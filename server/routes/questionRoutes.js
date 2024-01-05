@@ -1,8 +1,8 @@
 import express from "express";
 import {
-  askQuestions,
   getAllQuestions,
   getQuestionByTagName,
+  getQuestionByTitle,
   getQuestionsById,
   getQuestionsByUserId,
 } from "../controller/questionController.js";
@@ -14,9 +14,6 @@ router.get("/all", getAllQuestions);
 router.get("/id/:_id", getQuestionsById);
 router.get("/userId/:_id", getQuestionsByUserId);
 router.get("/tagname/:name", getQuestionByTagName);
-
-// Post routes
-
-router.post("/askquestion", askQuestions);
+router.get("/questionbytitle/:title", getQuestionByTitle);
 
 export default router;

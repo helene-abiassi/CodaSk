@@ -7,19 +7,19 @@ const questionSchema = new mongoose.Schema({
   },
   posted_on: {
     type: Date,
-    required: true,
+    // required: true,
   },
   title: {
     type: String,
-    required: true,
+    // required: true,
   },
   problem_description: {
     type: String,
-    required: true,
+    // required: true,
   },
   solution_tried: {
     type: String,
-    required: true,
+    // required: true,
   },
   module: {
     type: String,
