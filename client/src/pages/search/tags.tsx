@@ -120,7 +120,7 @@ function Tags() {
         <input
           type="search"
           id="default-search"
-          className="placeholder:text-gray-black block w-fit rounded-3xl border bg-[#EDE9E6] p-4 ps-10 text-sm  text-gray-900 placeholder:text-left placeholder:text-base placeholder:font-extralight "
+          className="placeholder:text-gray-black block w-fit rounded-3xl border bg-[#EDE9E6] p-4 ps-5 text-sm  text-gray-900 placeholder:text-left placeholder:text-base placeholder:font-extralight "
           placeholder="search for keywords, tags, questions..."
           required
           onChange={handleSearchInput}

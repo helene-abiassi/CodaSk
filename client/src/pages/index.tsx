@@ -37,7 +37,7 @@ export default function Home() {
               for Codac students and alumnis!
             </h1>
 
-            <div className="justify-cente flex min-w-full flex-col">
+            <div className="flex min-w-full flex-col justify-center">
               <div
                 id="purpleCTAcontainer"
                 className="rounded-lg bg-[#B197FC] p-10 pb-10"
@@ -48,10 +48,10 @@ export default function Home() {
                 <div className="flex flex-row justify-around">
                   <div
                     id="greyCTABox"
-                    className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
+                    className="hover:shadow-custom2 h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 text-[#6741D9] shadow-custom hover:bg-[#6741D9] hover:text-white"
                   >
                     <Link
-                      className="text-center text-xl font-bold text-[#6741D9] no-underline"
+                      className="text-center text-xl font-bold  no-underline"
                       href={'/search/questions'}
                     >
                       Search by questions
@@ -59,10 +59,10 @@ export default function Home() {
                   </div>
                   <div
                     id="greyCTABox"
-                    className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
+                    className="hover:shadow-custom2 h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 text-[#6741D9] shadow-custom hover:bg-[#6741D9] hover:text-white"
                   >
                     <Link
-                      className="text-center text-xl font-bold text-[#6741D9] no-underline"
+                      className="text-center text-xl font-bold no-underline"
                       href={'/search/tags'}
                     >
                       Search by tags
@@ -71,10 +71,10 @@ export default function Home() {
 
                   <div
                     id="greyCTABox"
-                    className="h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 shadow-custom"
+                    className="hover:shadow-custom2 h-40 w-40 rounded-lg bg-[#D9D9D9] p-5 text-[#6741D9] shadow-custom hover:bg-[#6741D9] hover:text-white"
                   >
                     <Link
-                      className="text-center text-xl font-bold text-[#6741D9] no-underline"
+                      className="text-center text-xl font-bold  no-underline"
                       href={'/search/modules'}
                     >
                       {' '}

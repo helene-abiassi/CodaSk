@@ -55,8 +55,6 @@ function TagCard({
   const router = useRouter();
 
   const allTags = data && data.getAllTags;
-  console.log('allTags :>> ', allTags);
-
   const [displayedTags, setDisplayedTags] = useState(allTags);
 
   // Bookmark logic
@@ -162,8 +160,7 @@ function TagCard({
     <div className="flex flex-wrap justify-center">
       {loading && <Loader />}
 
-      {displayedTags &&
-        allTags &&
+      {displayedTags && allTags && displayedTags.length > 0 ? (
         displayedTags?.map((tag, index) => {
           const isTagBookmarked =
             isAlreadyBookmarked && isAlreadyBookmarked[index];
@@ -231,7 +228,12 @@ function TagCard({
               </div>
             </div>
           );
-        })}
+        })
+      ) : (
+        <p className=" my-14  font-medium text-[#6741D9] md:text-3xl">
+          No tags found
+        </p>
+      )}
 
       {/* BOOKMARK MODAL */}
       {showAddModal && (
@@ -248,8 +250,8 @@ function TagCard({
           onClose={handleCloseAddModal}
         />
       )}
-      {/* UNBOOKMARK MODAL */}
 
+      {/* UNBOOKMARK MODAL */}
       {showRemoveModal && (
         <Modal
           title="Removed from bookmarks!"

@@ -15,6 +15,7 @@ const config: Config = {
       },
       boxShadow: {
         custom: '10px 10px 0 0 #6741D9',
+        custom2: '10px 10px 0 0 black',
       },
     },
   },
