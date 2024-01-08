@@ -129,8 +129,8 @@ function Question({tagdata, tag}: ComponentProps) {
       {/* TOP SECTION */}
       <div className="flex flex-row items-start justify-between px-6 py-6">
         <h1 className=" mx-8 mt-4 text-left font-medium text-[#6741D9] md:text-3xl">
-          Search among {tagdata?.getQuestionsByTagName.length} questions tagged{' '}
-          {router.query.name}
+          Search among {tagdata?.getQuestionsByTagName.length} questions{' '}
+          {router.query.name ? <>tagged {router.query.name}</> : ''}
         </h1>
         <div className="flex flex-col">
           <QuestionButtons />

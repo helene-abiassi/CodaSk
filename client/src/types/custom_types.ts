@@ -49,8 +49,9 @@ export interface User extends UserPhoto {
 
   export interface Tags{
 name:string;
+course_type:string;
 description:string;
-related_questions: Questions[];
+related_questions?: Questions[];
   }
 
   export interface Answers{

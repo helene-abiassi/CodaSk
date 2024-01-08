@@ -4,9 +4,8 @@ import colors from "colors";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import userRoutes from "../server/routes/userRoutes.js";
-// import questionRoutes from "../server/routes/questionRoutes.js";
-import answerRoutes from "../server/routes/answerRoute.js";
 import questionRoutes from "../server/routes/questionRoutes.js";
+import answerRoutes from "../server/routes/answerRoute.js";
 import cloudinaryConfig from "./config/cloudinaryConfig.js";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
@@ -38,7 +37,7 @@ const server = new ApolloServer({
 const addRoutes = () => {
   app.use("/api", router);
   app.use("/api/users", userRoutes);
-  // app.use("/api/questions", questionRoutes);
+  app.use("/api/questions", questionRoutes);
   app.use("/api/answers", answerRoutes);
 };
 
