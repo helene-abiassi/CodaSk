@@ -6,6 +6,8 @@ import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {userQuery} from '@/pages/search/tags';
 import Loader from './Loader';
+import Modal from './Modal';
+import Image from 'next/image';
 
 type tagProps = {
   getAllTags: [
@@ -52,9 +54,19 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
   );
 
   const [isBookmarked, setIsBookmarked] = useState(isAlreadyBookmarked);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
 
   const handleTagRedirect = (tagID: string) => {
     router.push(`http://localhost:3000/search/questions/tagged/${tagID}`);
+  };
+
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
+  };
+
+  const handleCloseRemoveModal = () => {
+    setShowRemoveModal(false);
   };
 
   const bookmarkTagClick = async (userID: string, tagID: string) => {
@@ -92,7 +104,8 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
     }
     try {
       await bookmarkTagClick(userID, tagID);
-      alert('Added to bookmarks!');
+      // alert('Added to bookmarks!');
+      setShowAddModal(true);
     } catch (error) {
       console.log('error :>> ', error);
     }
@@ -107,7 +120,8 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
 
     try {
       await unbookmarkTagClick(userID, tagID);
-      alert('Removed from bookmarks!');
+      // alert('Removed from bookmarks!');
+      setShowRemoveModal(true);
     } catch (error) {
       console.log('error :>> ', error);
     }
@@ -185,6 +199,34 @@ function TagCard({data, bookmarkTag, unbookmarkTag, userData, loading}: Props) {
             </div>
           );
         })}
+      {showAddModal && (
+        <Modal
+          title="Added to your bookmarks!"
+          message={
+            <Link
+              className=" rounded-full bg-[#B197FC] px-2 py-2 font-light text-white no-underline hover:bg-black hover:font-light"
+              href={`http://localhost:3000/user/profile/${sessionUserID}`}
+            >
+              Go to my profile
+            </Link>
+          }
+          onClose={handleCloseAddModal}
+        />
+      )}
+      {showRemoveModal && (
+        <Modal
+          title="Removed from bookmarks!"
+          message={
+            <Link
+              className=" rounded-full bg-[#B197FC] px-2 py-2 font-light text-white no-underline hover:bg-black hover:font-light"
+              href={`http://localhost:3000/user/profile/${sessionUserID}`}
+            >
+              Go to my profile
+            </Link>
+          }
+          onClose={handleCloseRemoveModal}
+        />
+      )}
     </div>
   );
 }

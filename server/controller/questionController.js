@@ -76,7 +76,7 @@ const getQuestionByTitle = async (req, res) => {
         //stage 3: fields to import
         {
           $project: {
-            _id: 0,
+            _id: 1,
             author: 1,
             posted_on: 1,
             title: 1,
@@ -95,6 +95,7 @@ const getQuestionByTitle = async (req, res) => {
       const questionByTitle = await questionModel.aggregate(agg);
 
       res.status(200).json({
+        number: questionByTitle.length,
         data: questionByTitle,
       });
     } catch (error) {

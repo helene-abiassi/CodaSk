@@ -9,6 +9,7 @@ import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {getPostedOnInDays} from '@/utils/GetPostedOnInDays';
 import Loader from './Loader';
+import {Questions} from '@/types/custom_types';
 
 type questionCardProp = {
   getAllQuestions: [
@@ -87,6 +88,7 @@ type Props = {
     variables: {deleteQuestionId: string};
   }) => void;
   loading: boolean;
+  questions: Questions[];
 };
 
 function QuestionCard({
@@ -94,6 +96,7 @@ function QuestionCard({
   filteredTagData,
   deleteQuestion,
   loading,
+  questions,
 }: Props) {
   const session = useSession();
   const userID = session?.data?.user?.name as string;
