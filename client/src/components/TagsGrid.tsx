@@ -19,6 +19,8 @@ type Props = {
     variables: {userId: string; tagId: string};
   }) => void;
   loading: boolean;
+  searchInput: string;
+  setSearchInput: React.Dispatch<React.SetStateAction<string>>;
 };
 
 function TagsGrid({
@@ -27,6 +29,8 @@ function TagsGrid({
   unbookmarkTag,
   userData,
   loading,
+  setSearchInput,
+  searchInput,
 }: Props) {
   return (
     <div className="flex flex-col">
@@ -36,6 +40,8 @@ function TagsGrid({
         unbookmarkTag={unbookmarkTag}
         userData={userData}
         loading={loading}
+        setSearchInput={setSearchInput}
+        searchInput={searchInput}
       />
     </div>
   );

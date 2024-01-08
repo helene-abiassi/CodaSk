@@ -2,7 +2,7 @@ import QuestionButtons from '@/components/QuestionButtons';
 import TagsGrid from '@/components/TagsGrid';
 import {gql, useMutation, useQuery} from '@apollo/client';
 import {useSession} from 'next-auth/react';
-import React, {useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 
 /// QUERIES ///
 export type tagQuery = {
@@ -97,6 +97,13 @@ function Tags() {
     setSortBy(sortOption);
   };
 
+  const [searchInput, setSearchInput] = useState('');
+
+  const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const normalizedQuery = e.target.value.toLowerCase();
+    setSearchInput(normalizedQuery);
+  };
+
   return (
     <div className="h-full min-h-screen w-full">
       {/* TOP SECTION */}
@@ -116,7 +123,10 @@ function Tags() {
           className="placeholder:text-gray-black block w-fit rounded-3xl border bg-[#EDE9E6] p-4 ps-10 text-sm  text-gray-900 placeholder:text-left placeholder:text-base placeholder:font-extralight "
           placeholder="search for keywords, tags, questions..."
           required
+          onChange={handleSearchInput}
+          value={searchInput}
         />
+        <span className="relative w-fit"></span>
         {/* SORT BY FILTERS */}
         <div className="flex flex-row items-center justify-center">
           <span className="flex cursor-pointer  flex-row text-lg font-normal text-[#6741D9]">
@@ -165,6 +175,8 @@ function Tags() {
           unbookmarkTag={unbookmarkTag}
           userData={userData}
           loading={loading}
+          searchInput={searchInput}
+          setSearchInput={setSearchInput}
         />
       </div>
     </div>

@@ -25,8 +25,7 @@ const Modal = ({message, onClose, title, image}: ModalProps) => {
         <div className="m-4 flex flex-col items-center justify-center">
           {image && <div className="image-container">{image}</div>}
 
-          <br />
-          <p className="message text-center text-xl">{message}</p>
+          <p className="message text-center text-lg">{message}</p>
         </div>
       </div>
     </div>
