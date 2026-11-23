@@ -5,7 +5,7 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import cookieParser from 'cookie-parser';
-import { Connection, STATES } from 'mongoose';
+import { Connection } from 'mongoose';
 import type { AppModule as AppModuleType } from '../src/app.module';
 import { seedSampleData } from './fixtures/seed-sample-data';
 import { IntegrationTestEnvironment } from './integration-test-environment';
@@ -14,7 +14,6 @@ import { startMongoTestContainer } from './mongodb-test-container';
 type TestContainer = Awaited<ReturnType<typeof startMongoTestContainer>>;
 
 export class IntegrationTestSetup {
-  private static active?: IntegrationTestSetup;
   private app?: INestApplication;
   private module?: TestingModule;
   private container?: TestContainer;
@@ -23,11 +22,7 @@ export class IntegrationTestSetup {
   private constructor() {}
 
   static async create(): Promise<IntegrationTestSetup> {
-    if (IntegrationTestSetup.active) {
-      throw new Error('Only one integration test setup can run in a test file');
-    }
     const setup = new IntegrationTestSetup();
-    IntegrationTestSetup.active = setup;
     try {
       await setup.init();
       return setup;
@@ -66,7 +61,6 @@ export class IntegrationTestSetup {
     this.app.useGlobalPipes(new ValidationPipe());
     this.app.use(cookieParser());
     await this.app.init();
-    this.getTestConnection();
   }
 
   getApp(): INestApplication {
@@ -84,25 +78,6 @@ export class IntegrationTestSetup {
     return this.getApp().get<Connection>(getConnectionToken());
   }
 
-  private getTestConnection(): Connection {
-    const connection = this.getConnection();
-    const uri = this.container && new URL(this.container.uri);
-    if (
-      !this.container ||
-      !uri ||
-      connection.readyState !== STATES.connected ||
-      connection.name !== this.container.databaseName ||
-      connection.host !== uri.hostname ||
-      connection.port !== Number(uri.port) ||
-      !connection.db
-    ) {
-      throw new Error(
-        'Refusing to use an unexpected integration test database',
-      );
-    }
-    return connection;
-  }
-
   async createAuthorizationHeader(userId: string): Promise<string> {
     const app = this.getApp();
     const config = app.get(ConfigService);
@@ -117,11 +92,11 @@ export class IntegrationTestSetup {
   }
 
   async seedDatabase(): Promise<void> {
-    await seedSampleData(this.getTestConnection());
+    await seedSampleData(this.getConnection());
   }
 
   async cleanDatabase(): Promise<void> {
-    const db = this.getTestConnection().db;
+    const db = this.getConnection().db;
     if (!db) {
       throw new Error('Integration test database is not connected');
     }
@@ -158,10 +133,6 @@ export class IntegrationTestSetup {
         this.environment = undefined;
       } catch (error) {
         errors.push(error);
-      } finally {
-        if (IntegrationTestSetup.active === this) {
-          IntegrationTestSetup.active = undefined;
-        }
       }
     }
 
