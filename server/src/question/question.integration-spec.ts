@@ -1,68 +1,26 @@
-import { randomUUID } from 'node:crypto';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
-import mongoose, { Connection, STATES } from 'mongoose';
-import { Answer, AnswerSchema } from '../answer/entities/answer.entity';
-import { Question, QuestionSchema } from './entities/question.entity';
 import { QuestionService } from './question.service';
-import { Tag, TagSchema } from '../tag/entities/tag.entity';
-import { User, UserSchema } from '../user/entities/user.entity';
 import { sampleData, sampleIds } from '../../test/fixtures/sample-data';
-import { seedSampleData } from '../../test/fixtures/seed-sample-data';
+import { IntegrationTestSetup } from '../../test/integration-test-setup';
 
 describe('QuestionService.findOne (integration)', () => {
-  const databaseName = `codask_it_${randomUUID().replace(/-/g, '')}`;
-  let connection: Connection;
-  let module: TestingModule | undefined;
+  let setup: IntegrationTestSetup;
   let service: QuestionService;
 
-  async function cleanupDatabase(): Promise<void> {
-    if (!connection) {
-      return;
-    }
-
-    try {
-      if (connection.readyState === STATES.connected) {
-        if (connection.name !== databaseName) {
-          throw new Error('Refusing to drop an unexpected database');
-        }
-        await connection.dropDatabase();
-      }
-    } finally {
-      await connection.close();
-    }
-  }
-
   beforeAll(async () => {
-    connection = mongoose.createConnection(
-      `mongodb://mongo-test:27017/${databaseName}`,
-      {
-        // A local test service should be ready before the suite starts.
-        serverSelectionTimeoutMS: 5000,
-      },
-    );
-    await connection.asPromise();
-    const questionModel = connection.model(Question.name, QuestionSchema);
-    connection.model(User.name, UserSchema);
-    connection.model(Answer.name, AnswerSchema);
-    connection.model(Tag.name, TagSchema);
-    await seedSampleData(connection);
+    setup = await IntegrationTestSetup.create();
+    service = setup.getApp().get(QuestionService);
+  });
 
-    module = await Test.createTestingModule({
-      providers: [
-        QuestionService,
-        { provide: getModelToken(Question.name), useValue: questionModel },
-      ],
-    }).compile();
-    service = module.get(QuestionService);
+  beforeEach(async () => {
+    await setup.seedDatabase();
+  });
+
+  afterEach(async () => {
+    await setup?.cleanDatabase();
   });
 
   afterAll(async () => {
-    try {
-      await module?.close();
-    } finally {
-      await cleanupDatabase();
-    }
+    await setup?.close();
   });
 
   it('returns the seeded question with its populated relations', async () => {

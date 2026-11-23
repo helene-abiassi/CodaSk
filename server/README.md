@@ -6,10 +6,13 @@ authentication and user, question, answer and tag endpoints for the
 
 ## Prerequisites
 
-- Node.js 22.12 or newer and npm. The frontend's current Vite dependency also
-  supports Node.js 20.19 or newer within the 20.x release line.
+- Node.js 24 or newer and npm. `@codegenie/serverless-express` declares Node
+  24 as its minimum; the frontend has its own Node requirements.
 - Docker and Docker Compose to run the local MongoDB service, or another
   reachable MongoDB instance with a separate development database.
+- A running Docker daemon accessible to the current user for integration tests.
+  Testcontainers needs to pull the MongoDB and resource-reaper images if they
+  are not already available.
 
 ## Local setup
 
@@ -103,8 +106,8 @@ Run from `server/`:
 | `npm run seed:dev` | Add missing synthetic records to the local development database. |
 | `npm test` | Run the Jest unit tests. |
 | `npm run test:cov` | Run unit tests with coverage and the configured 70% global thresholds. |
-| `npm run test:integration` | Run integration tests inside the Docker test runner. |
-| `npm run test:all` | Run unit and integration tests inside the Docker test runner. |
+| `npm run test:integration` | Run integration tests on the host using Testcontainers. |
+| `npm run test:all` | Run unit and integration tests sequentially on the host. |
 | `npm run test:e2e` | Run the separate e2e suite; see the caveat below. |
 
 The existing e2e test imports the full app and requires a configured, reachable
@@ -112,46 +115,41 @@ MongoDB instance. It currently expects an outdated root response (`Hello
 World!`), so it needs updating before it can reliably pass. Use a separate test
 database and test credentials; do not use production resources.
 
-### Docker test runner
+### Integration testing
 
-From the repository root, run both unit and integration tests:
-
-```bash
-docker compose -p codask-tests -f docker-compose.test.yaml run --build --rm test
-```
-
-This builds the test image, starts a separate test MongoDB and waits for it to
-be healthy. No host Node.js installation or `server/.env` file is needed.
-The image contains the source and dependencies, so use `--build` after changes.
-
-Run the suites individually:
+From `server/`, install dependencies and run the suites on the host:
 
 ```bash
-# Unit tests only; does not start MongoDB
-docker compose -p codask-tests -f docker-compose.test.yaml run --build --rm --no-deps test npm test -- --ci --runInBand
-
-# Integration tests only
-docker compose -p codask-tests -f docker-compose.test.yaml run --build --rm test npm run test:integration -- --ci --runInBand
+npm ci
+npm test                     # Unit tests; Docker is not required
+npm run test:integration     # Integration tests; Docker must be running
+npm run test:all             # Both suites, sequentially
 ```
 
-Unit tests can also still run in the running application server with
-`docker compose exec server npm test`. Integration tests run only in the
-dedicated test runner: they connect to `mongo-test:27017`, ignore `MONGO_URI`,
-seed a uniquely named database with the shared fixtures, and remove it during
-teardown. They never seed the development database; `seed:dev` remains optional
-and manual.
+Testcontainers starts MongoDB containers with dynamically assigned host ports
+and uniquely named databases. Each integration test file owns its containers,
+so files may run in parallel without sharing data. The setup stops the app and
+container during teardown; Testcontainers also uses a resource reaper for
+cleanup. No development Compose service or `.env` file is required. The
+full-app setup overrides `MONGO_URI` and auth configuration with test-only
+values and restores the original environment afterward. It never seeds or
+cleans the development database.
 
-The test MongoDB has no published host port and stores its data in memory.
-The test runner is removed automatically, but the MongoDB container remains
-available for subsequent runs. Stop and remove the test stack when finished:
+The shared `IntegrationTestSetup` in `test/integration-test-setup.ts` exposes
+the Nest app and HTTP server, `seedDatabase()`, `cleanDatabase()`, and
+`createAuthorizationHeader(userId)` for a seeded or otherwise existing user.
+Call `IntegrationTestSetup.create()` in `beforeAll`, seed explicitly in
+`beforeEach` when needed, clean in `afterEach`, and call `close()` in
+`afterAll`. Cleanup removes documents from test collections while preserving
+indexes. Only one setup may be active per test process.
 
-```bash
-docker compose -p codask-tests -f docker-compose.test.yaml down
-```
+The auth helper signs an access token for a bearer header; it does not perform
+login. Fixture users have login disabled, and refresh authentication requires a
+refresh cookie and a stored hashed refresh token. The optional `seed:dev`
+command remains separate and manual.
 
-GitHub Actions uses the same test stack and cleans it up after the tests. The
-existing e2e command does not automatically connect to this service; do not run
-it against development or production data.
+The existing e2e command does not use this setup; do not run it against
+development or production data.
 
 ## Source layout
 
@@ -160,7 +158,7 @@ it against development or production data.
 - `src/config/` and `src/common/`: configuration and shared utilities.
 - `src/main.ts`: HTTP bootstrap, Swagger setup and Lambda handler.
 - `src/**/*.spec.ts`: Jest unit tests; `src/**/*.integration-spec.ts`: integration tests.
-- `test/`: shared fixtures and separate Jest configuration and e2e test.
+- `test/`: integration setup, shared fixtures, separate Jest configurations and e2e test.
 
 ## Docker Compose
 
@@ -189,8 +187,11 @@ matches the client URL opened in the browser.
 
 On pushes to `main`, the
 [backend deployment workflow](../.github/workflows/backend-deploy.yml) installs
-dependencies, runs unit and integration tests in Docker and builds before deploying to
-AWS Lambda and creating an API Gateway deployment. A test failure stops the
-deployment. The integration tests use an isolated, ephemeral MongoDB service;
-the workflow does not run e2e tests or enforce coverage thresholds. It builds
-with Node 24 and configures the Lambda runtime as Node 22.
+dependencies, runs unit and integration tests on the runner, and builds before
+deploying to AWS Lambda and creating an API Gateway deployment. A test failure
+stops the deployment. Testcontainers uses the runner's Docker daemon for
+isolated, ephemeral MongoDB containers; the workflow does not run e2e tests or
+enforce coverage thresholds. It builds with Node 24 and configures the Lambda
+runtime as Node 22. The declared Node 24 minimum of
+`@codegenie/serverless-express` is therefore not validated against the deployed
+runtime by this workflow.
