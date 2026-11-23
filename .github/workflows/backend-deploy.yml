@@ -13,13 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Docker tests
-        run: docker compose -p codask-ci-tests -f docker-compose.test.yaml run --build --rm test
-
-      - name: Clean up Docker tests
-        if: always()
-        run: docker compose -p codask-ci-tests -f docker-compose.test.yaml down --remove-orphans
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -28,6 +21,10 @@ jobs:
       - name: Install dependencies
         working-directory: server
         run: npm ci
+
+      - name: Run unit and integration tests
+        working-directory: server
+        run: npm run test:all
 
       - name: Build
         working-directory: server
