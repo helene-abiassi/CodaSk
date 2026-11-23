@@ -141,7 +141,7 @@ the Nest app and HTTP server, `seedDatabase()`, `cleanDatabase()`, and
 Call `IntegrationTestSetup.create()` in `beforeAll`, seed explicitly in
 `beforeEach` when needed, clean in `afterEach`, and call `close()` in
 `afterAll`. Cleanup removes documents from test collections while preserving
-indexes. Only one setup may be active per test process.
+indexes. Only one setup may be active per test file.
 
 The auth helper signs an access token for a bearer header; it does not perform
 login. Fixture users have login disabled, and refresh authentication requires a

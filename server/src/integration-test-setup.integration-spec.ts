@@ -1,9 +1,10 @@
 import request from 'supertest';
-import { STATES } from 'mongoose';
+import mongoose, { STATES } from 'mongoose';
 import { IntegrationTestSetup } from '../test/integration-test-setup';
 import { sampleData, sampleIds } from '../test/fixtures/sample-data';
 
 let firstDatabaseName: string;
+let firstSetup: IntegrationTestSetup;
 
 describe('Integration test setup', () => {
   let setup: IntegrationTestSetup;
@@ -13,6 +14,7 @@ describe('Integration test setup', () => {
     previousMongoUri = process.env.MONGO_URI;
     process.env.MONGO_URI = 'mongodb://example.invalid/never-use-this';
     setup = await IntegrationTestSetup.create();
+    firstSetup = setup;
     firstDatabaseName = setup.getConnection().name;
   });
 
@@ -71,9 +73,9 @@ describe('Integration test setup', () => {
       .expect(200);
   });
 
-  it('rejects overlapping setups in the same process', async () => {
+  it('rejects overlapping setups in the same test file', async () => {
     await expect(IntegrationTestSetup.create()).rejects.toThrow(
-      'Only one integration test setup can run in a process',
+      'Only one integration test setup can run in a test file',
     );
   });
 
@@ -100,13 +102,37 @@ describe('Integration test setup', () => {
     );
   });
 
-  it('refuses to seed or clean an unexpected database', async () => {
+  it.each([
+    ['name', 'unexpected_database'],
+    ['host', 'unexpected-host'],
+    ['port', 1],
+  ] as const)(
+    'refuses to seed or clean when the connection %s changes',
+    async (property, value) => {
+      const connection = setup.getConnection();
+      const replaced = jest.replaceProperty(connection, property, value);
+      try {
+        await expect(setup.cleanDatabase()).rejects.toThrow(
+          'Refusing to use an unexpected integration test database',
+        );
+        await expect(setup.seedDatabase()).rejects.toThrow(
+          'Refusing to use an unexpected integration test database',
+        );
+      } finally {
+        replaced.restore();
+      }
+      expect(
+        await connection.db?.collection('questions').countDocuments(),
+      ).toBe(sampleData.questions.length);
+    },
+  );
+
+  it('refuses to seed or clean a disconnected database', async () => {
     const connection = setup.getConnection();
-    const name = jest.replaceProperty(
-      connection,
-      'name',
-      'unexpected_database',
-    );
+    const disconnected = mongoose.createConnection();
+    const getConnection = jest
+      .spyOn(setup, 'getConnection')
+      .mockReturnValue(disconnected);
     try {
       await expect(setup.cleanDatabase()).rejects.toThrow(
         'Refusing to use an unexpected integration test database',
@@ -115,7 +141,8 @@ describe('Integration test setup', () => {
         'Refusing to use an unexpected integration test database',
       );
     } finally {
-      name.restore();
+      getConnection.mockRestore();
+      await disconnected.close();
     }
     expect(await connection.db?.collection('questions').countDocuments()).toBe(
       sampleData.questions.length,
@@ -126,6 +153,10 @@ describe('Integration test setup', () => {
 it('can start a fresh setup after teardown in the same process', async () => {
   const setup = await IntegrationTestSetup.create();
   try {
+    await firstSetup.close();
+    await expect(IntegrationTestSetup.create()).rejects.toThrow(
+      'Only one integration test setup can run in a test file',
+    );
     expect(setup.getConnection().name).not.toBe(firstDatabaseName);
     await setup.seedDatabase();
     const header = await setup.createAuthorizationHeader(

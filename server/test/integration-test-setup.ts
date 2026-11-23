@@ -8,27 +8,26 @@ import cookieParser from 'cookie-parser';
 import { Connection, STATES } from 'mongoose';
 import type { AppModule as AppModuleType } from '../src/app.module';
 import { seedSampleData } from './fixtures/seed-sample-data';
+import { IntegrationTestEnvironment } from './integration-test-environment';
 import { startMongoTestContainer } from './mongodb-test-container';
 
 type TestContainer = Awaited<ReturnType<typeof startMongoTestContainer>>;
 
 export class IntegrationTestSetup {
-  private static active = false;
+  private static active?: IntegrationTestSetup;
   private app?: INestApplication;
   private module?: TestingModule;
   private container?: TestContainer;
-  private originalEnvironment?: NodeJS.ProcessEnv;
-  private readonly environmentKeys = new Set<string>();
-  private ownsSlot = true;
+  private environment?: IntegrationTestEnvironment;
 
   private constructor() {}
 
   static async create(): Promise<IntegrationTestSetup> {
     if (IntegrationTestSetup.active) {
-      throw new Error('Only one integration test setup can run in a process');
+      throw new Error('Only one integration test setup can run in a test file');
     }
-    IntegrationTestSetup.active = true;
     const setup = new IntegrationTestSetup();
+    IntegrationTestSetup.active = setup;
     try {
       await setup.init();
       return setup;
@@ -47,22 +46,8 @@ export class IntegrationTestSetup {
 
   private async init(): Promise<void> {
     this.container = await startMongoTestContainer();
-    this.originalEnvironment = { ...process.env };
-    const testEnvironment = {
-      PORT: '5000',
-      MONGO_URI: this.container.uri,
-      CORS_ORIGINS: 'http://localhost:5173',
-      ACCESS_TOKEN_SECRET: 'integration-test-access-secret',
-      ACCESS_TOKEN_EXPIRY: '15m',
-      REFRESH_TOKEN_SECRET: 'integration-test-refresh-secret',
-      REFRESH_TOKEN_EXPIRY: '7d',
-      DOMAIN_NAME: '',
-    };
-
-    for (const [key, value] of Object.entries(testEnvironment)) {
-      this.environmentKeys.add(key);
-      process.env[key] = value;
-    }
+    this.environment = new IntegrationTestEnvironment();
+    this.environment.apply(this.container.uri);
 
     try {
       // Defer loading until test configuration is set; Jest runs this project as CommonJS.
@@ -74,18 +59,14 @@ export class IntegrationTestSetup {
         imports: [AppModule],
       }).compile();
     } finally {
-      for (const key of Object.keys(process.env)) {
-        if (!(key in this.originalEnvironment)) {
-          this.environmentKeys.add(key);
-        }
-      }
+      this.environment.captureAddedVariables();
     }
 
     this.app = this.module.createNestApplication();
     this.app.useGlobalPipes(new ValidationPipe());
     this.app.use(cookieParser());
     await this.app.init();
-    this.getConnection();
+    this.getTestConnection();
   }
 
   getApp(): INestApplication {
@@ -100,7 +81,11 @@ export class IntegrationTestSetup {
   }
 
   getConnection(): Connection {
-    const connection = this.getApp().get<Connection>(getConnectionToken());
+    return this.getApp().get<Connection>(getConnectionToken());
+  }
+
+  private getTestConnection(): Connection {
+    const connection = this.getConnection();
     const uri = this.container && new URL(this.container.uri);
     if (
       !this.container ||
@@ -132,11 +117,11 @@ export class IntegrationTestSetup {
   }
 
   async seedDatabase(): Promise<void> {
-    await seedSampleData(this.getConnection());
+    await seedSampleData(this.getTestConnection());
   }
 
   async cleanDatabase(): Promise<void> {
-    const db = this.getConnection().db;
+    const db = this.getTestConnection().db;
     if (!db) {
       throw new Error('Integration test database is not connected');
     }
@@ -168,25 +153,22 @@ export class IntegrationTestSetup {
     } catch (error) {
       errors.push(error);
     } finally {
-      if (this.originalEnvironment) {
-        for (const key of this.environmentKeys) {
-          const value = this.originalEnvironment[key];
-          if (value === undefined) {
-            delete process.env[key];
-          } else {
-            process.env[key] = value;
-          }
+      try {
+        this.environment?.restore();
+        this.environment = undefined;
+      } catch (error) {
+        errors.push(error);
+      } finally {
+        if (IntegrationTestSetup.active === this) {
+          IntegrationTestSetup.active = undefined;
         }
-      }
-      this.originalEnvironment = undefined;
-      this.environmentKeys.clear();
-      if (this.ownsSlot) {
-        IntegrationTestSetup.active = false;
-        this.ownsSlot = false;
       }
     }
 
-    if (errors.length > 0) {
+    if (errors.length === 1) {
+      throw errors[0];
+    }
+    if (errors.length > 1) {
       throw new AggregateError(
         errors,
         'Failed to close integration test setup',
